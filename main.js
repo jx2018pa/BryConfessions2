@@ -33,8 +33,12 @@ const auth = require("./auth.json");
 // config.token contains the bot's token
 // config.prefix contains the message prefix.
 
+const SQLite = require("better-sqlite3");
+const sql = new SQLite("./pool.sqlite");
+
 const logChannel = "675193177656918039";
-const slowChannels = ["675201659558690875", "675350296142282752"];
+//const slowChannels = ["675201659558690875", "675350296142282752"];
+const slowChannels = ["675201659558690875"];
 
 const reactions = [
   "[NAME]'s pants were soaked for some reason", 
@@ -57,7 +61,6 @@ const reactions = [
 ]
 
 var pool = []
-// TODO own server
 
 function timeConverter(UNIX_timestamp) {
   var a = new Date(UNIX_timestamp);
@@ -69,32 +72,30 @@ function addReaction() {
   if (Math.random() > 0.1) {
     return null;
   }
-  console.log("a");
   return reactions[Math.floor(Math.random() * reactions.length)];
 }
 
 function createConfession(userMessage) {
   var embed = new Discord.RichEmbed()
     .setColor('#88c0d0')
-    .setTitle('Confession')
-    .setDescription(userMessage.content)
-    .setFooter("posted at " + timeConverter(userMessage.createdTimestamp));
+    .setTitle('Confession #' + userMessage.id)
+    .setDescription(userMessage.message)
+    .setFooter("posted at " + timeConverter(userMessage.date));
 
   var reaction = addReaction();
   if (reaction != null) {
-    console.log("hi");
     embed = embed.addField('Bot addition', reaction);
   }
   return embed;
 }
 
 function selectMessage() {
-  if (pool.length == 0) {
+  var toSend = client.getMessage.get();
+  if (!toSend) {
     return null;
   }
-  var ndx = Math.floor(Math.random() * pool.length);
-  var message = createConfession(pool[ndx]);
-  pool.splice(ndx, 1);
+  client.deletePulled.run(toSend.id);
+  var message = createConfession(toSend);
   return message;
 }
 
@@ -105,9 +106,22 @@ client.on("ready", () => {
   // docs refer to as the "ClientUser".
   client.user.setGame("DM me your confessions");
 
+  const table = sql.prepare("SELECT count(*) FROM sqlite_master WHERE type='table' AND name='pool';").get();
+  if (!table['count(*)']) {
+    sql.prepare("CREATE TABLE pool (id INTEGER PRIMARY KEY AUTOINCREMENT, message TEXT, date TEXT);").run();
+    sql.pragma("synchronous = 1");
+    sql.pragma("journal_mode = wal");
+  }
+
+  client.getMessage = sql.prepare("SELECT * FROM pool ORDER BY RANDOM() LIMIT 1;");
+  client.deletePulled = sql.prepare("DELETE FROM pool WHERE id=?");
+  client.pushMessage = sql.prepare("INSERT INTO pool (message, date) VALUES (@message, @date);");
+  client.getLast = sql.prepare("SELECT * FROM pool ORDER BY id DESC LIMIT 1;");
+
   var interval = setInterval(function() {
     for (var i = 0; i < 5; i++) {
       var toSend = selectMessage();
+      console.log(toSend);
       if (toSend != null) {
         slowChannels.forEach(channel => client.channels.get(channel).send(toSend));
       }
@@ -136,8 +150,8 @@ client.on("message", async message => {
     return;
   }
 
-  pool.push(message);
-  client.channels.get(logChannel).send(createConfession(message));
+  client.pushMessage.run({'message': message.content, 'date': timeConverter(message.createdTimestamp)});
+  client.channels.get(logChannel).send(createConfession({'id': 'log', 'message': message.content, 'date': timeConverter(message.createdTimestamp)}));
 });
 
 client.login(auth.token);
