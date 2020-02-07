@@ -150,7 +150,13 @@ client.on("message", async message => {
     return;
   }
 
+
   var reaction = addReaction();
+  if (message.content.includes("!noreact")) {
+    reaction = null;
+    message.content = message.content.replace("!noreact", "");
+  }
+
   client.pushMessage.run({'message': message.content, 'date': timeConverter(message.createdTimestamp), 'reaction': reaction});
   var id = client.returnId.get(message.content).id;
   var confessionReturn = createConfession({'id': id, 'message': message.content, 'date': timeConverter(message.createdTimestamp), 'reaction': reaction})
