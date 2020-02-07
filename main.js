@@ -109,7 +109,7 @@ client.on("ready", () => {
     for (var i = 0; i < 5; i++) {
       var toSend = selectMessage();
       if (toSend != null) {
-        client.channels.get(slowChannel).send(toSend);
+        slowChannels.forEach(channel => client.channels.get(channel).send(toSend));
       }
     }
   }, 3600000);
