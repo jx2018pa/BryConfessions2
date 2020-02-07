@@ -69,7 +69,7 @@ function timeConverter(UNIX_timestamp) {
 }
 
 function addReaction() {
-  if (Math.random() > 0.1) {
+  if (Math.random() > 0.2) {
     return null;
   }
   return reactions[Math.floor(Math.random() * reactions.length)];
@@ -82,9 +82,8 @@ function createConfession(userMessage) {
     .setDescription(userMessage.message)
     .setFooter("posted at " + timeConverter(userMessage.date));
 
-  var reaction = addReaction();
-  if (reaction != null) {
-    embed = embed.addField('Bot addition', reaction);
+  if (userMessage.reaction != null) {
+    embed = embed.addField('Bot addition', userMessage.reaction);
   }
   return embed;
 }
@@ -108,14 +107,14 @@ client.on("ready", () => {
 
   const table = sql.prepare("SELECT count(*) FROM sqlite_master WHERE type='table' AND name='pool';").get();
   if (!table['count(*)']) {
-    sql.prepare("CREATE TABLE pool (id INTEGER PRIMARY KEY AUTOINCREMENT, message TEXT, date TEXT);").run();
+    sql.prepare("CREATE TABLE pool (id INTEGER PRIMARY KEY AUTOINCREMENT, message TEXT, date TEXT, reaction TEXT);").run();
     sql.pragma("synchronous = 1");
     sql.pragma("journal_mode = wal");
   }
 
   client.getMessage = sql.prepare("SELECT * FROM pool ORDER BY RANDOM() LIMIT 1;");
   client.deletePulled = sql.prepare("DELETE FROM pool WHERE id=?");
-  client.pushMessage = sql.prepare("INSERT INTO pool (message, date) VALUES (@message, @date);");
+  client.pushMessage = sql.prepare("INSERT INTO pool (message, date, reaction) VALUES (@message, @date, @reaction);");
   client.getLast = sql.prepare("SELECT * FROM pool ORDER BY id DESC LIMIT 1;");
 
   var interval = setInterval(function() {
@@ -150,9 +149,9 @@ client.on("message", async message => {
     return;
   }
 
-  client.pushMessage.run({'message': message.content, 'date': timeConverter(message.createdTimestamp)});
-  client.channels.get(logChannel).send(createConfession({'id': 'log', 'message': message.content, 'date': timeConverter(message.createdTimestamp)}));
+  var reaction = addReaction();
+  client.pushMessage.run({'message': message.content, 'date': timeConverter(message.createdTimestamp), 'reaction': reaction});
+  client.channels.get(logChannel).send(createConfession({'id': 'log', 'message': message.content, 'date': timeConverter(message.createdTimestamp), 'reaction': reaction}));
 });
 
 client.login(auth.token);
-
