@@ -110,7 +110,7 @@ client.on("ready", () => {
     if (toSend != null) {
       client.channels.get(slowChannel).send(toSend);
     }
-  }, 10000);
+  }, 3600000);
 });
 
 client.on("guildCreate", guild => {
