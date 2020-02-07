@@ -63,7 +63,7 @@ client.on("message", async message => {
   }
 
   // Check if lowercased version of the message contains "n"
-  if (message.content.toLowerCase().includes('n'))
+  if (message.content.toLowerCase().includes('n')) {
     message.channel.send('Did you try to type "' + message.content.replace(/n/gi,'') + '"? The letter :regional_indicator_n: is prohibited per orders of Supreme Leader Xi Jipig.');
   }
 });
