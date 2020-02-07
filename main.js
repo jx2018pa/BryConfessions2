@@ -106,9 +106,11 @@ client.on("ready", () => {
   client.user.setGame("DM me your confessions");
 
   var interval = setInterval(function() {
-    var toSend = selectMessage();
-    if (toSend != null) {
-      client.channels.get(slowChannel).send(toSend);
+    for (var i = 0; i < 5; i++)
+      var toSend = selectMessage();
+      if (toSend != null) {
+        client.channels.get(slowChannel).send(toSend);
+      }
     }
   }, 3600000);
 });
