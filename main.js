@@ -34,7 +34,7 @@ const auth = require("./auth.json");
 // config.prefix contains the message prefix.
 
 const logChannel = "675193177656918039";
-const slowChannel = "675201659558690875";
+const slowChannels = ["675201659558690875", "675350296142282752"];
 
 const reactions = [
   "[NAME]'s pants were soaked for some reason", 
