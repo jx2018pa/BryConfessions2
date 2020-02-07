@@ -20,6 +20,22 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
+
+function timeConverter(UNIX_timestamp) {
+  var a = new Date(UNIX_timestamp);
+  time = a.toLocaleString('en-US');
+  return time;
+}
+
+function createConfession(userMessage) {
+  var embed = new Discord.RichEmbed()
+    .setColor('#88c0d0')
+    .setTitle('Confession')
+    .setDescription(userMessage.content)
+    .setFooter("posted at " + timeConverter(userMessage.createdTimestamp));
+  return embed;
+}
+
 // Load up the discord.js library
 const Discord = require("discord.js");
 
@@ -33,12 +49,16 @@ const auth = require("./auth.json");
 // config.token contains the bot's token
 // config.prefix contains the message prefix.
 
+var pool = []
+// TODO own server
+var logChannel = "675165733382258714";
+
 client.on("ready", () => {
   // This event will run if the bot starts, and logs in, successfully.
   console.log(`Bot has started, with ${client.users.size} users, in ${client.channels.size} channels of ${client.guilds.size} guilds.`);
   // Example of changing the bot's playing game to something useful. `client.user` is what the
   // docs refer to as the "ClientUser".
-  client.user.setGame("Ce🅱sori🅱g the i🅱ter🅱et si🅱ce 1989");
+  client.user.setGame("DM me your confessions");
 });
 
 client.on("guildCreate", guild => {
@@ -58,14 +78,19 @@ client.on("message", async message => {
   // It's good practice to ignore other bots. This also makes your bot ignore itself
   // and not get into a spam loop (we call that "botception").
 
-  if (message.author.bot) {
+  if (message.author.bot || message.channel.type != "dm") {
     return;
   }
 
+  pool.push(message);
+  console.log(message);
+  //var rendered_message = "> " + message.content + "\n > " + "posted at " + timeConverter(message.createdTimestamp);
+  client.channels.get(logChannel).send(createConfession(message));
+
   // Check if lowercased version of the message contains "n"
-  if (message.content.toLowerCase().includes('n')) {
-    message.channel.send('Did you try to type "' + message.content.replace(/n/gi,'') + '"? The letter :regional_indicator_n: is prohibited per orders of Supreme Leader Xi Jipig.');
-  }
+  //if (message.content.toLowerCase().includes('n')) {
+  //  message.channel.send('Did you try to type "' + message.content.replace(/n/gi,'') + '"? The letter :regional_indicator_n: is prohibited per orders of Supreme Leader Xi Jipig.');
+  //}
 });
 
 client.login(auth.token);
