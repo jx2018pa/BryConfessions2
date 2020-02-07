@@ -116,6 +116,7 @@ client.on("ready", () => {
   client.deletePulled = sql.prepare("DELETE FROM pool WHERE id=?");
   client.pushMessage = sql.prepare("INSERT INTO pool (message, date, reaction) VALUES (@message, @date, @reaction);");
   client.getLast = sql.prepare("SELECT * FROM pool ORDER BY id DESC LIMIT 1;");
+  client.returnId = sql.prepare("SELECT id FROM pool WHERE message=?");
 
   var interval = setInterval(function() {
     for (var i = 0; i < 5; i++) {
@@ -151,7 +152,10 @@ client.on("message", async message => {
 
   var reaction = addReaction();
   client.pushMessage.run({'message': message.content, 'date': timeConverter(message.createdTimestamp), 'reaction': reaction});
-  client.channels.get(logChannel).send(createConfession({'id': 'log', 'message': message.content, 'date': timeConverter(message.createdTimestamp), 'reaction': reaction}));
+  var id = client.returnId.get(message.content).id;
+  var confessionReturn = createConfession({'id': id, 'message': message.content, 'date': timeConverter(message.createdTimestamp), 'reaction': reaction})
+  client.channels.get(logChannel).send(confessionReturn);
+  message.channel.send(confessionReturn);
 });
 
 client.login(auth.token);
