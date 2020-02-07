@@ -20,22 +20,6 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-
-function timeConverter(UNIX_timestamp) {
-  var a = new Date(UNIX_timestamp);
-  time = a.toLocaleString('en-US');
-  return time;
-}
-
-function createConfession(userMessage) {
-  var embed = new Discord.RichEmbed()
-    .setColor('#88c0d0')
-    .setTitle('Confession')
-    .setDescription(userMessage.content)
-    .setFooter("posted at " + timeConverter(userMessage.createdTimestamp));
-  return embed;
-}
-
 // Load up the discord.js library
 const Discord = require("discord.js");
 
@@ -49,9 +33,59 @@ const auth = require("./auth.json");
 // config.token contains the bot's token
 // config.prefix contains the message prefix.
 
+const logChannel = "675165733382258714";
+
+const reactions = [
+  "[NAME]'s pants were soaked for some reason", 
+  "i dunno man, seems kinda gay to me", 
+  "and that's why i'll never be grabbed from behind",
+  "kinda makes me wanna chiu chiu your ass out",
+  "is this why neil will never pin me to the wall?",
+  "and that's why my mum is pissed at me...",
+  "time for a threesome?",
+  "this has me *thirsting* for anthony's purple derple",
+  "*shits affectionately*",
+  "Rawr! X3 nuzzles pounces on you UwU you so warm, couldn't help but notice your bulge from across the floor",
+  "and [NAME] slightly enjoyed it",
+  "and [NAME] dreamed about it vividly that night",
+  "but [NAME] didn't want it to end",
+  "Jimmy liked it",
+  "They undress, their stomachs are white.\nIn the yard, dewy and shivering\nwith crickets, they lie naked,\nface-up, face-down.\nThey learn Chinese.\nCrickets: chiu chiu. Dew: I’ve forgotten.\nNaked:   I’ve forgotten.\nNi, wo:   you and me.\nLegs are parted,\none tells the other\nthey are beautiful as the moon.",
+  "ngl thats kinda hot",
+  "i just came in my trousers"
+]
+
 var pool = []
 // TODO own server
-var logChannel = "675165733382258714";
+
+function timeConverter(UNIX_timestamp) {
+  var a = new Date(UNIX_timestamp);
+  time = a.toLocaleString('en-US');
+  return time;
+}
+
+function addReaction() {
+  if (Math.random() > 0.1) {
+    return null;
+  }
+  console.log("a");
+  return reactions[Math.floor(Math.random() * items.length)];
+}
+
+function createConfession(userMessage) {
+  var embed = new Discord.RichEmbed()
+    .setColor('#88c0d0')
+    .setTitle('Confession')
+    .setDescription(userMessage.content)
+    .setFooter("posted at " + timeConverter(userMessage.createdTimestamp));
+
+  var reaction = addReaction();
+  if (reaction != null) {
+    console.log("hi");
+    embed = embed.addField('Bot addition', reaction);
+  }
+  return embed;
+}
 
 client.on("ready", () => {
   // This event will run if the bot starts, and logs in, successfully.
@@ -83,7 +117,7 @@ client.on("message", async message => {
   }
 
   pool.push(message);
-  console.log(message);
+  //console.log(message);
   //var rendered_message = "> " + message.content + "\n > " + "posted at " + timeConverter(message.createdTimestamp);
   client.channels.get(logChannel).send(createConfession(message));
 
