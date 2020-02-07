@@ -34,7 +34,7 @@ const auth = require("./auth.json");
 // config.prefix contains the message prefix.
 
 const logChannel = "675193177656918039";
-const slowChannel = "675193407148130314";
+const slowChannel = "675201659558690875";
 
 const reactions = [
   "[NAME]'s pants were soaked for some reason", 
@@ -106,7 +106,7 @@ client.on("ready", () => {
   client.user.setGame("DM me your confessions");
 
   var interval = setInterval(function() {
-    for (var i = 0; i < 5; i++)
+    for (var i = 0; i < 5; i++) {
       var toSend = selectMessage();
       if (toSend != null) {
         client.channels.get(slowChannel).send(toSend);
