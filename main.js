@@ -33,7 +33,8 @@ const auth = require("./auth.json");
 // config.token contains the bot's token
 // config.prefix contains the message prefix.
 
-const logChannel = "675165733382258714";
+const logChannel = "675193177656918039";
+const slowChannel = "675193407148130314";
 
 const reactions = [
   "[NAME]'s pants were soaked for some reason", 
@@ -69,7 +70,7 @@ function addReaction() {
     return null;
   }
   console.log("a");
-  return reactions[Math.floor(Math.random() * items.length)];
+  return reactions[Math.floor(Math.random() * reactions.length)];
 }
 
 function createConfession(userMessage) {
@@ -87,12 +88,29 @@ function createConfession(userMessage) {
   return embed;
 }
 
+function selectMessage() {
+  if (pool.length == 0) {
+    return null;
+  }
+  var ndx = Math.floor(Math.random() * pool.length);
+  var message = createConfession(pool[ndx]);
+  pool.splice(ndx, 1);
+  return message;
+}
+
 client.on("ready", () => {
   // This event will run if the bot starts, and logs in, successfully.
   console.log(`Bot has started, with ${client.users.size} users, in ${client.channels.size} channels of ${client.guilds.size} guilds.`);
   // Example of changing the bot's playing game to something useful. `client.user` is what the
   // docs refer to as the "ClientUser".
   client.user.setGame("DM me your confessions");
+
+  var interval = setInterval(function() {
+    var toSend = selectMessage();
+    if (toSend != null) {
+      client.channels.get(slowChannel).send(toSend);
+    }
+  }, 10000);
 });
 
 client.on("guildCreate", guild => {
@@ -117,14 +135,7 @@ client.on("message", async message => {
   }
 
   pool.push(message);
-  //console.log(message);
-  //var rendered_message = "> " + message.content + "\n > " + "posted at " + timeConverter(message.createdTimestamp);
   client.channels.get(logChannel).send(createConfession(message));
-
-  // Check if lowercased version of the message contains "n"
-  //if (message.content.toLowerCase().includes('n')) {
-  //  message.channel.send('Did you try to type "' + message.content.replace(/n/gi,'') + '"? The letter :regional_indicator_n: is prohibited per orders of Supreme Leader Xi Jipig.');
-  //}
 });
 
 client.login(auth.token);
