@@ -83,7 +83,7 @@ function createConfession(userMessage) {
     .setFooter("posted at " + timeConverter(userMessage.date));
 
   if (userMessage.reaction != null) {
-    embed = embed.addField('Bot addition', userMessage.reaction);
+    embed = embed.addField('Word of rngesus', userMessage.reaction);
   }
   return embed;
 }
