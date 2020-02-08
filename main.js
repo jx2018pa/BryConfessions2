@@ -150,6 +150,14 @@ client.on("message", async message => {
     return;
   }
 
+  if (message.content.trim().split(" ").length < 3 && message.content.trim().length < 15) {
+    message.channel.send(new Discord.RichEmbed()
+      .setColor('#d08770')
+      .setTitle('Error')
+      .setDescription('Sorry, confessions should be longer than 3 words or 15 characters')
+    );
+    return;
+  }
 
   var reaction = addReaction();
   if (message.content.includes("!noreact")) {
