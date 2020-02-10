@@ -58,7 +58,7 @@ const reactions = [
   "ngl thats kinda hot",
   "i just came in my trousers",
   "that's the most outrageous thing i've seen today",
-  "damn girl.  wanna 'create codes' together? ;))",
+  "damn girl.  wanna 'make codes' together? ;))",
   "So I get bored and I play Overwatch.  I see Emma **** with Junkrat as usual.  And then I go onto DeviantArt, and I see Angela x Anthony **** as usual.  And then I walk into John Lian's class, and I see John Lian with, with, with Tao Lao Shi.  So I walk out and hang myself.",
   "And then Mr. Davidson walks in, 'cats are cool bye', and goes on a one hour linguistics lab, which everyone is bored.  Then he gives us a test about circles and vibrations.  And after the test is finished, everyone begins to have sex.",
   "And I throw up, and then I wake up again, and I see myself in the bed again, but the bed is full of white stuff.  I flip over the person and I see the face off Kulass' ass, and I wake up and scream.  I find myself in a pile of PurpleDerples, and they yell at me saying 'oh yeah' and making those lips noises, and it was great.  Then I time traveled to the past so I could see the dinosaurs, and I licked all the dinosaurs, and it was great.  And then the Dinos all died from STDs and whatevers that thing is.  I insert my **** into the dinos, and Derples are born.  And then meteorites fall, and a star appears.  Surprise surprise it’s Angela.",
