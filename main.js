@@ -115,7 +115,7 @@ function createConfession(userMessage) {
     .setTitle('Confession #' + userMessage.id)
     .setDescription(userMessage.message)
     .setFooter("posted at " + timeConverter(userMessage.date));
-  replace("[NAME]", randname)
+  //replace("[NAME]", randname) ADI PLS FIX
 
   if (userMessage.reaction != null) {
     embed = embed.addField('Word of rngesus', userMessage.reaction);
