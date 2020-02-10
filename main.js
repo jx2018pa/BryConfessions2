@@ -37,8 +37,7 @@ const SQLite = require("better-sqlite3");
 const sql = new SQLite("./pool.sqlite");
 
 const logChannel = "675193177656918039";
-//const slowChannels = ["675201659558690875", "675350296142282752"];
-const slowChannels = ["675201659558690875"];
+const slowChannels = ["675201659558690875", "675350296142282752", "675381993642393641"];
 
 const reactions = [
   "[NAME]'s pants were soaked for some reason", 
