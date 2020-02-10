@@ -1,4 +1,4 @@
-/*
+﻿/*
  * Copyright (c) 2018 Aditya Saligrama.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -58,7 +58,7 @@ const reactions = [
   "ngl thats kinda hot",
   "i just came in my trousers",
   "that's the most outrageous thing i've seen today",
-  "damn girl.  wanna 'create codes' together? ;))"
+  "damn girl.  wanna 'make codes' together? ;))"
 ]
   const randname = [
   "Adi",
