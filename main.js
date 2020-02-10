@@ -206,6 +206,7 @@ client.on("message", async message => {
   client.channels.get(logChannel).send(confessionReturn);
   //message.channel.send(confessionReturn);
   //Make it so that the bot does not respond to confessions so we can delete our degeneracy :)
+  message.channel.send("Confession saved!");
 });
 
 client.login(auth.token);
