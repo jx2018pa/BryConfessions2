@@ -1,4 +1,4 @@
-/*
+﻿/*
  * Copyright (c) 2018 Aditya Saligrama.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -144,7 +144,7 @@ client.on("ready", () => {
   if (!table['count(*)']) {
     sql.prepare("CREATE TABLE pool (id INTEGER PRIMARY KEY AUTOINCREMENT, message TEXT, date TEXT, reaction TEXT);").run();
     sql.pragma("synchronous = 1");
-    sql.pragma("journal_mode = wal");
+    sql.pragma("journal_mode = wal"); //pin me to the wal
   }
 
   client.getMessage = sql.prepare("SELECT * FROM pool ORDER BY RANDOM() LIMIT 1;");
@@ -204,7 +204,8 @@ client.on("message", async message => {
   var id = client.returnId.get(message.content).id;
   var confessionReturn = createConfession({'id': id, 'message': message.content, 'date': timeConverter(message.createdTimestamp), 'reaction': reaction})
   client.channels.get(logChannel).send(confessionReturn);
-  message.channel.send(confessionReturn);
+  //message.channel.send(confessionReturn);
+  //Make it so that the bot does not respond to confessions so we can delete our degeneracy :)
 });
 
 client.login(auth.token);
