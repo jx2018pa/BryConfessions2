@@ -58,12 +58,14 @@ const reactions = [
   "i just came in my trousers",
   "that's the most outrageous thing i've seen today",
   "damn girl.  wanna 'make codes' together? ;))",
+  "don't worry, i'll 'take care' of you ;))",
+  "SSSCCCCLLLLLUUUURRRRRRRPPPPPPPPPP",
   "So I get bored and I play Overwatch.  I see Emma **** with Junkrat as usual.  And then I go onto DeviantArt, and I see Angela x Anthony **** as usual.  And then I walk into John Lian's class, and I see John Lian with, with, with Tao Lao Shi.  So I walk out and hang myself.",
   "And then Mr. Davidson walks in, 'cats are cool bye', and goes on a one hour linguistics lab, which everyone is bored.  Then he gives us a test about circles and vibrations.  And after the test is finished, everyone begins to have sex.",
   "And I throw up, and then I wake up again, and I see myself in the bed again, but the bed is full of white stuff.  I flip over the person and I see the face off Kulass' ass, and I wake up and scream.  I find myself in a pile of PurpleDerples, and they yell at me saying 'oh yeah' and making those lips noises, and it was great.  Then I time traveled to the past so I could see the dinosaurs, and I licked all the dinosaurs, and it was great.  And then the Dinos all died from STDs and whatevers that thing is.  I insert my **** into the dinos, and Derples are born.  And then meteorites fall, and a star appears.  Surprise surprise it’s Angela.",
   "Pal is right in front of me, and he bites me, and I bite him beck, and I think he’s traumatised.  So Pal runs away screaming.",
   "we decided to duke it out using our fidget spinners.  We fight each other with our ****s.",
-  "After I bit my dick, I see Pal with the bible, descending from Heaven.  Then he shoves the bible in my ass, saying 'my disciple, do you like it?' I yell out yes.  But then he launched a nuke saying '2sinful4me'.  But we decided to shemx anyways bam bam, pow pow, and I created humans.  And this is why you guys can’t suck ur dick or else Pal will come down from Heaven again and smack you with the Bible, and with the title 'Repent'.",
+  "After I bit my dick, I see Pal with the bible, descending from Heaven.  Then he shoves the bible in [NAME]'s ass, saying 'my disciple, do you like it?' [NAME] yells out yes.  But then he launched a nuke saying '2sinful4me'.  But we decided to shemx anyways bam bam, pow pow, and I created humans.  And this is why you guys can’t suck ur dick or else Pal will come down from Heaven again and smack you with the Bible, and with the title 'Repent'.",
   "[NAME]'s dick, shocked by the revelation, flies into my mouth, and I spit it out.  Then I roast it, and then I dry it, and then I slow roast it, add some mushrooms, and some saute sauce, and I suck on it.  Then I cut it into pieces and I eat it like a French lady.  I cut them into tiny pieces, but then I invent a robotic penis, and they're is fine, just like how Genji has a robotic penis.  So I eat their dick with a lot of saute sauce, and I slowly chew it.  It’s soft, with a nice texture, but it’s also hard on it inside, and then I realize there’s still some semen left in it, so I poop out a baby."
 ]
 const names = [
