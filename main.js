@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2018 Aditya Saligrama.
+ * Copyright (c) 2020 Aditya Saligrama, Anthony Cui, Emma Hsiao, John Lian.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
