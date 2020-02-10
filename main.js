@@ -66,7 +66,7 @@ const reactions = [
   "After I bit my dick, I see Pal with the bible, descending from Heaven.  Then he shoves the bible in my ass, saying 'my disciple, do you like it?' I yell out yes.  But then he launched a nuke saying '2sinful4me'.  But we decided to shemx anyways bam bam, pow pow, and I created humans.  And this is why you guys can’t suck ur dick or else Pal will come down from Heaven again and smack you with the Bible, and with the title 'Repent'.",
   "[NAME]'s dick, shocked by the revelation, flies into my mouth, and I spit it out.  Then I roast it, and then I dry it, and then I slow roast it, add some mushrooms, and some saute sauce, and I suck on it.  Then I cut it into pieces and I eat it like a French lady.  I cut them into tiny pieces, but then I invent a robotic penis, and they're is fine, just like how Genji has a robotic penis.  So I eat their dick with a lot of saute sauce, and I slowly chew it.  It’s soft, with a nice texture, but it’s also hard on it inside, and then I realize there’s still some semen left in it, so I poop out a baby."
 ]
-  const randname = [
+const names = [
   "Adi",
   "Anthony",
   "Angela",
@@ -75,7 +75,7 @@ const reactions = [
   "Byrnart", 
   "Cuwee Cwee",
   "Chunnathan Liar",
-  "Dadi Sawigwama"
+  "Dadi Sawigwama",
   "Daddy BoKo", 
   "Daddy mitch", 
   "Daniel",
@@ -84,7 +84,7 @@ const reactions = [
   "John",
   "Krist Offer",
   "Neil",
-  "Neil K. Malur"
+  "Neil Krishna Malur",
   "Matthew",
   "Mister :full_moon_with_face:",
   "Vincent",
@@ -105,7 +105,13 @@ function addReaction() {
   if (Math.random() > 0.2) {
     return null;
   }
-  return reactions[Math.floor(Math.random() * reactions.length)];
+
+  var ret = reactions[Math.floor(Math.random() * reactions.length)];
+  if (ret.includes("[NAME]")) {
+    ret = ret.replace("[NAME]", names[Math.floor(Math.random() * names.length)]);
+  }
+
+  return ret;
 }
 
 function createConfession(userMessage) {
@@ -114,7 +120,6 @@ function createConfession(userMessage) {
     .setTitle('Confession #' + userMessage.id)
     .setDescription(userMessage.message)
     .setFooter("posted at " + timeConverter(userMessage.date));
-  //replace("[NAME]", randname) ADI PLS FIX
 
   if (userMessage.reaction != null) {
     embed = embed.addField('Word of rngesus', userMessage.reaction);
