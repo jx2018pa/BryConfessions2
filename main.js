@@ -46,19 +46,46 @@ const reactions = [
   "and that's why i'll never be grabbed from behind",
   "kinda makes me wanna chiu chiu your ass out",
   "is this why neil will never pin me to the wall?",
-  "and that's why my mum is pissed at me...",
+  "My mum is pissed at me, she looks at infinite campus and she is happy at first, then she sees the C+ in french.  'French is the easiest course Vingts Cinq, what happened'.  Then she yelled at me, and threw stuff at me, then she pinned me onto the bed.  She brought a balloon.  Then my dad came in and then I was kicked out while.  They locked the door.  This is what happened after.",
   "time for a threesome?",
   "this has me *thirsting* for anthony's purple derple",
   "*shits affectionately*",
-  "Rawr! X3 nuzzles pounces on you UwU you so warm, couldn't help but notice your bulge from across the floor",
   "and [NAME] slightly enjoyed it",
   "and [NAME] dreamed about it vividly that night",
   "but [NAME] didn't want it to end",
   "Jimmy liked it",
   "They undress, their stomachs are white.\nIn the yard, dewy and shivering\nwith crickets, they lie naked,\nface-up, face-down.\nThey learn Chinese.\nCrickets: chiu chiu. Dew: I’ve forgotten.\nNaked:   I’ve forgotten.\nNi, wo:   you and me.\nLegs are parted,\none tells the other\nthey are beautiful as the moon.",
   "ngl thats kinda hot",
-  "i just came in my trousers"
+  "i just came in my trousers",
+  "that's the most outrageous thing i've seen today",
+  "damn girl.  wanna 'create codes' together? ;))"
 ]
+  const randname = [
+  "Adi",
+  "Anthony",
+  "Angela",
+  "Ben",
+  "Bryant",
+  "Byrnart", 
+  "Cuwee Cwee",
+  "Chunnathan Liar",
+  "Dadi Sawigwama"
+  "Daddy BoKo", 
+  "Daddy mitch", 
+  "Daniel",
+  "Emma",
+  "Jimmy",
+  "John",
+  "Krist Offer",
+  "Neil",
+  "Neil K. Malur"
+  "Matthew",
+  "Mister :full_moon_with_face:",
+  "Vincent",
+  "Wes",
+  "Willy",
+  "Zander",
+  ]
 
 var pool = []
 
@@ -81,6 +108,7 @@ function createConfession(userMessage) {
     .setTitle('Confession #' + userMessage.id)
     .setDescription(userMessage.message)
     .setFooter("posted at " + timeConverter(userMessage.date));
+  replace("[NAME]", randname)
 
   if (userMessage.reaction != null) {
     embed = embed.addField('Word of rngesus', userMessage.reaction);
