@@ -37,6 +37,7 @@ const SQLite = require("better-sqlite3");
 const sql = new SQLite("./pool.sqlite");
 
 const logChannel = "675193177656918039";
+const instantChannel = "675350296142282752";
 const slowChannels = ["675201659558690875", "675350296142282752", "675381993642393641"];
 
 const reactions = [
@@ -186,6 +187,17 @@ client.on("message", async message => {
 
   // It's good practice to ignore other bots. This also makes your bot ignore itself
   // and not get into a spam loop (we call that "botception").
+
+
+  if (message.content.includes("!instant")) {
+    client.channels.get(instantChannel).send(message.content);
+    message.channel.send(new Discord.RichEmbed()
+      .setColor('#88c0d0')
+      .setTitle('Success')
+      .setDescription('Instant message sent!')
+    );
+    return;
+  }
 
   if (message.author.bot || message.channel.type != "dm") {
     return;
