@@ -226,13 +226,15 @@ client.on("message", async message => {
   client.channels.get(logChannel).send(confessionReturn);
   //message.channel.send(confessionReturn);
   //Make it so that the bot does not respond to confessions so we can delete our degeneracy :)
+  message.react(👍);
+  /*
   message.react(🇸);
   message.react(🇦);
   message.react(🇻);
   message.react(🇪);
   message.react(🇩);
   message.react(👍);
-  /*
+  
   message.channel.send(new Discord.RichEmbed()
       .setColor('#88c0d0')
       .setTitle('Success')
