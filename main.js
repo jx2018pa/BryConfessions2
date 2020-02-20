@@ -53,6 +53,7 @@ const reactions = [
   "and [NAME] slightly enjoyed it",
   "and [NAME] dreamed about it vividly that night",
   "but [NAME] didn't want it to end",
+  "then [NAME] creamed their pants",
   "Sm so much mh.",
   "Smh my head.",
   "You should spice up your panic attack with a harmonica.",
@@ -108,6 +109,7 @@ const names = [
   "Ben",
   "Bryant",
   "Byrnart", 
+  "Franklin",
   "Cuwee Cwee",
   "Chunnathan Liar",
   "Dadi Sawigwama",
@@ -137,7 +139,7 @@ function timeConverter(UNIX_timestamp) {
 }
 
 function addReaction() {
-  if (Math.random() > 0.2) {
+  if (Math.random() > 0.3) {
     return null;
   }
 
@@ -258,6 +260,7 @@ client.on("message", async message => {
   client.channels.get(logChannel).send(confessionReturn);
   //message.channel.send(confessionReturn);
   //Make it so that the bot does not respond to confessions so we can delete our degeneracy :)
+  message.react("👍");
   message.channel.send(new Discord.RichEmbed()
       .setColor('#88c0d0')
       .setTitle('Success')
