@@ -171,8 +171,8 @@ const names = [
   "Ms Lemon Tree",
   "Vincent",
   "Vingts Cinq",
-  "Vincense,"
-  "Vinshent,"
+  "Vincense",
+  "Vinshent",
   "Wes",
   "Willy",
   "Zander",
