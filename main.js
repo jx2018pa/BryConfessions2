@@ -207,7 +207,7 @@ client.on("ready", () => {
         slowChannels.forEach(channel => client.channels.get(channel).send(toSend));
       }
     }
-  }, 2700000);
+  }, 1350000);
 });
 
 client.on("guildCreate", guild => {
