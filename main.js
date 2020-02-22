@@ -80,6 +80,11 @@ const reactions = [
   "Oh i wawnt hew tuwu wub hew feet aww ovew my face, i wawnt hew tuwu pin me tuwu the gwound with thewm but i know she wouwdn’t duwu that😒. Even though she won’t, i stiww wuv [NAME]-chan. I know my sweet [NAME] -chan won’t teww anyone abouwt ouw wittwe pwivate study session, she’s too shy awnd sweet to😊. But if i see any of the mawe students (especiawwy thawt fuckew wowenz😡) getting cwose tuwu my bewna-chan, i might accidentawwy weave thewm in the middwe of enemy wines without any weapons🤭. The onwy exception iws ashe since they’we hoodie buddies🤗.",
   "Please emotionally manipulate me like a fisherman manipulates a fish",
   "I owo’d so hard i am now locked in a zoo cage",
+  "Then [NAME] started sucking [NAME]'s toes",
+  "but then I got distracted by [NAME]'s thick ass",
+  "Then [NAME] saw [NAME] eating [NAME]'s ass",
+  "But everyone was busy licking [NAME]'s dick",
+  "But then [NAME] walked in wearing nothing but a t-shirt",
   "Stream so what",
   "Stan loona",
   "Stan [NAME]",
@@ -123,7 +128,7 @@ const names = [
   "Neil",
   "Neil Krishna Malur",
   "Matthew",
-  "Mister :full_moon_with_face:",
+  "Mr. Moon",
   "Vincent",
   "Wes",
   "Willy",
@@ -139,7 +144,7 @@ function timeConverter(UNIX_timestamp) {
 }
 
 function addReaction() {
-  if (Math.random() > 0.3) {
+  if (Math.random() > 0.5) {
     return null;
   }
 
@@ -264,7 +269,7 @@ client.on("message", async message => {
   //message.react("🇦");
   //message.react("🇻");
   //message.react("🇪");
-  //message.react("💾");
+  message.react("💾");
   message.react("👍");
   //message.channel.send(new Discord.RichEmbed()
   //    .setColor('#88c0d0')
