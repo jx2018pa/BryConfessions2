@@ -188,9 +188,10 @@ function timeConverter(UNIX_timestamp) {
 }
 
 function addReaction() {
-  if (Math.random() > 0.5) {
-    return null;
-  }
+  //vincent day celebration
+  //if (Math.random() > 0.5) {
+  //  return null;
+  //}
 
   var ret = reactions[Math.floor(Math.random() * reactions.length)];
   if (ret.includes("[NAME]")) {
