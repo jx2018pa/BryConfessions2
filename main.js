@@ -139,7 +139,7 @@ const names = [
   "Ange",
   "Ben",
   "Chun Chun",
-  "Daddy Chen."
+  "Daddy Chen.",
   "Bryant",
   "Byrnart", 
   "Bryfart",
@@ -168,6 +168,7 @@ const names = [
   "Mr. Moon",
   "Mr. Parker",
   "Ms Lemon Tree",
+  "Ms. Lemons",
   "Vincent",
   "Vingts Cinq",
   "Vincense",
