@@ -194,7 +194,7 @@ function addReaction() {
   //}
 
   var ret = reactions[Math.floor(Math.random() * reactions.length)];
-  if (ret.includes("[NAME]")) {
+  while(ret.includes("[NAME]")) {
     ret = ret.replace("[NAME]", names[Math.floor(Math.random() * names.length)]);
   }
 
