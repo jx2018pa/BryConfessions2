@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2020 Aditya Saligrama, Anthony Cui, Emma Hsiao, John Lian.
+ * Copyright (c) 2020 Aditya Saligrama, Anthony Cui, Emma Hsiao, John Lian, Vincent Lian.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -178,6 +178,28 @@ const reactions = [
   "what if the best reaction all along... was you above? 🥺🥺🥺🥺🥺",
   "why are you [NAME]",
   "konichiwa! watashino namaewa, [NAME] desu! watashiwa gak sei, arimasss! arigatokasamassss! hajime... arigato, kasamassssss",
+  "quest: the hidden nut \nNut under the kitchen table while **2** parents are within **50** ft without getting caught \nRequires 2 failed perception checks and a successful stealth check. \nREWARD: 20 GP.",
+  "**ILL TAKE YOUR ENTIRE STOCK**",
+  "*** I WANNA BE IN YOUR POCKET \n FRONT OR BACK, IT DOESN'T MATTER",
+  "QUEST: [CRAFT MINE] \nOBJECTIVE: Survive (rolling 15 or above) for **2** days on Minecraft while Franklin (use stats for **Invisible Stalker**) is online. \nREWARD: 10 gp (gold pieces) and a diamond worth 300 [NAME]s.",
+  "fill your pockets with emmy",
+  "the latest hotesst ship from alibaba is [NAME]cent",
+  "QUEST: [GONE FISHING] \nOBJECTIVE: Deceive (rolling persuasion or performance by DM discretion) 1 **Invisible Stalker** into pining for you, playing as a different person. \nPREQUISITES: 1x Disguise Kit \nREWARD: 40 gp (gold pieces)",
+  "haha what a nice merry day oopsie i just spilled my [NAME]s everywhere",
+  "QUEST: [LOADED POCKETS] \nOBJECTIVE: Explore **Meinkrapht** (2 day's journey) and collect **40** Emeralds worth at least 800 sp in total.  Return gems to **Emmy** (NPC located in Westin) \nREWARD:  the double claw ban hammer (a +1 magical warhammer capable of casting **SMITE** 1x per rest)",
+  "QUEST: [THE ENDER DRAG ON] \nOBJECTIVE: revive and slay the shadow dragon **En'Dair** in the Shadowfell.  Afterwards, spam the guildmaster **Poozah** to give you permission to build on the grounds of the Shadowfell. \nREWARD: the unhatched egg of the shadow dragon.",
+  "in our upcoming election, we have the [NAME] and [NAME] communism duo versus the [NAME] and [NAME] religion of pal, running for presidents!",
+  "[NAME]cest is wincest",
+  "https://www.youtube.com/watch?v=pXkJVlHgSLw",
+  "https://www.youtube.com/watch?v=3NJ1PwFf1nQ",
+  "https://youtu.be/neb1bQTC7j0",
+  "https://youtu.be/8bBziFgbYq4",
+  "https://youtu.be/IXixYd1qTfk",
+  "https://www.youtube.com/watch?v=rlsnGb3dN2M",
+  "https://youtu.be/yWEnropGlZI",
+  "https://youtu.be/Uiv9ySk9x8s",
+  "the sun is also a [NAME]",
+  "https://www.youtube.com/watch?v=trJ-TXKnj_Y",
 ]
 const names = [
   "Adi",
@@ -206,6 +228,7 @@ const names = [
   "Dadi",
   "Emma",
   "Emmom",
+  "Emmy",
   "Hatsune Miku",
   "Jimmy",
   "Jimmy Neutron",
@@ -221,6 +244,7 @@ const names = [
   "Matthew",
   "Miku",
   "Moon LAO SHI",
+  "MAO LAO SHI",
   "Lemon Tree",
   "SHEN AN QI",
   "LIAN XIAO CHUAN",
@@ -230,13 +254,19 @@ const names = [
   "Vingts Cinq",
   "Vincense",
   "Vinshent",
+  "Vincest",
+  "Victoria",
+  "Victoria Chu",
+  "Vicky Chu",
   "Wes",
   "Willy",
   "WHS Administration",
   "Zander",
   "Mr. Oreo Parker",
   "Orangela",
-  //adding at bottom because im lazy
+  "Ender Dragon",
+  "Obama Obama",
+  "Steve Jobs",
   "Certain Teacher's Beard",
   ]
 
