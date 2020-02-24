@@ -231,9 +231,15 @@ const reactions = [
   "Brought to you by SquareSpace.",
   "Brought to you by [NAME]Space.",
   "i want to get [NAME]ed so hard",
+  "*that*",
+  "that's what she said",
+  "that's what [NAME] said",
+  "As [NAME] touched [NAME]'s body, just doing a simple Titanic pose... a T-pose, to assert dominance... just a pure, titanic mockup pose, with clothes on. Of course. STop thinking it that way, you stupid fucking scum. As [NAME] was doing a t-pose to assert dominance on the Titanic, [NAME] and [NAME] gasped in shock. Such disgusting scum, [NAME] gasped. [NAME] agreed. ‘Why would a gay woman like [NAME], touch a filthy little specimen... after all, men had those... *long [NAME] things*.’ All womens are queens, said [NAME], and All men are scum, said [NAME]. But however, [NAME] broke stereotypes. This is a story of how one should not follow society, and should rise up against stereotypes. Men and women should be allowed to touch each other, and be allowed to reproduce, instead of masturbating to anime girls. This is a story of [NAME] and [NAME]. The revolution.... of gays.... and straights. Only tonight, on PBS. 8pm every Friday.”,
 ]
 const names = [
   "Neil",
+  "Neil Malur",
+  "Doctor Malur",
   /*
   "Adi",
   "Alexander Ingare",
