@@ -230,8 +230,11 @@ const reactions = [
   "Micheal Bloomberg? More like, Micheal [NAME]berg.",
   "Brought to you by SquareSpace.",
   "Brought to you by [NAME]Space.",
+  "i want to get [NAME]ed so hard",
 ]
 const names = [
+  "Neil",
+  /*
   "Adi",
   "Alexander Ingare",
   "Ange",
@@ -316,6 +319,7 @@ const names = [
   "Willy",
   "Zander",
   "Zander's Forest",
+  */
   ]
 
 var pool = []
