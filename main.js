@@ -1,4 +1,4 @@
-﻿/*
+/*
  * Copyright (c) 2020 Aditya Saligrama, Anthony Cui, Emma Hsiao, John Lian, Vincent Lian.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -142,7 +142,9 @@ const reactions = [
   //vincent-esque
   "I'm reading the [NAME] Chronicles for english class",
   "then i went into my brother's room and locked the door\nand then i walk in realize [NAME] is with [NAME] who was supposed to be [NAME]'s brother's prom date",
+  "and then i find myself in a bed with a girl\ni dont know who it is but then i turn her over\nthen i realize its [NAME] in a wig\nand then i realize i was wearing my pants\nso everything was fine\nand then my hands was in his pants\nso it wasnt fine",
   "I'm calling 911",
+  "but then [NAME] walks in with a underwear only and starts yelling \"its wednesday my dudes\"",
   "Story time bitches let me clear up my desk for uhh [NAME] x [NAME] x [NAME] drabble",
   "[NAME] faps a lot so they have big hands",
   "I want [NAME] to touch me",
@@ -294,6 +296,13 @@ const reactions = [
   "if [NAME] 👦 n my girl 👸😍 both drowning😱🌊 n I can only save one😤 catch me at my girls funeral😔👻🌹",
   "cummies 💦 cummies 💦 give me some! [NAME]'s 😜💖💦 cummies 💦 in my bum! Not too bitter not too sweet 🍯! my favorite 🔖🔖 special 🌟 good 👌👍🏾 girl 👶 treat! Pour those cummies 💦 on 🔛 my ass 🍑 and I won't give you any sass! Suck 😜💦 you dry for my drink 🍹, to fullfill my twisted 🥨 kink!",
   "🎊🎊🎊",
+  "😳",
+  "Brybot, eat [NAME]",
+  "Brybot, succ [NAME]",
+  "Brybot, orangejustice",
+  "Brybot, throw [NAME]",
+  "Brybot, siton [NAME]",
+  "Brybot, ship [NAME] and [NAME]",
   "https://cdn.discordapp.com/attachments/642210805961457664/643615540031782916/unknown.png",
   "https://cdn.discordapp.com/attachments/642210805961457664/642338022745964554/20181101_172117.jpg",
   "https://cdn.discordapp.com/attachments/642210805961457664/642274616026464257/unknown.png",
