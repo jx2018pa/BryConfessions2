@@ -328,7 +328,7 @@ const reactions = [
   "Brybot, siton [NAME]",
   "Brybot, ship [NAME] and [NAME]",
   "[NAME]!!! WHAT ARE YOU DOING!?!?",
-  "[NAME!!! WHAT ARE YOU DOING IN MY PUSSSIE?????",
+  "[NAME]!!! WHAT ARE YOU DOING IN MY PUSSSIE?????",
   "[NAME]!! WHARE ARE YOU DOING IN MY COOCHIIE???!?!?1?!!?!?",
   "https://cdn.discordapp.com/attachments/642210805961457664/643615540031782916/unknown.png",
   "https://cdn.discordapp.com/attachments/642210805961457664/642338022745964554/20181101_172117.jpg",
