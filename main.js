@@ -117,7 +117,24 @@ const reactions = [
   "Then [NAME] died of embarassment",
   "Then [NAME] and [NAME]'s dicks interlocked",
   "Then [NAME] saw [NAME] licking [NAME]'s toes",
+  "But then [NAME] and [NAME] went to the bedroom and locked the door",
+  "I woke up but then I found [NAME] pinning me to the bed",
+  "GRAB ME BY THE [NAME]",
+  "GOD I WANT [NAME] SO BAD",
+  "MMMMM ZHE GE [NAME] TE BIE SQUEEEEEESSHY",
+  "MMMMMMMMMMMMMMMMMMMMMMMMMMMM",
+  "Got too much [NAME] in mah pocket ;)",
+  "Hey guys could someone \"take care\" of [NAME]? Not sure why I said \"take care\"... haha...",
+  "Gn! .... no response? cold fishhhh -_-",
+  "Oh god I can't take this anymore... I'm gonna go drink some [NAME]icide brb",
+  "When I woke up [NAME] was in the corner of my bedroom watching me creepily and i got strangely aroused",
+  "[NAME], luxuriously and generously covered in horse manure, rolls up behind you. You fail to have an erection, and he leans in and whispers *have you been watching too much porn?*",
   "That made [NAME] slightly aroused",
+  "[NAME] haunts my fucking dreams",
+  "[NAME] touched me in my \"special area\" and I liked it... :)",
+  "Do you guys wanna see [NAME]'s milk?????",
+  "I wish [NAME] would tie me up",
+  "I just threw up a bit in my mouth... and it tasted like [NAME]",
   "But then everyone got distracted by the thunderous clap of [NAME]'s ass cheeks",
   "But then everyone was distracted by the loud schlopping noises coming from [NAME]'s general direction",
   //vincent-esque
@@ -253,6 +270,23 @@ const reactions = [
   "https://media.discordapp.net/attachments/178587636603027456/488383887634857984/20180827_145551.png?width=423&height=670",
   "https://media.discordapp.net/attachments/178587636603027456/488384577543471104/20180517_131017.jpg?width=503&height=670",
   "What's the most outrageous thing you seen today?",
+  "I want [NAME]'s cock",
+  "You're literally [NAME] from Brawl Stars",
+  "You can call me [NAME] \"[NAME]\" [NAME]",
+  "You are literally [NAME] \"[NAME]\" [NAME]",
+  "delete this",
+  "delet dis",
+  "I never wanted to breed with anyone more than I want to with [NAME]. That perfect, chiseled body. Those [NAME]-like abs. The muscular frame of a literal god. It honestly fucking hurts knowing that I'll never get with them, pass my genes and alleles through them, and have him birth a set of perfect offspring. I'd do fucking ANYTHING for the chance to get them pregnant. A N Y T H I N G. And the fact that I can't is quite honestly too much to fucking bear. Why would God himself create something so perfect? To fucking tantalize us? Fucking laugh in our faces?! Honestly guys, I just fucking can't anymore. Fuck.",
+  "if [NAME] 👦 n my girl 👸😍 both drowning😱🌊 n I can only save one😤 catch me at my girls funeral😔👻🌹",
+  "cummies 💦 cummies 💦 give me some! [NAME]'s 😜💖💦 cummies 💦 in my bum! Not too bitter not too sweet 🍯! my favorite 🔖🔖 special 🌟 good 👌👍🏾 girl 👶 treat! Pour those cummies 💦 on 🔛 my ass 🍑 and I won't give you any sass! Suck 😜💦 you dry for my drink 🍹, to fullfill my twisted 🥨 kink!",
+  "https://cdn.discordapp.com/attachments/642210805961457664/643615540031782916/unknown.png",
+  "https://cdn.discordapp.com/attachments/642210805961457664/642338022745964554/20181101_172117.jpg",
+  "https://cdn.discordapp.com/attachments/642210805961457664/642274616026464257/unknown.png",
+  "https://cdn.discordapp.com/attachments/642210805961457664/642275114813227008/unknown.png",
+  "https://cdn.discordapp.com/attachments/642210805961457664/642213657505169419/unknown.png",
+  "https://cdn.discordapp.com/attachments/642210805961457664/642211521195409411/unknown.png",
+  "https://cdn.discordapp.com/attachments/642210805961457664/642211185462345747/fddfdf.png",
+  "https://cdn.discordapp.com/attachments/642210805961457664/642210914241609738/a473eaaba0983ab92b4f1889fbcd3431.png",
 ]
 const names = [
   "Adi",
@@ -282,6 +316,7 @@ const names = [
   "Dadi Sawigwama",
   "Dadi",
   "Daniel",
+  "Dan Atefi",
   "Donald Trump",
   "Doctor Malur",
   "Eggplant",
@@ -290,6 +325,8 @@ const names = [
   "Emmy",
   "Ender Dragon",
   "Franklin",
+  "Frank",
+  "Ginger",
   "Hatsune Miku",
   "Jack",
   "Jimmy Neutron",
@@ -313,6 +350,7 @@ const names = [
   "Miles",
   "Moon LAO SHI",
   "Mr. Micheal Callaham",
+  "my peepee",
   "Neil Fucking Malur",
   "Neil Krishna Malur",
   "Neil Malur",
@@ -340,6 +378,8 @@ const names = [
   "WHS Administration",
   "Wes",
   "Willy",
+  "Xiao Song",
+  "Xiao Ginger",
   "Zander",
   "Zander's Forest",
   ]
@@ -353,7 +393,7 @@ function timeConverter(UNIX_timestamp) {
 }
 
 function addReaction() {
-  if (Math.random() > 0.3) {
+  if (Math.random() > 0.4) {
     return null;
   }
 
@@ -416,7 +456,7 @@ client.on("ready", () => {
         slowChannels.forEach(channel => client.channels.get(channel).send(toSend));
       }
     }
-  }, 675000);
+  }, 2400000);
 });
 
 client.on("guildCreate", guild => {
@@ -443,7 +483,7 @@ client.on("message", async message => {
     message.channel.send(new Discord.RichEmbed()
       .setColor('#88c0d0')
       .setTitle('Success')
-      .setDescription('Instant message sent!')
+      .setDescription('IM sent!')
     );
     //message.content = message.content.replace("!noreact", "");
     return;
