@@ -141,7 +141,10 @@ const reactions = [
   "I just threw up a bit in my mouth... and it tasted like [NAME]",
   "But then everyone got distracted by the thunderous clap of [NAME]'s ass cheeks",
   "But then everyone was distracted by the loud schlopping noises coming from [NAME]'s general direction",
+  "Guys can I add my bot to the discord, it's called [NAME]bot",
   //vincent-esque
+  "everyday, [NAME] only wanted [NAME]'s milk",
+  "[NAME] milked [NAME] everyday\nand forever",
   "I'm reading the [NAME] Chronicles for english class",
   "then i went into my brother's room and locked the door\nand then i walk in realize [NAME] is with [NAME] who was supposed to be [NAME]'s brother's prom date",
   "and then i find myself in a bed with a girl\ni dont know who it is but then i turn her over\nthen i realize its [NAME] in a wig\nand then i realize i was wearing my pants\nso everything was fine\nand then my hands was in his pants\nso it wasnt fine",
@@ -208,6 +211,7 @@ const reactions = [
   "\"I know you just want to ride this shiny glossy baby,\" [NAME] said as the car. He stroked his smooth metallic body with the cardoor, and [NAME]’s pants were completely drenched for some reason. \"Fine, I’ll drive you. It’s not-not like I like your- smooth car bod- or anything, b-baka.\" [NAME] sputtuered. [NAME] and [NAME] drove off into the sunset, then participated in a 10 minutes race on a boring ass track honestly who the fuck plays Forza what the fuck Adi",
   "you are my spaceship because you make me want to blast off into the sun",
   "https://www.youtube.com/watch?v=q37kaXE1Fb0",
+  "https://www.youtube.com/watch?v=OHbwkZgkBIU",
   "https://media.discordapp.net/attachments/313418010700283907/670098755860561952/unknown.png",
   "'Fucking is for humans.' - [NAME], 2020 Noble Prize Winner.",
   "'anunhaiso yeo! i am [NAME], and i am debuting under [NAME] entertainment! kansamida!",
@@ -232,6 +236,8 @@ const reactions = [
   "why are you [NAME]",
   "said [NAME] as they ventured into [NAME]'s forest",
   "The [NAME] Chronicles, by [NAME]",
+  "psst one of my most delicate balls broke 🙁",
+  "FatExploding[NAME]",
   "Little known fact: America's first president was actually known as George \"[NAME]\" Washington",
   "konichiwa! watashino namaewa, [NAME] desu! watashiwa gak sei, arimasss! arigatokasamassss! hajime... arigato, kasamassssss",
   "quest: the hidden nut \nNut under the kitchen table while **2** parents are within **50** ft without getting caught \nRequires 2 failed perception checks and a successful stealth check. \nREWARD: 20 GP.",
@@ -332,6 +338,8 @@ const reactions = [
   "https://cdn.discordapp.com/attachments/642210805961457664/642211521195409411/unknown.png",
   "https://cdn.discordapp.com/attachments/642210805961457664/642211185462345747/fddfdf.png",
   "https://cdn.discordapp.com/attachments/642210805961457664/642210914241609738/a473eaaba0983ab92b4f1889fbcd3431.png",
+  "https://cdn.discordapp.com/attachments/407277252976312321/446872409656786954/Screen_Shot_2018-05-17_at_11.10.56_PM.png",
+  "https://cdn.discordapp.com/attachments/548531087488581662/650909509803573263/unknown.png",
   "Fanccccyyyy, yoooooooooooouuuuuuuuuuuuuuuu".
   "Again i feel - speciarrrrrrrrrrrrrrrrrrrr",
   "stream [NAME] by [NAME]",
@@ -353,7 +361,6 @@ const reactions = [
   "Suddenly in English class, [NAME]'s water bottle squirted and curved in arc, as it landed on [NAME]'s head.",
   "Tale of Two [NAME]s",
   "Things Fall Apart features [NAME] as thy lives in a society",
-
 ]
 const names = [
   "Adi",
