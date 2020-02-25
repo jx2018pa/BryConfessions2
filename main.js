@@ -330,7 +330,6 @@ const reactions = [
   "https://cdn.discordapp.com/attachments/642210805961457664/642211521195409411/unknown.png",
   "https://cdn.discordapp.com/attachments/642210805961457664/642211185462345747/fddfdf.png",
   "https://cdn.discordapp.com/attachments/642210805961457664/642210914241609738/a473eaaba0983ab92b4f1889fbcd3431.png",
-  "https://cdn.discordapp.com/attachments/548531087488581662/650909509803573263/unknown.png",
 ]
 const names = [
   "Adi",
