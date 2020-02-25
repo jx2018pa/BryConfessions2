@@ -133,7 +133,7 @@ const reactions = [
   "ello mello... do u wanna have some *fun* [NAME]? maybe do some *making codes* if yuo're into that? *you're not? cold fishh.....*",
   "haiii [NAME]!! i just sent u my 400 video nightcore playlist... my favorite video features [NAME] in a suggestive pose...",
   "So I get bored and I play Overwatch.  I see [NAME] **** with Junkrat as usual.  And then I go onto DeviantArt, and I see [NAME] x [NAME] fencing as usual.  And then I walk into [NAME] Lian's class, and I see [NAME] Lian with, with, with Tao Lao Shi.  So I walk out and hang myself.",
-  "And then Mr. Davidson walks in, 'cats are cool bye', and goes on a one hour linguistics lab, which everyone is bored.  Then he gives us a test about circles and vibrations.  And after the test is finished, everyone begins to have sex.",
+  "And then Mr. [NAME] walks in, 'cats are cool bye', and goes on a one hour linguistics lab, which everyone is bored.  Then he gives us a test about circles and vibrations.  And after the test is finished, everyone begins to have sex.",
   "And I throw up, and then I wake up again, and I see myself in the bed again, but the bed is full of white stuff.  I flip over the person and I see the face off [NAME]' ass, and I wake up and scream.  I find myself in a pile of PurpleDerples, and they yell at me saying 'oh yeah' and making those lips noises, and it was great.  Then I time traveled to the past so I could see the dinosaurs, and I licked all the dinosaurs, and it was great.  And then the Dinos all died from STDs and whatevers that thing is.  I insert my **** into the dinos, and Derples are born.  And then meteorites fall, and a star appears.  Surprise surprise it’s [NAME].",
   "[NAME] is right in front of me, and he bites me, and I bite him beck, and I think he’s traumatised.  So [NAME] runs away screaming.",
   "we decided to duke it out using our fidget spinners.  We fight each other with our ****s.",
@@ -156,6 +156,13 @@ const reactions = [
   //two uh "differnt" versions of world is mine
   "https://www.youtube.com/watch?v=EuJ6UR_pD5s",
   "https://www.youtube.com/watch?v=FrVYD2Ac6nM",
+  //various kpoop
+  "https://www.youtube.com/watch?v=6oanIo_2Z4Q", //lin gidle
+  "https://www.youtube.com/watch?v=XEOCbFJjRw0", //b loona
+  "https://www.youtube.com/watch?v=FKlGHHhTOsQ", //dc
+  "https://www.youtube.com/watch?v=NfeYX7VW7PU", //dc intro
+  "https://www.youtube.com/watch?v=bP32eRT8HJY", //l intro
+  "https://www.youtube.com/watch?v=eDEFolvLn0A", //iz f
   "IM SO SICK OF THIS [NAME] LOVE",
   "make me chiu chiu so hard like a degenerate",
   "Everyday in the morning, I think of you. I think of your soft tender lips, the extravagant lavender shampoo you used last night. I want you to hold me, for us to dance off into the night, into the spiraling beauty that is my passion for you. I want everything to stop in this moment, for our love to be eternal and forever. I want stay by your side, admiring your shiny head forever, to lay next to you on the beach, watching the tides go in and out, and wake up by your side in the mornings just to see you sleeping and smile. [NAME], I want to be with you forever. You are my destiny, and please, darling, let me suck your toes.",
@@ -235,12 +242,19 @@ const reactions = [
   "that's what she said",
   "that's what [NAME] said",
   "As [NAME] touched [NAME]'s body, just doing a simple Titanic pose... a T-pose, to assert dominance... just a pure, titanic mockup pose, with clothes on. Of course. STop thinking it that way, you stupid fucking scum. As [NAME] was doing a t-pose to assert dominance on the Titanic, [NAME] and [NAME] gasped in shock. Such disgusting scum, [NAME] gasped. [NAME] agreed. ‘Why would a gay woman like [NAME], touch a filthy little specimen... after all, men had those... *long [NAME] things*.’ All womens are queens, said [NAME], and All men are scum, said [NAME]. But however, [NAME] broke stereotypes. This is a story of how one should not follow society, and should rise up against stereotypes. Men and women should be allowed to touch each other, and be allowed to reproduce, instead of masturbating to anime girls. This is a story of [NAME] and [NAME]. The revolution.... of gays.... and straights. Only tonight, on PBS. 8pm every Friday.”,
+  "[NAME] gang [NAME] gang [NAME] gang [NAME] gang [NAME] gang [NAME] gang [NAME] gang [NAME] gang",
+  "i want [NAME] to be inside of me right now",
+  "https://www.youtube.com/watch?v=YSWKtuaV2fY",
+  "https://www.youtube.com/watch?v=boo_Ii2Iam4",
+  "https://www.webassign.net",
+  "guys its gonna be [NAME] day",
+  "anunhaseyo, we are Twice 2! We are comprised of 9 members: [NAME], who's the main vocal, [NAME] is our main dancer! And we have [NAME], who's our sub vocal, and [NAME] is our rapper. Next, we have [NAME], who composes our songs and is our subdancer as well! [NAME] is our main vocal as well, can really hit those high notes. [NAME] has those pipes for days too, can sing a highnote for 69 seconds! Finally, we have our breakdance duo, [NAME] and [NAME], who are siblings! We will debut under [NAME] entertainment, with our debut song, 'xiao ping guo.' Thank you so much, and please look forward to our debut stage!",
+  "consume puppy",
+  "https://media.discordapp.net/attachments/178587636603027456/488383887634857984/20180827_145551.png?width=423&height=670",
+  "https://media.discordapp.net/attachments/178587636603027456/488384577543471104/20180517_131017.jpg?width=503&height=670",
+  "What's the most outrageous thing you seen today?",
 ]
 const names = [
-  "Neil",
-  "Neil Malur",
-  "Doctor Malur",
-  /*
   "Adi",
   "Alexander Ingare",
   "Ange",
@@ -248,6 +262,7 @@ const names = [
   "Angewa",
   "Anthony",
   "Antonee",
+  "AP Bio",
   "BTS",
   "Ben",
   "Boris K",
@@ -260,6 +275,7 @@ const names = [
   "Chun Chun",
   "Chunnathan Liar",
   "Cuwee Cwee",
+  "College Board",
   "Daddy BoKo",
   "Daddy Chen.",
   "Daddy mitch",
@@ -267,6 +283,7 @@ const names = [
   "Dadi",
   "Daniel",
   "Donald Trump",
+  "Doctor Malur",
   "Eggplant",
   "Emma",
   "Emmom",
@@ -325,7 +342,6 @@ const names = [
   "Willy",
   "Zander",
   "Zander's Forest",
-  */
   ]
 
 var pool = []
@@ -337,10 +353,9 @@ function timeConverter(UNIX_timestamp) {
 }
 
 function addReaction() {
-  //vincent day celebration
-  //if (Math.random() > 0.5) {
-  //  return null;
-  //}
+  if (Math.random() > 0.3) {
+    return null;
+  }
 
   var ret = reactions[Math.floor(Math.random() * reactions.length)];
   while(ret.includes("[NAME]")) {
@@ -401,7 +416,7 @@ client.on("ready", () => {
         slowChannels.forEach(channel => client.channels.get(channel).send(toSend));
       }
     }
-  }, 120000);
+  }, 675000);
 });
 
 client.on("guildCreate", guild => {
