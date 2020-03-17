@@ -340,7 +340,7 @@ const reactions = [
   "https://cdn.discordapp.com/attachments/642210805961457664/642210914241609738/a473eaaba0983ab92b4f1889fbcd3431.png",
   "https://cdn.discordapp.com/attachments/407277252976312321/446872409656786954/Screen_Shot_2018-05-17_at_11.10.56_PM.png",
   "https://cdn.discordapp.com/attachments/548531087488581662/650909509803573263/unknown.png",
-  "Fanccccyyyy, yoooooooooooouuuuuuuuuuuuuuuu".
+  "Fanccccyyyy, yoooooooooooouuuuuuuuuuuuuuuu",
   "Again i feel - speciarrrrrrrrrrrrrrrrrrrr",
   "stream [NAME] by [NAME]",
   "Hey [NAME] are you RNA? Because I want to unzip your genes.",
