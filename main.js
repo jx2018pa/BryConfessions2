@@ -399,11 +399,6 @@ const names = [
   "Dan Atefi",
   "Donald Trump",
   "Doctor Malur",
-  "President Malur",
-  "Senator Malur",
-  "Congressman Malur,"
-  "Mr. Malur",
-  "Dr. Malur",
   "Eggplant",
   "Edward",
   "Emma",
