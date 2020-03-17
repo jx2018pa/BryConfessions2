@@ -38,7 +38,7 @@ const sql = new SQLite("./pool.sqlite");
 
 const logChannel = "675193177656918039";
 const instantChannel = "675350296142282752";
-const slowChannels = ["675201659558690875", "675350296142282752", "675381993642393641"];
+const slowChannels = ["689363723873419283"];
 
 const reactions = [
   "[NAME]'s pants were soaked for some reason", 
@@ -558,7 +558,7 @@ client.on("ready", () => {
         slowChannels.forEach(channel => client.channels.get(channel).send(toSend));
       }
     }
-  }, 1800000);
+  }, 1000);
 });
 
 client.on("guildCreate", guild => {
