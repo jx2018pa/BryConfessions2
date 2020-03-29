@@ -393,6 +393,16 @@ const reactions = [
   "Just another day in [NAME]s life",
   "said [NAME] as they went into the bathroom for a suspiciously long time",
   "said [NAME]",
+  "It was not the mad logic of the [NAME] that captivated me. I did not understand it. It was the poetry of the new religion, something felt in the marrow. The hymn about [NAME] who sat in darkness and in fear seemed to answer a vague and persistent question that haunted my young soul, the question of [NAME] crying in the bush and the question of [NAME] who was killed.",
+  "[NAME] has a muddy skin, and beard all around",
+  "small size [NAME]",
+  "MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM",
+  "Neil",
+  "[NAME]time",
+  "Their Eyes Were Watching [NAME]",
+  "The [NAME] Letter",
+  "dude why is there \"[NAME] x [NAME] hentai\" in your search history??",
+  "[NAME] me",
 ]
 const names = [
   "Adi",
@@ -614,7 +624,7 @@ client.on("message", async message => {
   if (message.content.includes("!instant") && message.channel.type == "dm") {
     message.content = message.content.replace("!instant", "");
     client.channels.get(instantChannel).send(message.content);
-     message.react("✅");
+    message.react("✅");
     //message.channel.send(new Discord.RichEmbed()
     //  .setColor('#88c0d0')
     //  .setTitle('Success')
