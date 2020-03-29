@@ -544,7 +544,7 @@ function createConfession(userMessage) {
     .setColor('#88c0d0')
     .setTitle('Confession #' + userMessage.id)
     .setDescription(userMessage.message)
-    .setFooter("posted at " + timeConverter(userMessage.date));
+    //.setFooter("posted at " + timeConverter(userMessage.date));
 
   if (userMessage.reaction != null) {
     embed = embed.addField('Word of rngesus', userMessage.reaction);
@@ -614,11 +614,12 @@ client.on("message", async message => {
   if (message.content.includes("!instant") && message.channel.type == "dm") {
     message.content = message.content.replace("!instant", "");
     client.channels.get(instantChannel).send(message.content);
-    message.channel.send(new Discord.RichEmbed()
-      .setColor('#88c0d0')
-      .setTitle('Success')
-      .setDescription('IM sent!')
-    );
+     message.react("✅");
+    //message.channel.send(new Discord.RichEmbed()
+    //  .setColor('#88c0d0')
+    //  .setTitle('Success')
+    //  .setDescription('IM sent!')
+    //);
     //message.content = message.content.replace("!noreact", "");
     return;
   }
