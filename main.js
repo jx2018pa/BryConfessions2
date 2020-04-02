@@ -621,18 +621,18 @@ client.on("message", async message => {
   // and not get into a spam loop (we call that "botception").
 
 
-  if (message.content.includes("!instant") && message.channel.type == "dm") {
-    message.content = message.content.replace("!instant", "");
-    client.channels.get(instantChannel).send(message.content);
-    message.react("✅");
+//  if (message.content.includes("!instant") && message.channel.type == "dm") {
+//    message.content = message.content.replace("!instant", "");
+//    client.channels.get(instantChannel).send(message.content);
+ //   message.react("✅");
     //message.channel.send(new Discord.RichEmbed()
     //  .setColor('#88c0d0')
     //  .setTitle('Success')
     //  .setDescription('IM sent!')
     //);
     //message.content = message.content.replace("!noreact", "");
-    return;
-  }
+ //   return;
+ // }
 
   if (message.author.bot || message.channel.type != "dm") {
     return;
