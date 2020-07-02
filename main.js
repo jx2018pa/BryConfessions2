@@ -24,7 +24,7 @@
 const Discord = require("discord.js");
 
 //md5
-const hash = require("md5");
+const md5 = require('md5');
 //write to file
 const fs = require('fs');
 
@@ -557,25 +557,24 @@ function addReaction() {
 }
 
 function createConfession(userMessage) {
+  var hashedId = md5(message.author.id);
+  if (banlist.bannedids == hashedId) {
+    message.channel.send("You have been banned!");
+    return null;
+  }
   var embed = new Discord.RichEmbed()
     .setColor('#88c0d0')
     .setTitle('Confession #' + userMessage.id)
     .setDescription(userMessage.message)
     //.setFooter("posted at " + timeConverter(userMessage.date));
-
+  );
   if (userMessage.reaction != null) {
     embed = embed.addField('Word of rngesus', userMessage.reaction);
   }
-  //var hashedId = ('<<discord user id>>', '<<md5 seed>>')
-  if (banlist.bannedid == hashedID) {
-    message.channel.send("ur banned anonymously lul");
-    return null;
-  }
-  /* log message code */
-fs.appendFile('messagelogs.txt', hashedId+userMessage.message, function (err) {
-  if (err) throw err;
-  console.log('Confession logged');
-});
+  fs.appendFile('messagelogs.txt', hashedId+userMessage.message, function (err) {
+    if (err) throw err;
+    console.log('Confession logged');
+  });
   return embed;
 }
 
