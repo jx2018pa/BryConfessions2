@@ -529,12 +529,7 @@ const names = [
   ]
 
 var pool = []
-/*
-function calculateMD5(<<user id variable>>) {
 
-  var userid
-}
-*/
 function timeConverter(UNIX_timestamp) {
   var a = new Date(UNIX_timestamp);
   time = a.toLocaleString('en-US');
@@ -569,7 +564,7 @@ function createConfession(userMessage) {
   if (hashedID <is in banned id repository>) {
     message.channel.send("ur banned anonymously lul")
   }
-  /*
+  */
   return embed;
 }
 
