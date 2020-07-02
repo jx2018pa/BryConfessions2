@@ -23,6 +23,11 @@
 // Load up the discord.js library
 const Discord = require("discord.js");
 
+//md5
+const hash = require("md5");
+//write to file
+fs = require('fs');
+
 // This is your client. Some people call it `bot`, some people call it `self`,
 // some might call it `cootchie`. Either way, when you see `client.something`, or `bot.something`,
 // this is what we're refering to. Your client.
@@ -35,6 +40,8 @@ const auth = require("./auth.json");
 
 const SQLite = require("better-sqlite3");
 const sql = new SQLite("./pool.sqlite");
+
+const banList = require("./banlist.json"); //this should never be uploaded publicly
 
 const logChannel = "675193177656918039";
 const instantChannel = "675350296142282752";
@@ -560,11 +567,15 @@ function createConfession(userMessage) {
     embed = embed.addField('Word of rngesus', userMessage.reaction);
   }
   //var hashedId = ('<<discord user id>>', '<<md5 seed>>')
-  /*
-  if (hashedID <is in banned id repository>) {
-    message.channel.send("ur banned anonymously lul")
+  if (banlist.bannedid == hashedID) {
+    message.channel.send("ur banned anonymously lul");
+    return null;
   }
-  */
+  /* log message code */
+fs.appendFile('messagelogs.txt', hashedId+userMessage.message, function (err) {
+  if (err) throw err;
+  console.log('Confession logged');
+});
   return embed;
 }
 
