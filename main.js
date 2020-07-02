@@ -26,7 +26,7 @@ const Discord = require("discord.js");
 //md5
 const hash = require("md5");
 //write to file
-fs = require('fs');
+const fs = require('fs');
 
 // This is your client. Some people call it `bot`, some people call it `self`,
 // some might call it `cootchie`. Either way, when you see `client.something`, or `bot.something`,
