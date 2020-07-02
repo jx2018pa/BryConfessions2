@@ -529,7 +529,12 @@ const names = [
   ]
 
 var pool = []
+/*
+function calculateMD5(<<user id variable>>) {
 
+  var userid
+}
+*/
 function timeConverter(UNIX_timestamp) {
   var a = new Date(UNIX_timestamp);
   time = a.toLocaleString('en-US');
@@ -559,6 +564,12 @@ function createConfession(userMessage) {
   if (userMessage.reaction != null) {
     embed = embed.addField('Word of rngesus', userMessage.reaction);
   }
+  //var hashedId = ('<<discord user id>>', '<<md5 seed>>')
+  /*
+  if (hashedID <is in banned id repository>) {
+    message.channel.send("ur banned anonymously lul")
+  }
+  /*
   return embed;
 }
 
