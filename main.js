@@ -38,8 +38,8 @@ const auth = require("./auth.json");
 // config.token contains the bot's token
 // config.prefix contains the message prefix.
 
-const SQLite = require("better-sqlite3");
-const sql = new SQLite("./pool.sqlite");
+//const SQLite = require("better-sqlite3");
+//const sql = new SQLite("./pool.sqlite");
 
 const banList = require("./banlist.json"); //this should never be uploaded publicly
 
@@ -533,16 +533,19 @@ const names = [
   "Bowser",
   "Ronald McDonald",
   "John Lian's Sister",
+  "Alex Lian",
+  "Neil's Sister",
   ]
 
-var pool = []
+//var pool = []
 
+/*
 function timeConverter(UNIX_timestamp) {
   var a = new Date(UNIX_timestamp);
   time = a.toLocaleString('en-US');
   return time;
 }
-
+*/
 function addReaction() {
   if (Math.random() > 0.4) {
     return null;
@@ -555,13 +558,8 @@ function addReaction() {
 
   return ret;
 }
-
+/*
 function createConfession(userMessage) {
-  var hashedId = md5(message.author.id);
-  if (banlist.bannedids == hashedId) {
-    message.channel.send("You have been banned!");
-    return null;
-  }
   var embed = new Discord.RichEmbed()
     .setColor('#88c0d0')
     .setTitle('Confession #' + userMessage.id)
@@ -578,6 +576,7 @@ function createConfession(userMessage) {
   return embed;
 }
 
+
 function selectMessage() {
   var toSend = client.getMessage.get();
   if (!toSend) {
@@ -587,27 +586,29 @@ function selectMessage() {
   var message = createConfession(toSend);
   return message;
 }
-
+*/
 client.on("ready", () => {
   // This event will run if the bot starts, and logs in, successfully.
   console.log(`Bot has started, with ${client.users.size} users, in ${client.channels.size} channels of ${client.guilds.size} guilds.`);
   // Example of changing the bot's playing game to something useful. `client.user` is what the
   // docs refer to as the "ClientUser".
   client.user.setActivity("DM confessions here | add !noreact for serious messages");
-
+/*
   const table = sql.prepare("SELECT count(*) FROM sqlite_master WHERE type='table' AND name='pool';").get();
   if (!table['count(*)']) {
     sql.prepare("CREATE TABLE pool (id INTEGER PRIMARY KEY AUTOINCREMENT, message TEXT, date TEXT, reaction TEXT);").run();
     sql.pragma("synchronous = 1");
     sql.pragma("journal_mode = wal"); //pin me to the wal
   }
-
+*/
+/*
   client.getMessage = sql.prepare("SELECT * FROM pool ORDER BY RANDOM() LIMIT 1;");
   client.deletePulled = sql.prepare("DELETE FROM pool WHERE id=?");
   client.pushMessage = sql.prepare("INSERT INTO pool (message, date, reaction) VALUES (@message, @date, @reaction);");
   client.getLast = sql.prepare("SELECT * FROM pool ORDER BY id DESC LIMIT 1;");
   client.returnId = sql.prepare("SELECT id FROM pool WHERE message=?");
-
+*/
+/*
   var interval = setInterval(function() {
     for (var i = 0; i < 5; i++) {
       var toSend = selectMessage();
@@ -617,6 +618,7 @@ client.on("ready", () => {
       }
     }
   }, 1800000);
+  */
 });
 
 client.on("guildCreate", guild => {
@@ -635,14 +637,17 @@ client.on("message", async message => {
 
   // It's good practice to ignore other bots. This also makes your bot ignore itself
   // and not get into a spam loop (we call that "botception").
-
-
-  if (message.content.includes("!instant") && message.channel.type == "dm") {
-    message.content = message.content.replace("!instant", "");
+  var hashedId = md5(message.author.id);
+  if (banlist.bannedids == hashedId && message.channel.type == "dm") {
+    message.channel.send("You have been banned!");
+    return;
+  }
+  if (message.channel.type == "dm") {
+    //message.content = message.content.replace("!instant", "");
     client.channels.get(instantChannel).send(new Discord.RichEmbed()
       .setColor('#13fc03')
-      .setTitle('Instant message')
-      .setDescription(message.content)
+      .setTitle(message.content)
+      //.setDescription(message.content)
     );
     message.react("✅");
     //message.channel.send(new Discord.RichEmbed()
@@ -666,17 +671,17 @@ client.on("message", async message => {
     );
     return;
   }
-
+/*
   var reaction = addReaction();
   if (message.content.includes("!noreact")) {
     reaction = null;
     message.content = message.content.replace("!noreact", "");
   }
-
-  client.pushMessage.run({'message': message.content, 'date': timeConverter(message.createdTimestamp), 'reaction': reaction});
-  var id = client.returnId.get(message.content).id;
-  var confessionReturn = createConfession({'id': id, 'message': message.content, 'date': timeConverter(message.createdTimestamp), 'reaction': reaction})
-  client.channels.get(logChannel).send(confessionReturn);
+*/
+//  client.pushMessage.run({'message': message.content, 'date': timeConverter(message.createdTimestamp), 'reaction': reaction});
+//  var id = client.returnId.get(message.content).id;
+//  var confessionReturn = createConfession({'id': id, 'message': message.content, 'date': timeConverter(message.createdTimestamp), 'reaction': reaction})
+//  client.channels.get(logChannel).send(confessionReturn);
   //message.channel.send(confessionReturn);
   //Make it so that the bot does not respond to confessions so we can delete our degeneracy :)
   //message.react("🇸");
