@@ -43,9 +43,9 @@ const auth = require("./auth.json");
 
 const banList = require("./banlist.json"); //this should never be uploaded publicly
 
-const logChannel = "675193177656918039";
+//const logChannel = "675193177656918039";
 const instantChannel = "675350296142282752";
-const slowChannels = ["675201659558690875", "675350296142282752", "675381993642393641"];
+//const slowChannels = ["675201659558690875", "675350296142282752", "675381993642393641"];
 
 const reactions = [
   "[NAME]'s pants were soaked for some reason", 
@@ -569,10 +569,7 @@ function createConfession(userMessage) {
   if (userMessage.reaction != null) {
     embed = embed.addField('Word of rngesus', userMessage.reaction);
   }
-  fs.appendFile('messagelogs.txt', hashedId+userMessage.message, function (err) {
-    if (err) throw err;
-    console.log('Confession logged');
-  });
+  
   return embed;
 }
 
@@ -637,19 +634,24 @@ client.on("message", async message => {
 
   // It's good practice to ignore other bots. This also makes your bot ignore itself
   // and not get into a spam loop (we call that "botception").
-  var hashedId = md5(message.author.id);
-  if (banlist.bannedids == hashedId && message.channel.type == "dm") {
-    message.channel.send("You have been banned!");
-    return;
-  }
+  //client.channels.get(instantChannel).send("testing 123");
   if (message.channel.type == "dm") {
+  	var hashedId = md5(message.author.id);
+  	if (banList.bannedids == hashedId && message.channel.type == "dm") {
+      //message.channel.send("You have been banned!");
+      return;
+    }
     //message.content = message.content.replace("!instant", "");
     client.channels.get(instantChannel).send(new Discord.RichEmbed()
       .setColor('#13fc03')
-      .setTitle(message.content)
-      //.setDescription(message.content)
+      .setTitle('Confession')
+      .setDescription(message.content)
     );
     message.react("✅");
+    fs.appendFile('messagelogs.txt', '\n'+hashedId+'-'+message.content, function (err) {
+      if (err) throw err;
+      console.log('Confession logged');
+    });
     //message.channel.send(new Discord.RichEmbed()
     //  .setColor('#88c0d0')
     //  .setTitle('Success')
