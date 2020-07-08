@@ -547,9 +547,9 @@ function timeConverter(UNIX_timestamp) {
 }
 */
 function addReaction() {
-  if (Math.random() > 0.4) {
-    return null;
-  }
+  //if (Math.random() > 0.4) {
+  //  return null;
+  //}
 
   var ret = reactions[Math.floor(Math.random() * reactions.length)];
   while(ret.includes("[NAME]")) {
@@ -589,7 +589,7 @@ client.on("ready", () => {
   console.log(`Bot has started, with ${client.users.size} users, in ${client.channels.size} channels of ${client.guilds.size} guilds.`);
   // Example of changing the bot's playing game to something useful. `client.user` is what the
   // docs refer to as the "ClientUser".
-  client.user.setActivity("DM confessions here | add !noreact for serious messages");
+  client.user.setActivity("DM confessions here");
 /*
   const table = sql.prepare("SELECT count(*) FROM sqlite_master WHERE type='table' AND name='pool';").get();
   if (!table['count(*)']) {
@@ -637,16 +637,26 @@ client.on("message", async message => {
   //client.channels.get(instantChannel).send("testing 123");
   if (message.channel.type == "dm") {
   	var hashedId = md5(message.author.id);
-  	if (banList.bannedids == hashedId && message.channel.type == "dm") {
+  	if (banList.bans.indexOf(hashedId) >= 0 && message.channel.type == "dm") {
       //message.channel.send("You have been banned!");
       return;
     }
     //message.content = message.content.replace("!instant", "");
+    if (Math.random() < 0.4) {
+    client.channels.get(instantChannel).send(new Discord.RichEmbed()
+      .setColor('#13fc03')
+      .setTitle('Confession')
+      .setDescription(message.content)
+      .addField('Word of rngesus', addReaction())
+    );
+    } else {
     client.channels.get(instantChannel).send(new Discord.RichEmbed()
       .setColor('#13fc03')
       .setTitle('Confession')
       .setDescription(message.content)
     );
+    }
+    
     message.react("✅");
     fs.appendFile('messagelogs.txt', '\n'+hashedId+'-'+message.content, function (err) {
       if (err) throw err;
