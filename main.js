@@ -54,6 +54,14 @@ const instantChannel = "675350296142282752";
 
 let postIds = [];
 let postTimes = [];
+let postQueue = [];
+let postWarn = [];
+
+let repPostNum=[];
+let repPostUser=[];
+let repPostVol=[];
+//let repPostReporters=[[]];
+var args;
 
 const reactions = [
   "[NAME]'s pants were soaked for some reason", 
@@ -646,26 +654,59 @@ client.on("message", async message => {
   // It's good practice to ignore other bots. This also makes your bot ignore itself
   // and not get into a spam loop (we call that "botception").
   //client.channels.get(instantChannel).send("testing 123");
-  if (message.author.bot || message.channel.type != "dm") {
+  if(message.author.bot) {
+  	return;
+  }
+  if(message.channel.id == instantChannel && message.content.toLowerCase().includes("report")) {
+  	args = message.content.slice(7);
+  	let reported = parseInt(args);
+  	//console.log("received report for conf "+reported);
+  	//console.log(repPostReporters);
+  	const reportsNeeded = 2;
+  	if(repPostNum.indexOf(reported) > -1) {
+  		let reportIndex = repPostNum.indexOf(reported);
+  		repPostVol[reportIndex]++;
+  		/*
+  		if(repPostReporters[reportIndex].indexOf(message.author.id) > -1) {
+  			message.channel.send("You have already reported confession #"+repPostNum[reportIndex]+"!");
+  			return;
+  		}
+  		*/
+  		if(repPostVol[reportIndex] >= reportsNeeded) {
+  			var reportUserIndex = postIds.indexOf(repPostUser[reportIndex]);
+  			postWarn[reportUserIndex] = true;
+  			message.channel.send("Your report for confession #"+repPostNum[reportIndex]+" has been counted. The user who sent the confession now has a 24 hour cooldown.");
+  			return;
+  		}
+  		message.channel.send("Your report for confession #"+repPostNum[reportIndex]+" has been counted. "+(reportsNeeded-repPostVol[reportIndex])+" more reports are needed.");
+  		//repPostReporters[reportIndex].push(message.author.id);
+  	} else {
+  		message.channel.send("That confession is unable to be reported!");
+  	}
+  }
+  if (message.channel.type != "dm") {
     return;
   }
-  if (message.channel.type == "dm") {
+  if (message.channel.type == "dm" && message.author.bot != true) {
   	var hashedId = md5(message.author.id);
   	for (i = 0; i < secret; i++) {
   	  hashedId = md5(hashedId);
   	}
   	var userIndex = postIds.indexOf(hashedId);
-  	//console.log(userIndex);
-  	console.log("Array is at "+userIndex);
-  	if((Date.now()-postTimes[userIndex]) <= 1500000 && userIndex != -1) {
-  		client.users.get(message.author.id).send("Cooldown! You cannot send a message for the next "+Math.round(((1500000-(Date.now()-postTimes[userIndex]))/1000)/60)+" minutes");
-  		return;
-  	}
-  	//var confNum = 
   	if (banList.bans.indexOf(hashedId) >= 0 && message.channel.type == "dm") {
       //message.channel.send("You have been banned!");
       return;
     }
+  	var cooldown = 1500
+  	if(postWarn[userIndex] == true) {
+  		cooldown = 86400000;
+  	}
+  	//console.log(userIndex);
+  	//console.log("Array is at "+userIndex);
+  	if((Date.now()-postTimes[userIndex]) <= cooldown && userIndex != -1) {
+  		client.users.get(message.author.id).send("Cooldown! You cannot send a message for the next "+Math.round(((cooldown-(Date.now()-postTimes[userIndex]))/1000)/60)+" minutes");
+  		return;
+  	}
     //message.content = message.content.replace("!instant", "");
     if (Math.random() < 0.4) {
     client.channels.get(instantChannel).send(new Discord.RichEmbed()
@@ -686,9 +727,14 @@ client.on("message", async message => {
     } else {
     	postIds.push(hashedId);
     	postTimes.push(Date.now());
+    	postQueue.push(null);
+    	postWarn.push(false);
     }
-    
-    
+    repPostNum.push(cNum);
+    repPostVol.push(0);
+    repPostUser.push(hashedId);
+    //repPostReporters.push(cNum);
+
     message.react("✅");
     cNum++;
     fs.appendFile('messagelogs.txt', '\n'+hashedId+'-'+message.content, function (err) {
