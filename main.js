@@ -656,7 +656,7 @@ client.on("message", async message => {
   	}
   	var userIndex = postIds.indexOf(hashedId);
   	//console.log(userIndex);
-  	console.log("Array is at "+userIndex.length);
+  	console.log("Array is at "+userIndex);
   	if((Date.now()-postTimes[userIndex]) <= 1500000 && userIndex != -1) {
   		client.users.get(message.author.id).send("Cooldown! You cannot send a message for the next "+Math.round(((1500000-(Date.now()-postTimes[userIndex]))/1000)/60)+" minutes");
   		return;
