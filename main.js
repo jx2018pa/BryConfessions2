@@ -27,6 +27,7 @@ const Discord = require("discord.js");
 const md5 = require('md5');
 //write to file
 const fs = require('fs');
+const readLastLines = require('read-last-lines');
 
 // This is your client. Some people call it `bot`, some people call it `self`,
 // some might call it `cootchie`. Either way, when you see `client.something`, or `bot.something`,
@@ -38,14 +39,21 @@ const auth = require("./auth.json");
 // config.token contains the bot's token
 // config.prefix contains the message prefix.
 
+let lastLine = '';
+
 //const SQLite = require("better-sqlite3");
 //const sql = new SQLite("./pool.sqlite");
 
 const banList = require("./banlist.json"); //this should never be uploaded publicly
 
+var confNum = 0; //will be overwritten
+
 //const logChannel = "675193177656918039";
 const instantChannel = "675350296142282752";
 //const slowChannels = ["675201659558690875", "675350296142282752", "675381993642393641"];
+
+let postIds = [];
+let postTimes = [];
 
 const reactions = [
   "[NAME]'s pants were soaked for some reason", 
@@ -587,6 +595,10 @@ function selectMessage() {
 client.on("ready", () => {
   // This event will run if the bot starts, and logs in, successfully.
   console.log(`Bot has started, with ${client.users.size} users, in ${client.channels.size} channels of ${client.guilds.size} guilds.`);
+  readLastLines.read('messagelogs.txt', 4)
+   .then((lines) => lastLine = lines);
+  console.log(lastLine);
+   //new RegExp((?<=\[)(.*?)(?=\])); //get conf number
   // Example of changing the bot's playing game to something useful. `client.user` is what the
   // docs refer to as the "ClientUser".
   client.user.setActivity("DM confessions here");
@@ -635,8 +647,18 @@ client.on("message", async message => {
   // It's good practice to ignore other bots. This also makes your bot ignore itself
   // and not get into a spam loop (we call that "botception").
   //client.channels.get(instantChannel).send("testing 123");
+  if (message.author.bot || message.channel.type != "dm") {
+    return;
+  }
   if (message.channel.type == "dm") {
   	var hashedId = md5(message.author.id);
+  	var userIndex = postIds.indexOf(hashedId);
+  	console.log(userIndex);
+  	if((Date.now()-postTimes[userIndex]) <= 1500000 && userIndex != -1) {
+  		client.users.get(message.author.id).send("Cooldown! You cannot send a message for the next "+Math.floor(((1500000-(Date.now()-postTimes[userIndex]))/1000)/60)+" minutes");
+  		return;
+  	}
+  	//var confNum = 
   	if (banList.bans.indexOf(hashedId) >= 0 && message.channel.type == "dm") {
       //message.channel.send("You have been banned!");
       return;
@@ -656,6 +678,13 @@ client.on("message", async message => {
       .setDescription(message.content)
     );
     }
+    if(userIndex > -1) {
+    	postTimes[userIndex] = Date.now()
+    } else {
+    	postIds.push(hashedId);
+    	postTimes.push(Date.now());
+    }
+    
     
     message.react("✅");
     fs.appendFile('messagelogs.txt', '\n'+hashedId+'-'+message.content, function (err) {
@@ -668,10 +697,6 @@ client.on("message", async message => {
     //  .setDescription('IM sent!')
     //);
     //message.content = message.content.replace("!noreact", "");
-    return;
-  }
-
-  if (message.author.bot || message.channel.type != "dm") {
     return;
   }
 
@@ -700,8 +725,8 @@ client.on("message", async message => {
   //message.react("🇦");
   //message.react("🇻");
   //message.react("🇪");
-  message.react("💾");
-  message.react("👍");
+  //message.react("💾");
+  //message.react("👍");
   //message.channel.send(new Discord.RichEmbed()
   //    .setColor('#88c0d0')
   //    .setTitle('Success')
