@@ -27,7 +27,9 @@ const Discord = require("discord.js");
 const md5 = require('md5');
 //write to file
 const fs = require('fs');
-const readLastLines = require('read-last-lines');
+let cNum = parseInt(fs.readFileSync("confnum.txt", "utf8"));
+const secret = parseInt(fs.readFileSync("secretkey.txt", "utf8"));
+//console.log(cNum);
 
 // This is your client. Some people call it `bot`, some people call it `self`,
 // some might call it `cootchie`. Either way, when you see `client.something`, or `bot.something`,
@@ -36,17 +38,15 @@ const client = new Discord.Client();
 
 // Here we load the config.json file that contains our token and our prefix values.
 const auth = require("./auth.json");
+
 // config.token contains the bot's token
 // config.prefix contains the message prefix.
-
-let lastLine = '';
 
 //const SQLite = require("better-sqlite3");
 //const sql = new SQLite("./pool.sqlite");
 
 const banList = require("./banlist.json"); //this should never be uploaded publicly
 
-var confNum = 0; //will be overwritten
 
 //const logChannel = "675193177656918039";
 const instantChannel = "675350296142282752";
@@ -595,13 +595,12 @@ function selectMessage() {
 client.on("ready", () => {
   // This event will run if the bot starts, and logs in, successfully.
   console.log(`Bot has started, with ${client.users.size} users, in ${client.channels.size} channels of ${client.guilds.size} guilds.`);
-  readLastLines.read('messagelogs.txt', 4)
-   .then((lines) => lastLine = lines);
-  console.log(lastLine);
+
    //new RegExp((?<=\[)(.*?)(?=\])); //get conf number
   // Example of changing the bot's playing game to something useful. `client.user` is what the
   // docs refer to as the "ClientUser".
   client.user.setActivity("DM confessions here");
+
 /*
   const table = sql.prepare("SELECT count(*) FROM sqlite_master WHERE type='table' AND name='pool';").get();
   if (!table['count(*)']) {
@@ -652,10 +651,14 @@ client.on("message", async message => {
   }
   if (message.channel.type == "dm") {
   	var hashedId = md5(message.author.id);
+  	for (i = 0; i < secret; i++) {
+  	  hashedId = md5(hashedId);
+  	}
   	var userIndex = postIds.indexOf(hashedId);
-  	console.log(userIndex);
+  	//console.log(userIndex);
+  	console.log("Array is at "+userIndex.length);
   	if((Date.now()-postTimes[userIndex]) <= 1500000 && userIndex != -1) {
-  		client.users.get(message.author.id).send("Cooldown! You cannot send a message for the next "+Math.floor(((1500000-(Date.now()-postTimes[userIndex]))/1000)/60)+" minutes");
+  		client.users.get(message.author.id).send("Cooldown! You cannot send a message for the next "+Math.round(((1500000-(Date.now()-postTimes[userIndex]))/1000)/60)+" minutes");
   		return;
   	}
   	//var confNum = 
@@ -667,14 +670,14 @@ client.on("message", async message => {
     if (Math.random() < 0.4) {
     client.channels.get(instantChannel).send(new Discord.RichEmbed()
       .setColor('#13fc03')
-      .setTitle('Confession')
+      .setTitle('Confession #'+cNum)
       .setDescription(message.content)
       .addField('Word of rngesus', addReaction())
     );
     } else {
     client.channels.get(instantChannel).send(new Discord.RichEmbed()
       .setColor('#13fc03')
-      .setTitle('Confession')
+      .setTitle('Confession #'+cNum)
       .setDescription(message.content)
     );
     }
@@ -687,9 +690,13 @@ client.on("message", async message => {
     
     
     message.react("✅");
+    cNum++;
     fs.appendFile('messagelogs.txt', '\n'+hashedId+'-'+message.content, function (err) {
       if (err) throw err;
       console.log('Confession logged');
+    });
+    fs.writeFile("confnum.txt", cNum, function (err) {
+    if (err) return console.log(err);
     });
     //message.channel.send(new Discord.RichEmbed()
     //  .setColor('#88c0d0')
