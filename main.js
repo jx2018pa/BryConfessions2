@@ -727,7 +727,7 @@ client.on("message", async message => {
       //message.channel.send("You have been banned!");
       return;
     }
-  	var cooldown = 1500
+  	var cooldown = 300000
   	if(postWarn[userIndex] == true) {
   		cooldown = 86400000;
   	}
