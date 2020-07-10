@@ -60,8 +60,10 @@ let postWarn = [];
 let repPostNum=[];
 let repPostUser=[];
 let repPostVol=[];
+let repPostReppers = [];
 //let repPostReporters=[[]];
 var args;
+var userInd;
 
 const reactions = [
   "[NAME]'s pants were soaked for some reason", 
@@ -607,7 +609,7 @@ client.on("ready", () => {
    //new RegExp((?<=\[)(.*?)(?=\])); //get conf number
   // Example of changing the bot's playing game to something useful. `client.user` is what the
   // docs refer to as the "ClientUser".
-  client.user.setActivity("DM confessions here");
+  client.user.setActivity("Type \"bryhelp\" or \"bryrules\" for more info");
 
 /*
   const table = sql.prepare("SELECT count(*) FROM sqlite_master WHERE type='table' AND name='pool';").get();
@@ -657,15 +659,38 @@ client.on("message", async message => {
   if(message.author.bot) {
   	return;
   }
-  if(message.channel.id == instantChannel && message.content.toLowerCase().includes("report")) {
+  if(message.content.toLowerCase() == "bryhelp" && message.channel.id == instantChannel) {
+  	 client.channels.get(instantChannel).send(new Discord.RichEmbed()
+      .setColor('#ffff00')
+      .setTitle('Bry Confessions Help')
+      .setDescription('DM the bot to submit a new confession. Confessions will be anonymously posted to #bry-confessions.\nThere is a 5-minutes cooldown for all users by default, but users that have been reported or are spamming may receive longer cooldowns.\nIf you would like to report a confession, type \"report <confession number>\" and confessions with more than 3 reports will impose a cooldown on the posting user.')
+      );
+  	 return;
+  }
+  if(message.content.toLowerCase() == "bryrules" && message.channel.id == instantChannel) {
+  	 client.channels.get(instantChannel).send(new Discord.RichEmbed()
+      .setColor('#ffff00')
+      .setTitle('Bry Confessions Rules')
+      .setDescription('Any content that can be perceived as hateful, harmful, dangerous or otherwise highly distasteful can result in a temporary or permanent ban.\nRepetitive spam may result in a 24hour cooldown or possibly a ban if behavior continues.')
+    );
+  	 return;
+  }
+  if(message.channel.id == instantChannel && message.content.toLowerCase().slice(0,6).includes("report")) {
   	args = message.content.slice(7);
   	let reported = parseInt(args);
+  	let repUsrId = message.author.id.toString();
   	//console.log("received report for conf "+reported);
   	//console.log(repPostReporters);
   	const reportsNeeded = 2;
   	if(repPostNum.indexOf(reported) > -1) {
   		let reportIndex = repPostNum.indexOf(reported);
-  		repPostVol[reportIndex]++;
+  		for (i = 0; i < (repPostReppers[reportIndex].length/18); i++) {
+			userInd = parseInt(repPostReppers[reportIndex].slice(i*18,i*18+18));
+			if(userInd == message.author.id) {
+				message.channel.send("You have already reported confession #"+repPostNum[reportIndex]+"!");
+				return;
+			}
+		}
   		/*
   		if(repPostReporters[reportIndex].indexOf(message.author.id) > -1) {
   			message.channel.send("You have already reported confession #"+repPostNum[reportIndex]+"!");
@@ -678,10 +703,15 @@ client.on("message", async message => {
   			message.channel.send("Your report for confession #"+repPostNum[reportIndex]+" has been counted. The user who sent the confession now has a 24 hour cooldown.");
   			return;
   		}
-  		message.channel.send("Your report for confession #"+repPostNum[reportIndex]+" has been counted. "+(reportsNeeded-repPostVol[reportIndex])+" more reports are needed.");
+  		message.channel.send("Your report for confession #"+repPostNum[reportIndex]+" has been counted. "+(reportsNeeded-repPostVol[reportIndex])+" more report(s) are needed.");
+  		//repPostReppers[reportIndex].concat(repUsrId);
+  		repPostReppers[reportIndex] = repPostReppers[reportIndex]+repUsrId;
+  		repPostVol[reportIndex]++;
+  		return;
   		//repPostReporters[reportIndex].push(message.author.id);
   	} else {
   		message.channel.send("That confession is unable to be reported!");
+  		return;
   	}
   }
   if (message.channel.type != "dm") {
@@ -733,6 +763,7 @@ client.on("message", async message => {
     repPostNum.push(cNum);
     repPostVol.push(0);
     repPostUser.push(hashedId);
+    repPostReppers.push("111111111111111111");
     //repPostReporters.push(cNum);
 
     message.react("✅");
