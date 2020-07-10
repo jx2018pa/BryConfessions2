@@ -61,9 +61,14 @@ let repPostNum=[];
 let repPostUser=[];
 let repPostVol=[];
 let repPostReppers = [];
+let currentPoll = false;
+let option1 = 0;
+let option2 = 0;
+let pollVoters = "111111111111111111";
 //let repPostReporters=[[]];
 var args;
 var userInd;
+var options
 
 const reactions = [
   "[NAME]'s pants were soaked for some reason", 
@@ -663,7 +668,7 @@ client.on("message", async message => {
   	 client.channels.get(instantChannel).send(new Discord.RichEmbed()
       .setColor('#ffff00')
       .setTitle('Bry Confessions Help')
-      .setDescription('DM the bot to submit a new confession. Confessions will be anonymously posted to #bry-confessions.\nThere is a 5-minutes cooldown for all users by default, but users that have been reported or are spamming may receive longer cooldowns.\nIf you would like to report a confession, type \"report <confession number>\" and confessions with more than 3 reports will impose a cooldown on the posting user.')
+      .setDescription('DM the bot to submit a new confession. Confessions will be anonymously posted to #bry-confessions.\nThere is a 5-minutes cooldown for all users by default, but users that have been reported or are spamming may receive longer cooldowns.\nIf you would like to report a confession, type \"report <confession number>\" and confessions with more than 3 reports will impose a cooldown on the posting user.\nWant to make a poll? Send \"createpoll|option1|option\" to the bot!')
       );
   	 return;
   }
@@ -675,13 +680,37 @@ client.on("message", async message => {
     );
   	 return;
   }
+  if(message.content.toLowerCase() == "vote a" && message.channel.id == instantChannel && currentPoll == true) {
+  	for (i = 0; i < (pollVoters.length/18); i++) {
+			userInd = parseInt(pollVoters.slice(i*18,i*18+18));
+			if(userInd == message.author.id) {
+				return;
+			}
+		}
+  	option1++;
+  	message.react("✅");
+  	pollVoters = pollVoters+message.author.id.toString();
+  	return;
+  }
+  if(message.content.toLowerCase() == "vote b" && message.channel.id == instantChannel && currentPoll == true) {
+  	  	for (i = 0; i < (pollVoters.length/18); i++) {
+			userInd = parseInt(pollVoters.slice(i*18,i*18+18));
+			if(userInd == message.author.id) {
+				return;
+			}
+		}
+  	option2++;
+  	message.react("✅");
+  	pollVoters = pollVoters+message.author.id.toString();
+  	return;
+  }
   if(message.channel.id == instantChannel && message.content.toLowerCase().slice(0,6).includes("report")) {
   	args = message.content.slice(7);
   	let reported = parseInt(args);
   	let repUsrId = message.author.id.toString();
   	//console.log("received report for conf "+reported);
   	//console.log(repPostReporters);
-  	const reportsNeeded = 2;
+  	const reportsNeeded = 3;
   	if(repPostNum.indexOf(reported) > -1) {
   		let reportIndex = repPostNum.indexOf(reported);
   		for (i = 0; i < (repPostReppers[reportIndex].length/18); i++) {
@@ -718,6 +747,50 @@ client.on("message", async message => {
     return;
   }
   if (message.channel.type == "dm" && message.author.bot != true) {
+  	if(message.content.toLowerCase().slice(0,11).includes("createpoll|")) {
+  		if(currentPoll == true) {
+  			client.users.get(message.author.id).send("There is already a poll running! Please wait for that one to finish.");
+  			return;
+  		} else {
+  			options = message.content.slice(11);
+  			var optionsArray = options.split("|");
+  			if(optionsArray.length != 2) {
+  				client.users.get(message.author.id).send("Invalid poll input! Use \"createpoll|option1|option2\"");
+  				return;
+  			}
+  			option1=0;
+  			option2=0;
+  			pollVoters = "111111111111111111";
+  			currentPoll = true;
+  			message.react("✅");
+
+  			var hashedId = md5(message.author.id);
+  	for (i = 0; i < secret; i++) {
+  	  hashedId = md5(hashedId);
+  	}
+
+    fs.appendFile('messagelogs.txt', '\n'+hashedId+'-'+message.content, function (err) {
+      if (err) throw err;
+      console.log('Poll logged');
+    });
+  			client.channels.get(instantChannel).send(new Discord.RichEmbed()
+      .setColor('#FFA500')
+      .setTitle('Poll')
+      .setDescription('A: '+optionsArray[0]+'\nB: '+optionsArray[1])
+      .addField('Vote now!', 'Type \"vote a\" or \"vote b\" to cast your vote!\nPoll runs for 10 minutes.')
+    );
+  			setTimeout(() => { client.channels.get(instantChannel).send(new Discord.RichEmbed()
+      .setColor('#FFA500')
+      .setTitle('Poll Results')
+      .setDescription(optionsArray[0]+': '+option1+'\n'+optionsArray[1]+': '+option2)
+      //.addField('Vote now!', 'Type \"vote a\" or \"vote b\" to cast your vote!\nPoll runs for 5 minutes.')
+    ); 
+  			currentPoll = false;
+
+  		}, 600000);
+  			return;
+  		}
+  	}
   	var hashedId = md5(message.author.id);
   	for (i = 0; i < secret; i++) {
   	  hashedId = md5(hashedId);
