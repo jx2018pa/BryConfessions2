@@ -68,7 +68,8 @@ let pollVoters = "111111111111111111";
 //let repPostReporters=[[]];
 var args;
 var userInd;
-var options
+var options;
+var anonyPoll = false;
 
 const reactions = [
   "[NAME]'s pants were soaked for some reason", 
@@ -664,6 +665,32 @@ client.on("message", async message => {
   if(message.author.bot) {
   	return;
   }
+  if(message.content.toLowerCase() == "vote a" && message.channel.type == "dm" && anonyPoll == true) {
+  	for (i = 0; i < (pollVoters.length/18); i++) {
+			userInd = parseInt(pollVoters.slice(i*18,i*18+18));
+			if(userInd == message.author.id) {
+				return;
+			}
+		}
+  	option1++;
+  	message.react("✅");
+  	pollVoters = pollVoters+message.author.id.toString();
+  	return;
+  }
+
+  if(message.content.toLowerCase() == "vote b" && message.channel.type == "dm" && anonyPoll == true) {
+  	  	for (i = 0; i < (pollVoters.length/18); i++) {
+			userInd = parseInt(pollVoters.slice(i*18,i*18+18));
+			if(userInd == message.author.id) {
+				return;
+			}
+		}
+  	option2++;
+  	message.react("✅");
+  	pollVoters = pollVoters+message.author.id.toString();
+  	return;
+  }
+
   if(message.content.toLowerCase() == "bryhelp" && message.channel.id == instantChannel) {
   	 client.channels.get(instantChannel).send(new Discord.RichEmbed()
       .setColor('#ffff00')
@@ -681,6 +708,9 @@ client.on("message", async message => {
   	 return;
   }
   if(message.content.toLowerCase() == "vote a" && message.channel.id == instantChannel && currentPoll == true) {
+  	if(anonyPoll == true) {
+  		return;
+  	}
   	for (i = 0; i < (pollVoters.length/18); i++) {
 			userInd = parseInt(pollVoters.slice(i*18,i*18+18));
 			if(userInd == message.author.id) {
@@ -693,6 +723,9 @@ client.on("message", async message => {
   	return;
   }
   if(message.content.toLowerCase() == "vote b" && message.channel.id == instantChannel && currentPoll == true) {
+  	if(anonyPoll == true) {
+  		return;
+  	}
   	  	for (i = 0; i < (pollVoters.length/18); i++) {
 			userInd = parseInt(pollVoters.slice(i*18,i*18+18));
 			if(userInd == message.author.id) {
@@ -754,10 +787,142 @@ client.on("message", async message => {
   		} else {
   			options = message.content.slice(11);
   			var optionsArray = options.split("|");
-  			if(optionsArray.length != 2) {
-  				client.users.get(message.author.id).send("Invalid poll input! Use \"createpoll|option1|option2\"");
-  				return;
+  			//var noTitleAnon = false;;
+  			//var titleAnon = false;
+  			if(optionsArray.length == 3) {
+  			if(optionsArray[2].toLowerCase().includes("anonpoll")) {
+  				//noTitleAnon = true;
+  				anonyPoll = true;
+
+
+
+  			option1=0;
+  			option2=0;
+  			pollVoters = "111111111111111111";
+  			currentPoll = true;
+  			message.react("✅");
+
+  			var hashedId = md5(message.author.id);
+  	for (i = 0; i < secret; i++) {
+  	  hashedId = md5(hashedId);
+  	}
+
+    fs.appendFile('messagelogs.txt', '\n'+hashedId+'-'+message.content, function (err) {
+      if (err) throw err;
+      console.log('Poll logged');
+    });
+  			client.channels.get(instantChannel).send(new Discord.RichEmbed()
+      .setColor('#800080')
+      .setTitle('Anonymous Poll')
+      .setDescription('A: '+optionsArray[0]+'\nB: '+optionsArray[1])
+      .addField('ANONYMOUS POLL', 'Bot will only accept votes via DM! Send \"vote a\" or \"vote b\" to cast your vote!\nPoll runs for 5 minutes.')
+    );
+  			setTimeout(() => { client.channels.get(instantChannel).send(new Discord.RichEmbed()
+      .setColor('#800080')
+      .setTitle('Anonymous Poll Results')
+      .setDescription(optionsArray[0]+': '+option1+'\n'+optionsArray[1]+': '+option2)
+      //.addField('Vote now!', 'Type \"vote a\" or \"vote b\" to cast your vote!\nPoll runs for 5 minutes.')
+    ); 
+  			currentPoll = false;
+  			anonyPoll = false;
+
+  		}, 300000);
+  			return;
+
+
+
+
+
   			}
+  		}
+  		if(optionsArray.length == 4) {
+  			if(optionsArray[3].includes("anonpoll")) {
+  				//titleAnon
+  				anonyPoll =true;
+
+
+  			option1=0;
+  			option2=0;
+  			pollVoters = "111111111111111111";
+  			currentPoll = true;
+  			message.react("✅");
+
+  			var hashedId = md5(message.author.id);
+  	for (i = 0; i < secret; i++) {
+  	  hashedId = md5(hashedId);
+  	}
+
+    fs.appendFile('messagelogs.txt', '\n'+hashedId+'-'+message.content, function (err) {
+      if (err) throw err;
+      console.log('Poll logged');
+    });
+  			client.channels.get(instantChannel).send(new Discord.RichEmbed()
+      .setColor('#800080')
+      .setTitle('Anonymous Poll - '+optionsArray[2])
+      .setDescription('A: '+optionsArray[0]+'\nB: '+optionsArray[1])
+      .addField('ANONYMOUS POLL', 'Bot will only accept votes via DM! Send \"vote a\" or \"vote b\" to cast your vote!\nPoll runs for 5 minutes.')
+    );
+  			setTimeout(() => { client.channels.get(instantChannel).send(new Discord.RichEmbed()
+      .setColor('#800080')
+      .setTitle('Anonymous Poll Results - '+optionsArray[2])
+      .setDescription(optionsArray[0]+': '+option1+'\n'+optionsArray[1]+': '+option2)
+      //.addField('Vote now!', 'Type \"vote a\" or \"vote b\" to cast your vote!\nPoll runs for 5 minutes.')
+    ); 
+  			currentPoll = false;
+  			anonyPoll = false;
+
+  		}, 300000);
+  			return;
+
+
+
+  			}
+  		}
+
+  			if(optionsArray.length == 3) {
+  				
+
+
+
+  			option1=0;
+  			option2=0;
+  			pollVoters = "111111111111111111";
+  			currentPoll = true;
+  			message.react("✅");
+
+  			var hashedId = md5(message.author.id);
+  	for (i = 0; i < secret; i++) {
+  	  hashedId = md5(hashedId);
+  	}
+
+    fs.appendFile('messagelogs.txt', '\n'+hashedId+'-'+message.content, function (err) {
+      if (err) throw err;
+      console.log('Poll logged');
+    });
+  			client.channels.get(instantChannel).send(new Discord.RichEmbed()
+      .setColor('#FFA500')
+      .setTitle('Poll - '+optionsArray[2])
+      .setDescription('A: '+optionsArray[0]+'\nB: '+optionsArray[1])
+      .addField('Vote now!', 'Type \"vote a\" or \"vote b\" to cast your vote!\nPoll runs for 5 minutes.')
+    );
+  			setTimeout(() => { client.channels.get(instantChannel).send(new Discord.RichEmbed()
+      .setColor('#FFA500')
+      .setTitle('Poll Results - '+optionsArray[2])
+      .setDescription(optionsArray[0]+': '+option1+'\n'+optionsArray[1]+': '+option2)
+      //.addField('Vote now!', 'Type \"vote a\" or \"vote b\" to cast your vote!\nPoll runs for 5 minutes.')
+    ); 
+  			currentPoll = false;
+
+  		}, 300000);
+  			return;
+
+
+
+
+  			}
+  			if(optionsArray.length == 2) {
+
+
   			option1=0;
   			option2=0;
   			pollVoters = "111111111111111111";
@@ -777,7 +942,7 @@ client.on("message", async message => {
       .setColor('#FFA500')
       .setTitle('Poll')
       .setDescription('A: '+optionsArray[0]+'\nB: '+optionsArray[1])
-      .addField('Vote now!', 'Type \"vote a\" or \"vote b\" to cast your vote!\nPoll runs for 10 minutes.')
+      .addField('Vote now!', 'Type \"vote a\" or \"vote b\" to cast your vote!\nPoll runs for 5 minutes.')
     );
   			setTimeout(() => { client.channels.get(instantChannel).send(new Discord.RichEmbed()
       .setColor('#FFA500')
@@ -787,8 +952,13 @@ client.on("message", async message => {
     ); 
   			currentPoll = false;
 
-  		}, 600000);
+  		}, 300000);
   			return;
+  		}
+
+  			client.users.get(message.author.id).send("Invalid poll input! Use \"createpoll|<option1>|<option2>|<title (optional)>|anonpoll (optional)\"");
+  			return;
+  		
   		}
   	}
   	var hashedId = md5(message.author.id);
