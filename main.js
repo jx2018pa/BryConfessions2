@@ -54,7 +54,6 @@ const instantChannel = "675350296142282752";
 
 let postIds = [];
 let postTimes = [];
-let postQueue = [];
 let postWarn = [];
 
 let repPostNum = [];
@@ -69,7 +68,12 @@ let pollVoters = "111111111111111111";
 var args;
 var userInd;
 var options;
+var s,v;
 var anonyPoll = false;
+
+
+const starts = ["neil", "ant", "vin", "bry", "baba", "adi", "john", "willy", "ben", "josh", "zand", "wes", "pal", "ed", "alex", "mich", "emma", "an"];
+const ends = ["neil", "cent", "adi", "thony", "grama", "athan", "willy", "jamin", "hsiao", "gare", "wes", "pal", "wu", "ander", "elle", "gela", "miles"];
 
 const reactions = [
     "[NAME]'s pants were soaked for some reason",
@@ -582,6 +586,22 @@ function addReaction() {
 
     return ret;
 }
+
+function generateShip() {
+	v = Math.random();
+   	v = starts.length * v;
+    v = v - v % 1;
+		s = Math.random();
+		s = ends.length * s;
+		s = s - s % 1;
+		while (s === v) {
+			s = Math.random();
+			s = ends.length * s;
+			s = s - s % 1;
+		}
+		return starts[v] + ends[s];
+}
+
 /*
 function createConfession(userMessage) {
   var embed = new Discord.RichEmbed()
@@ -665,6 +685,13 @@ client.on("message", async message => {
     if (message.author.bot) {
         return;
     }
+
+    if(message.content.toLowerCase() == "ship") {
+    	message.react("✅");
+		client.channels.get(instantChannel).send("Bry declares that " + generateShip() + " is the new hip ship in town.");
+		return;
+    }
+
     if (message.content.toLowerCase() == "vote a" && message.channel.type == "dm" && anonyPoll == true) {
         for (i = 0; i < (pollVoters.length / 18); i++) {
             userInd = parseInt(pollVoters.slice(i * 18, i * 18 + 18));
@@ -970,7 +997,6 @@ client.on("message", async message => {
         }
         var userIndex = postIds.indexOf(hashedId);
         if (banList.bans.indexOf(hashedId) >= 0 && message.channel.type == "dm") {
-            //message.channel.send("You have been banned!");
             return;
         }
         var cooldown = 300000
@@ -1003,7 +1029,6 @@ client.on("message", async message => {
         } else {
             postIds.push(hashedId);
             postTimes.push(Date.now());
-            postQueue.push(null);
             postWarn.push(false);
         }
         repPostNum.push(cNum);
