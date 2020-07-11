@@ -72,8 +72,8 @@ var s,v;
 var anonyPoll = false;
 
 
-const starts = ["neil", "ant", "vin", "bry", "baba", "adi", "john", "willy", "ben", "josh", "zand", "wes", "pal", "ed", "alex", "mich", "emma", "an"];
-const ends = ["neil", "cent", "adi", "thony", "grama", "athan", "willy", "jamin", "hsiao", "gare", "wes", "pal", "wu", "ander", "elle", "gela", "miles"];
+const starts = ["neil", "ant", "vin", "bry", "baba", "adi", "john", "willy", "ben", "josh", "zand", "wes", "pal", "ed", "alex", "mich", "emma", "an", "shradd"];
+const ends = ["neil", "cent", "adi", "thony", "grama", "athan", "willy", "jamin", "hsiao", "gare", "wes", "pal", "wu", "ander", "elle", "gela", "miles", "rena"];
 
 const reactions = [
     "[NAME]'s pants were soaked for some reason",
@@ -599,6 +599,10 @@ function generateShip() {
 			s = ends.length * s;
 			s = s - s % 1;
 		}
+		if(starts[v].slice(starts[v].length-1) == ends[s].slice(0,1)) {
+  return starts[v].slice(0,starts[v].length-1)+ends[s];
+
+}
 		return starts[v] + ends[s];
 }
 
