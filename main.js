@@ -689,7 +689,10 @@ client.on("message", async message => {
     if (message.author.bot) {
         return;
     }
-
+    if(message.content.toLowerCase() == "createpoll" || message.content.toLowerCase() == "pollhelp") {
+		message.channel.send("DM the bot \"createpoll|<option1>|<option2>|<title (optional)>|anonpoll (optional)\"");
+		return;
+    }
     if(message.content.toLowerCase() == "ship") {
     	message.react("✅");
 		client.channels.get(instantChannel).send("Bry declares that " + generateShip() + " is the new hip ship in town.");
@@ -726,7 +729,7 @@ client.on("message", async message => {
         client.channels.get(instantChannel).send(new Discord.RichEmbed()
             .setColor('#ffff00')
             .setTitle('Bry Confessions Help')
-            .setDescription('DM the bot to submit a new confession. Confessions will be anonymously posted to #bry-confessions.\nThere is a 5-minutes cooldown for all users by default, but users that have been reported or are spamming may receive longer cooldowns.\nIf you would like to report a confession, type \"report <confession number>\" and confessions with more than 3 reports will impose a cooldown on the posting user.\nWant to make a poll? Send \"createpoll|option1|option\" to the bot!')
+            .setDescription('DM the bot to submit a new confession. Confessions will be anonymously posted to #bry-confessions.\nThere is a 5-minutes cooldown for all users by default, but users that have been reported or are spamming may receive longer cooldowns.\nIf you would like to report a confession, type \"report <confession number>\" and confessions with more than 3 reports will impose a cooldown on the posting user.\nWant to make a poll? DM the bot \"createpoll|<option1>|<option2>|<title (optional)>|anonpoll (optional)\"')
         );
         return;
     }
