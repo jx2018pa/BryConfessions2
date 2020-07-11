@@ -64,6 +64,12 @@ let currentPoll = false;
 let option1 = 0;
 let option2 = 0;
 let pollVoters = "111111111111111111";
+let pollTime = 300000;
+let pollMinutes = 5;
+let currentPollTitle = "";
+let currentPollOpt1 = "";
+let currentPollOpt2 = "";
+let pollEndTime = 5;
 //let repPostReporters=[[]];
 var args;
 var userInd;
@@ -689,8 +695,16 @@ client.on("message", async message => {
     if (message.author.bot) {
         return;
     }
+    if(message.content.toLowerCase() == "pollstatus" && message.channel.type != "dm") {
+    	if(currentPoll == false) {
+    		message.channel.send("There is no poll currently running!");
+    		return;
+    	}
+    	message.channel.send("Title: "+currentPollTitle+"\nOption 1: "+currentPollOpt1+"\nOption 2: "+currentPollOpt2+"\nAnonymous: "+anonyPoll+"\nEnds in: "+Math.round(((pollEndTime-Date.now()) / 1000) / 60)+" minutes\n"+(option1+option2)+" people have voted");
+    	return;
+    }
     if(message.content.toLowerCase() == "createpoll" || message.content.toLowerCase() == "pollhelp") {
-		message.channel.send("DM the bot \"createpoll|<option1>|<option2>|<title (optional)>|anonpoll (optional)\"");
+		message.channel.send("DM the bot \"createpoll|<option1>|<option2>|<title (optional)>|anonpoll (optional)|duration (in minutes, optional)\"");
 		return;
     }
     if(message.content.toLowerCase() == "ship") {
@@ -729,7 +743,7 @@ client.on("message", async message => {
         client.channels.get(instantChannel).send(new Discord.RichEmbed()
             .setColor('#ffff00')
             .setTitle('Bry Confessions Help')
-            .setDescription('DM the bot to submit a new confession. Confessions will be anonymously posted to #bry-confessions.\nThere is a 5-minutes cooldown for all users by default, but users that have been reported or are spamming may receive longer cooldowns.\nIf you would like to report a confession, type \"report <confession number>\" and confessions with more than 3 reports will impose a cooldown on the posting user.\nWant to make a poll? DM the bot \"createpoll|<option1>|<option2>|<title (optional)>|anonpoll (optional)\"')
+            .setDescription('DM the bot to submit a new confession. Confessions will be anonymously posted to #bry-confessions.\nThere is a 5-minutes cooldown for all users by default, but users that have been reported or are spamming may receive longer cooldowns.\nIf you would like to report a confession, type \"report <confession number>\" and confessions with more than 3 reports will impose a cooldown on the posting user.\nWant to make a poll? DM the bot \"createpoll|<option1>|<option2>|<title (optional)>|anonpoll (optional)|duration (in minutes, optional)\"')
         );
         return;
     }
@@ -815,14 +829,26 @@ client.on("message", async message => {
     }
     if (message.channel.type == "dm" && message.author.bot != true) {
         if (message.content.toLowerCase().slice(0, 11).includes("createpoll|")) {
+        	pollTime = 300000;
+        	pollMinutes = 5;
             if (currentPoll == true) {
                 client.users.get(message.author.id).send("There is already a poll running! Please wait for that one to finish.");
                 return;
             } else {
                 options = message.content.slice(11);
                 var optionsArray = options.split("|");
-                //var noTitleAnon = false;;
-                //var titleAnon = false;
+                if(parseInt(optionsArray[optionsArray.length-1]) >= 2 && parseInt(optionsArray[optionsArray.length-1]) <= 45 && isNaN(parseInt(optionsArray[optionsArray.length-1])) == false) {
+                	pollMinutes = parseInt(optionsArray[optionsArray.length-1]);
+                	pollTime = pollMinutes*60000;
+                	optionsArray.pop();
+                } else if(isNaN(parseInt(optionsArray[optionsArray.length-1])) == false) {
+                	message.channel.send("Invalid number! Poll duration must be more than 2 minutes and less than 45 minutes inclusive.");
+                	return;
+                }
+                pollEndTime = Date.now() + pollTime;
+				currentPollOpt1 = optionsArray[0];
+				currentPollOpt2 = optionsArray[1];
+				currentPollTitle = "";
                 if (optionsArray.length == 3) {
                     if (optionsArray[2].toLowerCase().includes("anonpoll")) {
                         //noTitleAnon = true;
@@ -849,7 +875,7 @@ client.on("message", async message => {
                             .setColor('#800080')
                             .setTitle('Anonymous Poll')
                             .setDescription('A: ' + optionsArray[0] + '\nB: ' + optionsArray[1])
-                            .addField('ANONYMOUS POLL', 'Bot will only accept votes via DM! Send \"vote a\" or \"vote b\" to cast your vote!\nPoll runs for 5 minutes.')
+                            .addField('ANONYMOUS POLL', 'Bot will only accept votes via DM! Send \"vote a\" or \"vote b\" to cast your vote!\nPoll runs for '+pollMinutes+' minutes.\nType \"pollstatus\" to check on the poll!')
                         );
                         setTimeout(() => {
                             client.channels.get(instantChannel).send(new Discord.RichEmbed()
@@ -861,7 +887,7 @@ client.on("message", async message => {
                             currentPoll = false;
                             anonyPoll = false;
 
-                        }, 300000);
+                        }, pollTime);
                         return;
 
 
@@ -881,6 +907,8 @@ client.on("message", async message => {
                         currentPoll = true;
                         message.react("✅");
 
+                        currentPollTitle = optionsArray[2];
+
                         var hashedId = md5(message.author.id);
                         for (i = 0; i < secret; i++) {
                             hashedId = md5(hashedId);
@@ -894,7 +922,7 @@ client.on("message", async message => {
                             .setColor('#800080')
                             .setTitle('Anonymous Poll - ' + optionsArray[2])
                             .setDescription('A: ' + optionsArray[0] + '\nB: ' + optionsArray[1])
-                            .addField('ANONYMOUS POLL', 'Bot will only accept votes via DM! Send \"vote a\" or \"vote b\" to cast your vote!\nPoll runs for 5 minutes.')
+                            .addField('ANONYMOUS POLL', 'Bot will only accept votes via DM! Send \"vote a\" or \"vote b\" to cast your vote!\nPoll runs for '+pollMinutes+' minutes.\nType \"pollstatus\" to check on the poll!')
                         );
                         setTimeout(() => {
                             client.channels.get(instantChannel).send(new Discord.RichEmbed()
@@ -906,7 +934,7 @@ client.on("message", async message => {
                             currentPoll = false;
                             anonyPoll = false;
 
-                        }, 300000);
+                        }, pollTime);
                         return;
 
 
@@ -923,6 +951,9 @@ client.on("message", async message => {
                     option2 = 0;
                     pollVoters = "111111111111111111";
                     currentPoll = true;
+
+                    currentPollTitle = optionsArray[2];
+
                     message.react("✅");
 
                     var hashedId = md5(message.author.id);
@@ -938,7 +969,7 @@ client.on("message", async message => {
                         .setColor('#FFA500')
                         .setTitle('Poll - ' + optionsArray[2])
                         .setDescription('A: ' + optionsArray[0] + '\nB: ' + optionsArray[1])
-                        .addField('Vote now!', 'Type \"vote a\" or \"vote b\" to cast your vote!\nPoll runs for 5 minutes.')
+                        .addField('Vote now!', 'Type \"vote a\" or \"vote b\" to cast your vote!\nPoll runs for '+pollMinutes+' minutes.\nType \"pollstatus\" to check on the poll!')
                     );
                     setTimeout(() => {
                         client.channels.get(instantChannel).send(new Discord.RichEmbed()
@@ -949,7 +980,7 @@ client.on("message", async message => {
                         );
                         currentPoll = false;
 
-                    }, 300000);
+                    }, pollTime);
                     return;
 
 
@@ -978,7 +1009,7 @@ client.on("message", async message => {
                         .setColor('#FFA500')
                         .setTitle('Poll')
                         .setDescription('A: ' + optionsArray[0] + '\nB: ' + optionsArray[1])
-                        .addField('Vote now!', 'Type \"vote a\" or \"vote b\" to cast your vote!\nPoll runs for 5 minutes.')
+                        .addField('Vote now!', 'Type \"vote a\" or \"vote b\" to cast your vote!\nPoll runs for '+pollMinutes+' minutes.\nType \"pollstatus\" to check on the poll!')
                     );
                     setTimeout(() => {
                         client.channels.get(instantChannel).send(new Discord.RichEmbed()
@@ -989,11 +1020,11 @@ client.on("message", async message => {
                         );
                         currentPoll = false;
 
-                    }, 300000);
+                    }, pollTime);
                     return;
                 }
 
-                client.users.get(message.author.id).send("Invalid poll input! Use \"createpoll|<option1>|<option2>|<title (optional)>|anonpoll (optional)\"");
+                client.users.get(message.author.id).send("Invalid poll input! Use \"createpoll|<option1>|<option2>|<title (optional)>|anonpoll (optional)|duration (in minutes, optional)\"");
                 return;
 
             }
