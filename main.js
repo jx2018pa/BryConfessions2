@@ -695,12 +695,12 @@ client.on("message", async message => {
     if (message.author.bot) {
         return;
     }
-    if(message.content.toLowerCase() == "pollstatus" && message.channel.type != "dm") {
+    if(message.content.toLowerCase() == "pollstatus") {
     	if(currentPoll == false) {
     		message.channel.send("There is no poll currently running!");
     		return;
     	}
-    	message.channel.send("Title: "+currentPollTitle+"\nOption 1: "+currentPollOpt1+"\nOption 2: "+currentPollOpt2+"\nAnonymous: "+anonyPoll+"\nEnds in: "+Math.round(((pollEndTime-Date.now()) / 1000) / 60)+" minutes\n"+(option1+option2)+" people have voted");
+    	client.channels.get(instantChannel).send("Title: "+currentPollTitle+"\nOption 1: "+currentPollOpt1+"\nOption 2: "+currentPollOpt2+"\nAnonymous: "+anonyPoll+"\nEnds in: "+Math.round(((pollEndTime-Date.now()) / 1000) / 60)+" minutes\n"+(option1+option2)+" people have voted");
     	return;
     }
     if(message.content.toLowerCase() == "createpoll" || message.content.toLowerCase() == "pollhelp") {
