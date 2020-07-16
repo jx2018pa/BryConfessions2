@@ -1044,7 +1044,7 @@ client.on("message", async message => {
             client.channels.get(instantChannel).send('Confession #' + cNum);
             client.channels.get(instantChannel).send(attach[0].url);
             //return;
-        } else if (message.content.slice(message.content.length-3) == "png" || message.content.slice(message.content.length-3) == "jpg" || message.content.slice(message.content.length-3) == "gif" ||  message.content.slice(message.content.length-4) == "jpeg") {
+        } else if (message.content.slice(message.content.length-3) == "png" || message.content.slice(message.content.length-3) == "jpg" || message.content.slice(message.content.length-3) == "gif" ||  message.content.slice(message.content.length-4) == "jpeg" || message.content.includes("youtube.com") || message.content.includes("youtu.be") || message.content.includes("imgur.com") || message.content.includes("twitter.com") || message.content.includes("tenor.com")) {
             client.channels.get(instantChannel).send('Confession #' + cNum);
             client.channels.get(instantChannel).send(message.content);
         } else if (Math.random() < 0.4) {
