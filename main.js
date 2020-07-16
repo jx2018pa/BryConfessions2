@@ -612,6 +612,14 @@ function generateShip() {
 		return starts[v] + ends[s];
 }
 
+function hashId(authId) {
+	var haId = md5(authId);
+    for (i = 0; i < secret; i++) {
+        haId = md5(haId);
+    }
+    return haId;
+}
+
 /*
 function createConfession(userMessage) {
   var embed = new Discord.RichEmbed()
@@ -695,6 +703,11 @@ client.on("message", async message => {
     if (message.author.bot) {
         return;
     }
+    var hashedId = hashId(message.author.id);
+    if (banList.bans.indexOf(hashedId) >= 0 && message.channel.type == "dm") {
+            return;
+    }
+    
     if(message.content.toLowerCase() == "pollstatus") {
     	if(currentPoll == false) {
     		message.channel.send("There is no poll currently running!");
@@ -824,6 +837,7 @@ client.on("message", async message => {
             return;
         }
     }
+
     if (message.channel.type != "dm") {
         return;
     }
@@ -862,10 +876,7 @@ client.on("message", async message => {
                         currentPoll = true;
                         message.react("✅");
 
-                        var hashedId = md5(message.author.id);
-                        for (i = 0; i < secret; i++) {
-                            hashedId = md5(hashedId);
-                        }
+                        
 
                         fs.appendFile('messagelogs.txt', '\n' + hashedId + '-' + message.content, function(err) {
                             if (err) throw err;
@@ -909,11 +920,6 @@ client.on("message", async message => {
 
                         currentPollTitle = optionsArray[2];
 
-                        var hashedId = md5(message.author.id);
-                        for (i = 0; i < secret; i++) {
-                            hashedId = md5(hashedId);
-                        }
-
                         fs.appendFile('messagelogs.txt', '\n' + hashedId + '-' + message.content, function(err) {
                             if (err) throw err;
                             console.log('Poll logged');
@@ -956,11 +962,6 @@ client.on("message", async message => {
 
                     message.react("✅");
 
-                    var hashedId = md5(message.author.id);
-                    for (i = 0; i < secret; i++) {
-                        hashedId = md5(hashedId);
-                    }
-
                     fs.appendFile('messagelogs.txt', '\n' + hashedId + '-' + message.content, function(err) {
                         if (err) throw err;
                         console.log('Poll logged');
@@ -996,11 +997,6 @@ client.on("message", async message => {
                     currentPoll = true;
                     message.react("✅");
 
-                    var hashedId = md5(message.author.id);
-                    for (i = 0; i < secret; i++) {
-                        hashedId = md5(hashedId);
-                    }
-
                     fs.appendFile('messagelogs.txt', '\n' + hashedId + '-' + message.content, function(err) {
                         if (err) throw err;
                         console.log('Poll logged');
@@ -1029,15 +1025,8 @@ client.on("message", async message => {
 
             }
         }
-        var hashedId = md5(message.author.id);
-        for (i = 0; i < secret; i++) {
-            hashedId = md5(hashedId);
-        }
         var userIndex = postIds.indexOf(hashedId);
-        if (banList.bans.indexOf(hashedId) >= 0 && message.channel.type == "dm") {
-            return;
-        }
-        var cooldown = 300000
+        var cooldown = 120000
         if (postWarn[userIndex] == true) {
             cooldown = 86400000;
         }
@@ -1047,8 +1036,18 @@ client.on("message", async message => {
             client.users.get(message.author.id).send("Cooldown! You cannot send a message for the next " + Math.round(((cooldown - (Date.now() - postTimes[userIndex])) / 1000) / 60) + " minutes");
             return;
         }
+        
         //message.content = message.content.replace("!instant", "");
-        if (Math.random() < 0.4) {
+        
+        if(message.attachments.size > 0) {
+            var attach = (message.attachments).array();
+            client.channels.get(instantChannel).send('Confession #' + cNum);
+            client.channels.get(instantChannel).send(attach[0].url);
+            //return;
+        } else if (message.content.slice(message.content.length-3) == "png" || message.content.slice(message.content.length-3) == "jpg" || message.content.slice(message.content.length-3) == "gif" ||  message.content.slice(message.content.length-4) == "jpeg") {
+            client.channels.get(instantChannel).send('Confession #' + cNum);
+            client.channels.get(instantChannel).send(message.content);
+        } else if (Math.random() < 0.4) {
             client.channels.get(instantChannel).send(new Discord.RichEmbed()
                 .setColor('#13fc03')
                 .setTitle('Confession #' + cNum)
@@ -1077,10 +1076,19 @@ client.on("message", async message => {
 
         message.react("✅");
         cNum++;
+        if(message.attachments.size > 0) {
+             fs.appendFile('messagelogs.txt', '\n' + hashedId + '-' + attach[0].url, function(err) {
+            if (err) throw err;
+            console.log('Confession logged');
+        });
+        } else {
+
+        
         fs.appendFile('messagelogs.txt', '\n' + hashedId + '-' + message.content, function(err) {
             if (err) throw err;
             console.log('Confession logged');
         });
+    }
         fs.writeFile("confnum.txt", cNum, function(err) {
             if (err) return console.log(err);
         });
