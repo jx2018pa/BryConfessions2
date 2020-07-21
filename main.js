@@ -149,10 +149,7 @@ client.on("message", async message => {
     	} else {
             message.channel.send("Invalid input!");
         }
-    	
-
     }
-
     
     if(message.content.includes("bryquote")) {
         var picarr = message.content.split(" ");
