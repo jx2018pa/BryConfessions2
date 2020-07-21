@@ -117,8 +117,8 @@ client.on("ready", () => {
         if(d.getHours == 6) {
             client.channels.get(instantChannel).send("Good morning! Today is "+d.getMonth()+"-"+d.getDate()+". It is WHS Day N/A.\nQuote of the day:");
             client.channels.get(instantChannel).send(retArr(config.bryquotes));
-            client.channels.get(534903670618193921).send("Good morning! Today is "+d.getMonth()+"-"+d.getDate()+". It is WHS Day N/A.\nQuote of the day:");
-            client.channels.get(534903670618193921).send(retArr(config.bryquotes));
+            client.channels.get(496796970929618945).send("Good morning! Today is "+d.getMonth()+"-"+d.getDate()+". It is WHS Day N/A.\nQuote of the day:");
+            client.channels.get(496796970929618945).send(retArr(config.bryquotes));
 
             
         }
