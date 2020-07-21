@@ -115,7 +115,12 @@ client.on("ready", () => {
     setInterval(function() {
         var d = new Date();
         if(d.getHours == 6) {
-            client.channels.get(instantChannel).send("Good morning! Today is "+d.getMonth()+"-"+d.getDate()+". It is WHS Day N/A.");
+            client.channels.get(instantChannel).send("Good morning! Today is "+d.getMonth()+"-"+d.getDate()+". It is WHS Day N/A.\nQuote of the day:");
+            client.channels.get(instantChannel).send(retArr(config.bryquotes));
+            client.channels.get(534903670618193921).send("Good morning! Today is "+d.getMonth()+"-"+d.getDate()+". It is WHS Day N/A.\nQuote of the day:");
+            client.channels.get(534903670618193921).send(retArr(config.bryquotes));
+
+            
         }
     }, 2100000)
 });
@@ -160,19 +165,25 @@ client.on("message", async message => {
     	} else {
             message.channel.send("Invalid input!");
         }
+        return;
     }
+
 
     if(message.content == "neil") {
         message.channel.send(retArr(config.neil));
+        return;
     }
     if(message.content == "ben") {
         message.channel.send(retArr(config.ben));
+        return;
     }
     if(message.content == "anthony") {
         message.channel.send(retArr(config.anthony));
+        return;
     }
     if(message.content == "vincent") {
         message.channel.send(retArr(config.vincent));
+        return;
     }
     if(message.content.includes("bryquote")) {
         var picarr = message.content.split(" ");
@@ -196,7 +207,7 @@ client.on("message", async message => {
         } else {
             message.channel.send("Invalid input!");
         }
-        
+        return;
 
     }
 
