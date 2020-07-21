@@ -104,9 +104,20 @@ function hashId(authId) {
     return haId;
 }
 
+function retArr(array) {
+    var indX = Math.floor(Math.random() * array.length);
+    return array[indX];
+}
+
 client.on("ready", () => {
     console.log(`Bot has started, with ${client.users.size} users, in ${client.channels.size} channels of ${client.guilds.size} guilds.`);
     client.user.setActivity("Type \"bryhelp\" or \"bryrules\" for more info");
+    setInterval(function() {
+        var d = new Date();
+        if(d.getHours == 6) {
+            client.channels.get(instantChannel).send("Good morning! Today is "+d.getMonth()+"-"+d.getDate()+". It is WHS Day N/A.");
+        }
+    }, 2100000)
 });
 
 client.on("guildCreate", guild => {
@@ -150,7 +161,19 @@ client.on("message", async message => {
             message.channel.send("Invalid input!");
         }
     }
-    
+
+    if(message.content == "neil") {
+        message.channel.send(retArr(config.neil));
+    }
+    if(message.content == "ben") {
+        message.channel.send(retArr(config.ben));
+    }
+    if(message.content == "anthony") {
+        message.channel.send(retArr(config.anthony));
+    }
+    if(message.content == "vincent") {
+        message.channel.send(retArr(config.vincent));
+    }
     if(message.content.includes("bryquote")) {
         var picarr = message.content.split(" ");
         var brynum = parseInt(picarr[1])
@@ -573,5 +596,8 @@ client.on("message", async message => {
         return;
     }
 });
+
+
+
 
 client.login(auth.token);
