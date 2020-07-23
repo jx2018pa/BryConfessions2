@@ -40,7 +40,7 @@ const config = require("./config.json");
 
 
 //const logChannel = "675193177656918039";
-const instantChannel = "675350296142282752";
+let instantChannel = "675350296142282752";
 //const slowChannels = ["675201659558690875", "675350296142282752", "675381993642393641"];
 
 let postIds = [];
@@ -61,6 +61,7 @@ let currentPollTitle = "";
 let currentPollOpt1 = "";
 let currentPollOpt2 = "";
 let pollEndTime = 5;
+let serious = false;
 var args;
 var userInd;
 var options;
@@ -138,6 +139,18 @@ client.on("message", async message => {
     if (message.author.bot) {
         return;
     }
+    instantChannel = "675350296142282752";
+    serious = false;
+    if(message.content.toLowerCase().slice(0, 8) == "!serious") {
+        instantChannel = "735897976861360248";
+        serious = true;
+    }
+    if(message.channel.id == "735897976861360248") {
+        if(message.content.slice(0,4) == "vote" || message.content.slice(0,6) == "report") {
+            message.channel.send("This command must be performed in #bry-confessions!");
+            return;
+        }
+    }
     var hashedId = hashId(message.author.id);
     if (banList.bans.indexOf(hashedId) >= 0 && message.channel.type == "dm") {
             return;
@@ -183,6 +196,10 @@ client.on("message", async message => {
     }
     if(message.content == "vincent") {
         message.channel.send(retArr(config.vincent));
+        return;
+    }
+    if(message.content == "memoli") {
+        message.channel.send(retArr(config.memoli));
         return;
     }
     if(message.content.includes("bryquote")) {
@@ -523,7 +540,7 @@ client.on("message", async message => {
             }
         }
         var userIndex = postIds.indexOf(hashedId);
-        var cooldown = 120000
+        var cooldown = 20000
         if (postWarn[userIndex] == true) {
             cooldown = 86400000;
         }
@@ -544,6 +561,13 @@ client.on("message", async message => {
         } else if (message.content.slice(message.content.length-3) == "png" || message.content.slice(message.content.length-3) == "jpg" || message.content.slice(message.content.length-3) == "gif" ||  message.content.slice(message.content.length-4) == "jpeg" || message.content.includes("youtube.com") || message.content.includes("youtu.be") || message.content.includes("imgur.com") || message.content.includes("twitter.com") || message.content.includes("tenor.com")) {
             client.channels.get(instantChannel).send('Confession #' + cNum);
             client.channels.get(instantChannel).send(message.content);
+        } else if (serious) {
+            client.channels.get(instantChannel).send(new Discord.RichEmbed()
+                .setColor('#800080')
+                .setTitle('Confession #' + cNum)
+                .setDescription(message.content.slice(9))
+                //.addField('Word of rngesus', addReaction())
+            );
         } else if (Math.random() < 0.4) {
             client.channels.get(instantChannel).send(new Discord.RichEmbed()
                 .setColor('#13fc03')
