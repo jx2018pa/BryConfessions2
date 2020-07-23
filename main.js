@@ -62,6 +62,9 @@ let currentPollOpt1 = "";
 let currentPollOpt2 = "";
 let pollEndTime = 5;
 let serious = false;
+let verifyNum = -1;
+let explo = false;
+let isRoulette = false;
 var args;
 var userInd;
 var options;
@@ -113,17 +116,6 @@ function retArr(array) {
 client.on("ready", () => {
     console.log(`Bot has started, with ${client.users.size} users, in ${client.channels.size} channels of ${client.guilds.size} guilds.`);
     client.user.setActivity("Type \"bryhelp\" or \"bryrules\" for more info");
-    setInterval(function() {
-        var d = new Date();
-        if(d.getHours == 6) {
-            client.channels.get(instantChannel).send("Good morning! Today is "+d.getMonth()+"-"+d.getDate()+". It is WHS Day N/A.\nQuote of the day:");
-            client.channels.get(instantChannel).send(retArr(config.bryquotes));
-            client.channels.get(496796970929618945).send("Good morning! Today is "+d.getMonth()+"-"+d.getDate()+". It is WHS Day N/A.\nQuote of the day:");
-            client.channels.get(496796970929618945).send(retArr(config.bryquotes));
-
-            
-        }
-    }, 2100000)
 });
 
 client.on("guildCreate", guild => {
@@ -141,6 +133,7 @@ client.on("message", async message => {
     }
     instantChannel = "675350296142282752";
     serious = false;
+    verifyNum = -1;
     if(message.content.toLowerCase().slice(0, 8) == "!serious") {
         instantChannel = "735897976861360248";
         serious = true;
@@ -155,7 +148,30 @@ client.on("message", async message => {
     if (banList.bans.indexOf(hashedId) >= 0 && message.channel.type == "dm") {
             return;
     }
-    
+    explo = false;
+    if(message.content.slice(0,17) == "!explodingmessage") {
+        explo = true;
+    }
+
+    var veri = message.content.split(" ");
+    var spliceArea = message.content.indexOf(" ");
+    if(message.content.slice(0,7) == "verify|" && message.channel.type == "dm") {
+        
+        var veriNumArr = veri[0].split("|");
+        var veriNum = parseInt(veriNumArr[1]);
+        var veriConfIndex = repPostNum.indexOf(veriNum);
+        if(repPostUser[veriConfIndex] == hashedId) {
+            verifyNum = veriNumArr[1];
+        } else {
+            message.channel.send("Verification failure!");
+            return;
+        }
+    }
+    isRoulette = false;
+    if(message.content.slice(0,9) == "!roulette") {
+        isRoulette = true;
+    }
+
     if(message.content.includes("brypic")) {
     	var picarr = message.content.split(" ");
     	var brynum = parseInt(picarr[1])
@@ -200,6 +216,26 @@ client.on("message", async message => {
     }
     if(message.content == "memoli") {
         message.channel.send(retArr(config.memoli));
+        return;
+    }
+    if(message.content == "franklin") {
+        message.channel.send(retArr(config.franklin));
+        return;
+    }
+    if(message.content == "pal") {
+        message.channel.send(retArr(config.pal));
+        return;
+    }
+    if(message.content == "brymeme") {
+        message.channel.send(retArr(config.brymeme));
+        return;
+    }
+    if(message.content == "john") {
+        message.channel.send(retArr(config.john));
+        return;
+    }
+    if(message.content == "willy") {
+        message.channel.send(retArr(config.willy));
         return;
     }
     if(message.content.includes("bryquote")) {
@@ -276,7 +312,7 @@ client.on("message", async message => {
         client.channels.get(instantChannel).send(new Discord.RichEmbed()
             .setColor('#ffff00')
             .setTitle('Bry Confessions Help')
-            .setDescription('DM the bot to submit a new confession. Confessions will be anonymously posted to #bry-confessions.\nThere is a 5-minutes cooldown for all users by default, but users that have been reported or are spamming may receive longer cooldowns.\nIf you would like to report a confession, type \"report <confession number>\" and confessions with more than 3 reports will impose a cooldown on the posting user.\nWant to make a poll? DM the bot \"createpoll|<option1>|<option2>|<title (optional)>|anonpoll (optional)|duration (in minutes, optional)\"')
+            .setDescription('DM the bot to submit a new confession. Confessions will be anonymously posted to #bry-confessions.\nThere is a 5-minutes cooldown for all users by default, but users that have been reported or are spamming may receive longer cooldowns.\nIf you would like to report a confession, type \"report <confession number>\" and confessions with more than 3 reports will impose a cooldown on the posting user.\nWant to make a poll? DM the bot \"createpoll|<option1>|<option2>|<title (optional)>|anonpoll (optional)|duration (in minutes, optional)\"\nTo write a serious confession (no reaction, seperate channel) begin your confession with \"!serious\"\nTo verify you wrote a previous confession begin your DM to the bot with \"verify|<confession number>\"\nTo write a message that disappears after 45s add \"!explodingmessage\" before your confession\nTo play roulette, with a 1/6 chance of message reveal, type \"!roulette\" before your confession')
         );
         return;
     }
@@ -547,7 +583,7 @@ client.on("message", async message => {
         //console.log(userIndex);
         //console.log("Array is at "+userIndex);
         if ((Date.now() - postTimes[userIndex]) <= cooldown && userIndex != -1) {
-            client.users.get(message.author.id).send("Cooldown! You cannot send a message for the next " + Math.round(((cooldown - (Date.now() - postTimes[userIndex])) / 1000) / 60) + " minutes");
+            client.users.get(message.author.id).send("Cooldown! You cannot send a message for the next " + Math.round((cooldown - (Date.now() - postTimes[userIndex])) / 1000) + " seconds");
             return;
         }
         
@@ -567,6 +603,37 @@ client.on("message", async message => {
                 .setTitle('Confession #' + cNum)
                 .setDescription(message.content.slice(9))
                 //.addField('Word of rngesus', addReaction())
+            );
+        } else if (explo) {
+            client.channels.get(instantChannel).send(new Discord.RichEmbed()
+                .setColor('#FF0000')
+                .setTitle('Exploding Message')
+                .setDescription(message.content.slice(17))
+            ).then(sentMessage => {
+    sentMessage.delete(45000);
+});
+        } else if (isRoulette) {
+            if(Math.random() < 0.17) {
+                client.channels.get(instantChannel).send(new Discord.RichEmbed()
+                    .setColor('#FF0000')
+                    .setTitle('Bryconf Roulette #' + cNum)
+                    .setDescription(message.content.slice(10))
+                    .addField('ROULETTE', '😱 The author of this confession was <@'+message.author.id+'>!!!\n1/6 chance')
+                );
+            } else {
+                client.channels.get(instantChannel).send(new Discord.RichEmbed()
+                    .setColor('#bfff00')
+                    .setTitle('Bryconf Roulette #' + cNum)
+                    .setDescription(message.content.slice(10))
+                    .addField('ROULETTE', '😌 The author of this confession will stay anonymous!\n5/6 chance')
+                );
+            }
+        } else if (verifyNum > -1) {
+            client.channels.get(instantChannel).send(new Discord.RichEmbed()
+                .setColor('#13fc03')
+                .setTitle('Confession #' + cNum)
+                .setDescription(message.content.slice(spliceArea))
+                .addField('Verified!', "✅ This user also wrote confession #"+verifyNum)
             );
         } else if (Math.random() < 0.4) {
             client.channels.get(instantChannel).send(new Discord.RichEmbed()
@@ -632,7 +699,15 @@ client.on("message", async message => {
     }
 });
 
-
+setInterval(function() {
+        var d = new Date();
+        if(d.getHours == 6) {
+            client.channels.get(instantChannel).send("Good morning! Today is "+d.getMonth()+"-"+d.getDate()+". It is WHS Day N/A.\nQuote of the day:");
+            client.channels.get(instantChannel).send(retArr(config.bryquotes));
+            client.channels.get(496796970929618945).send("Good morning! Today is "+d.getMonth()+"-"+d.getDate()+". It is WHS Day N/A.\nQuote of the day:");
+            client.channels.get(496796970929618945).send(retArr(config.bryquotes));            
+        }
+}, 2100000)
 
 
 client.login(auth.token);
