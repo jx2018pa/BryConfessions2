@@ -238,6 +238,26 @@ client.on("message", async message => {
         message.channel.send(retArr(config.willy));
         return;
     }
+    if(message.content == "pastconf") {
+        var dex = Math.floor(Math.random() * config.pastconfs.length);
+        var pConfSplit = config.pastconfs[dex].split("BBSEP");
+        if(pConfSplit.length == 2) {
+            message.channel.send(new Discord.RichEmbed()
+            .setColor('#88c0d0')
+            .setTitle(pConfSplit[0])
+            .setDescription(pConfSplit[1])
+        );
+        return;
+    } else {
+         message.channel.send(new Discord.RichEmbed()
+            .setColor('#88c0d0')
+            .setTitle(pConfSplit[0])
+            .setDescription(pConfSplit[1])
+            .addField('Word of rngesus', pConfSplit[2])
+        );
+    }
+        
+    }
     if(message.content.includes("bryquote")) {
         var picarr = message.content.split(" ");
         var brynum = parseInt(picarr[1])
@@ -576,7 +596,7 @@ client.on("message", async message => {
             }
         }
         var userIndex = postIds.indexOf(hashedId);
-        var cooldown = 20000
+        var cooldown = 20000;
         if (postWarn[userIndex] == true) {
             cooldown = 86400000;
         }
@@ -613,7 +633,9 @@ client.on("message", async message => {
     sentMessage.delete(45000);
 });
         } else if (isRoulette) {
-            if(Math.random() < 0.17) {
+            var rand = Math.random();
+            //console.log(rand);
+            if(rand < 0.17) {
                 client.channels.get(instantChannel).send(new Discord.RichEmbed()
                     .setColor('#FF0000')
                     .setTitle('Bryconf Roulette #' + cNum)
