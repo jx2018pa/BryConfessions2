@@ -238,6 +238,10 @@ client.on("message", async message => {
         message.channel.send(retArr(config.willy));
         return;
     }
+    if(message.content == "angela") {
+        message.channel.send(retArr(config.angela));
+        return;
+    }
     if(message.content == "pastconf") {
         var dex = Math.floor(Math.random() * config.pastconfs.length);
         var pConfSplit = config.pastconfs[dex].split("BBSEP");
