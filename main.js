@@ -332,7 +332,7 @@ client.on("message", async message => {
         client.channels.get(instantChannel).send(new Discord.RichEmbed()
             .setColor('#ffff00')
             .setTitle('Bry Confessions Help')
-            .setDescription('DM the bot to submit a new confession. Confessions will be anonymously posted to #bry-confessions.\nThere is a 5-minutes cooldown for all users by default, but users that have been reported or are spamming may receive longer cooldowns.\nIf you would like to report a confession, type \"report <confession number>\" and confessions with more than 3 reports will impose a cooldown on the posting user.\nWant to make a poll? DM the bot \"createpoll|<option1>|<option2>|<title (optional)>|anonpoll (optional)|duration (in minutes, optional)\"\nTo write a serious confession (no reaction, seperate channel) begin your confession with \"!serious\"\nTo verify you wrote a previous confession begin your DM to the bot with \"verify|<confession number>\"\nTo write a message that disappears after 45s add \"!explodingmessage\" before your confession\nTo play roulette, with a 1/6 chance of message reveal, type \"!roulette\" before your confession')
+            .setDescription('DM the bot to submit a new confession. Confessions will be anonymously posted to #bry-confessions.\nThere is a 5-minutes cooldown for all users by default, but users that have been reported or are spamming may receive longer cooldowns.\nIf you would like to report a confession, type \"report <confession number>\" and confessions with more than 3 reports will impose a cooldown on the posting user.\nWant to make a poll? DM the bot \"createpoll|<option1>|<option2>|<title (optional)>|anonpoll (optional)|duration (in minutes, optional)\"\nTo write a serious confession (no reaction, seperate channel) begin your confession with \"!serious\"\nTo verify you wrote a previous confession begin your DM to the bot with \"verify|<confession number>\"\nTo write a message that disappears after 45s add \"!explodingmessage\" before your confession\nTo play roulette, with a 20% chance of message reveal, type \"!roulette\" before your confession')
         );
         return;
     }
@@ -640,14 +640,14 @@ client.on("message", async message => {
                     .setColor('#FF0000')
                     .setTitle('Bryconf Roulette #' + cNum)
                     .setDescription(message.content.slice(10))
-                    .addField('ROULETTE', '😱 The author of this confession was <@'+message.author.id+'>!!!\n1/6 chance')
+                    .addField('ROULETTE', '😱 The author of this confession was <@'+message.author.id+'>!!!\n20% chance')
                 );
             } else {
                 client.channels.get(instantChannel).send(new Discord.RichEmbed()
                     .setColor('#bfff00')
                     .setTitle('Bryconf Roulette #' + cNum)
                     .setDescription(message.content.slice(10))
-                    .addField('ROULETTE', '😌 The author of this confession will stay anonymous!\n5/6 chance')
+                    .addField('ROULETTE', '😌 The author of this confession will stay anonymous!\n80% chance')
                 );
             }
         } else if (verifyNum > -1) {
