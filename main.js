@@ -634,8 +634,8 @@ client.on("message", async message => {
 });
         } else if (isRoulette) {
             var rand = Math.random();
-            //console.log(rand);
-            if(rand < 0.17) {
+            console.log(rand);
+            if(rand < 0.2) {
                 client.channels.get(instantChannel).send(new Discord.RichEmbed()
                     .setColor('#FF0000')
                     .setTitle('Bryconf Roulette #' + cNum)
