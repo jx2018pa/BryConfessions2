@@ -28,6 +28,7 @@ const md5 = require('md5');
 //write to file
 const fs = require('fs');
 let cNum = parseInt(fs.readFileSync("confnum.txt", "utf8"));
+let starUsers = fs.readFileSync("starusers.txt", "utf8");
 const secret = parseInt(fs.readFileSync("secretkey.txt", "utf8"));
 const client = new Discord.Client();
 
@@ -131,6 +132,9 @@ client.on("message", async message => {
     if (message.author.bot) {
         return;
     }
+    if(starUsers.indexOf(message.author.id) > -1 && message.channel.type != "dm") {
+    	message.react("✨");
+    }
     instantChannel = "675350296142282752";
     serious = false;
     verifyNum = -1;
@@ -197,7 +201,22 @@ client.on("message", async message => {
         return;
     }
 
-
+    if (message.content.toLowerCase() == "bryhelp") {
+        message.channel.send(new Discord.RichEmbed()
+            .setColor('#ffff00')
+            .setTitle('Bry Confessions Help')
+            .setDescription('DM the bot to submit a new confession. Confessions will be anonymously posted to #bry-confessions.\nThere is a 5-minutes cooldown for all users by default, but users that have been reported or are spamming may receive longer cooldowns.\nIf you would like to report a confession, type \"report <confession number>\" and confessions with more than 3 reports will impose a cooldown on the posting user.\nWant to make a poll? DM the bot \"createpoll|<option1>|<option2>|<title (optional)>|anonpoll (optional)|duration (in minutes, optional)\"\nTo write a serious confession (no reaction, seperate channel) begin your confession with \"!serious\"\nTo verify you wrote a previous confession begin your DM to the bot with \"verify|<confession number>\"\nTo write a message that disappears after 45s add \"!explodingmessage\" before your confession\nTo play roulette, with a 20% chance of message reveal, type \"!roulette\" before your confession')
+        );
+        return;
+    }
+    if (message.content.toLowerCase() == "bryrules") {
+        message.channel.send(new Discord.RichEmbed()
+            .setColor('#ffff00')
+            .setTitle('Bry Confessions Rules')
+            .setDescription('Any content that can be perceived as hateful, harmful, dangerous or otherwise highly distasteful can result in a temporary or permanent ban.\nRepetitive spam may result in a 24hour cooldown or possibly a ban if behavior continues.')
+        );
+        return;
+    }
     if(message.content == "neil") {
         message.channel.send(retArr(config.neil));
         return;
@@ -331,23 +350,6 @@ client.on("message", async message => {
         pollVoters = pollVoters + message.author.id.toString();
         return;
     }
-
-    if (message.content.toLowerCase() == "bryhelp" && message.channel.id == instantChannel) {
-        client.channels.get(instantChannel).send(new Discord.RichEmbed()
-            .setColor('#ffff00')
-            .setTitle('Bry Confessions Help')
-            .setDescription('DM the bot to submit a new confession. Confessions will be anonymously posted to #bry-confessions.\nThere is a 5-minutes cooldown for all users by default, but users that have been reported or are spamming may receive longer cooldowns.\nIf you would like to report a confession, type \"report <confession number>\" and confessions with more than 3 reports will impose a cooldown on the posting user.\nWant to make a poll? DM the bot \"createpoll|<option1>|<option2>|<title (optional)>|anonpoll (optional)|duration (in minutes, optional)\"\nTo write a serious confession (no reaction, seperate channel) begin your confession with \"!serious\"\nTo verify you wrote a previous confession begin your DM to the bot with \"verify|<confession number>\"\nTo write a message that disappears after 45s add \"!explodingmessage\" before your confession\nTo play roulette, with a 20% chance of message reveal, type \"!roulette\" before your confession')
-        );
-        return;
-    }
-    if (message.content.toLowerCase() == "bryrules" && message.channel.id == instantChannel) {
-        client.channels.get(instantChannel).send(new Discord.RichEmbed()
-            .setColor('#ffff00')
-            .setTitle('Bry Confessions Rules')
-            .setDescription('Any content that can be perceived as hateful, harmful, dangerous or otherwise highly distasteful can result in a temporary or permanent ban.\nRepetitive spam may result in a 24hour cooldown or possibly a ban if behavior continues.')
-        );
-        return;
-    }
     if (message.content.toLowerCase() == "vote a" && message.channel.id == instantChannel && currentPoll == true) {
         if (anonyPoll == true) {
             return;
@@ -414,6 +416,22 @@ client.on("message", async message => {
 
     if (message.channel.type != "dm") {
         return;
+    }
+    if(cNum%1000 == 0) {
+    	client.channels.get(instantChannel).send(new Discord.RichEmbed()
+            .setColor('#ffa500')
+            .setTitle('CONFESSION #'+cNum)
+            .setDescription('Congratulations to <@'+message.author.id+'> for sending confession #'+cNum+'!!!!')
+        );
+        cNum++;
+        if(starUsers.indexOf(message.author.id) > -1) {
+        	return;
+        } else {
+        	starUsers.push(message.author.id);
+        	fs.writeFile("starusers.txt", starUsers, function(err) {
+            if (err) return console.log(err);
+        });
+        }
     }
     if (message.channel.type == "dm" && message.author.bot != true) {
         if (message.content.toLowerCase().slice(0, 11).includes("createpoll|")) {
@@ -724,16 +742,6 @@ client.on("message", async message => {
         return;
     }
 });
-
-setInterval(function() {
-        var d = new Date();
-        if(d.getHours == 6) {
-            client.channels.get(instantChannel).send("Good morning! Today is "+d.getMonth()+"-"+d.getDate()+". It is WHS Day N/A.\nQuote of the day:");
-            client.channels.get(instantChannel).send(retArr(config.bryquotes));
-            client.channels.get(496796970929618945).send("Good morning! Today is "+d.getMonth()+"-"+d.getDate()+". It is WHS Day N/A.\nQuote of the day:");
-            client.channels.get(496796970929618945).send(retArr(config.bryquotes));            
-        }
-}, 2100000)
 
 
 client.login(auth.token);
