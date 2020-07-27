@@ -431,7 +431,9 @@ client.on("message", async message => {
         	fs.writeFile("starusers.txt", starUsers, function(err) {
             if (err) return console.log(err);
         });
+        	return;
         }
+        return;
     }
     if (message.channel.type == "dm" && message.author.bot != true) {
         if (message.content.toLowerCase().slice(0, 11).includes("createpoll|")) {
