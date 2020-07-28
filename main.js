@@ -28,13 +28,12 @@ const md5 = require('md5');
 //write to file
 const fs = require('fs');
 let cNum = parseInt(fs.readFileSync("confnum.txt", "utf8"));
-let starUsers = fs.readFileSync("starusers.txt", "utf8");
+let starUsers = fs.readFileSync('starusers.txt').toString().split("-");
+let userEmojis = fs.readFileSync('useremojis.txt').toString().split("-");
 const secret = parseInt(fs.readFileSync("secretkey.txt", "utf8"));
 const client = new Discord.Client();
 
 const auth = require("./auth.json");
-
-
 
 const banList = require("./banlist.json"); //this should never be uploaded publicly
 const config = require("./config.json");
@@ -133,7 +132,13 @@ client.on("message", async message => {
         return;
     }
     if(starUsers.indexOf(message.author.id) > -1 && message.channel.type != "dm") {
-    	message.react("✨");
+    	try {
+    		message.react(userEmojis[starUsers.indexOf(message.author.id)]);
+    	}
+    	catch(err) {
+    		console.log("User react failed");
+    	}
+    	
     }
     instantChannel = "675350296142282752";
     serious = false;
@@ -175,7 +180,16 @@ client.on("message", async message => {
     if(message.content.slice(0,9) == "!roulette") {
         isRoulette = true;
     }
-
+    if(message.content.includes("!setemoji")) {
+    	if(starUsers.indexOf(message.author.id) == -1) {
+    		message.channel.send("You do not have a perk!");
+    	} else {
+    		console.log(message.content.slice(10,12));
+    		userEmojis[starUsers.indexOf(message.author.id)] = message.content.slice(10,12);
+    		message.channel.send("Emoji set! Please note that only true emojis will work.");
+    	}
+    	return;
+    }
     if(message.content.includes("brypic")) {
     	var picarr = message.content.split(" ");
     	var brynum = parseInt(picarr[1])
@@ -424,15 +438,16 @@ client.on("message", async message => {
             .setDescription('Congratulations to <@'+message.author.id+'> for sending confession #'+cNum+'!!!!')
         );
         cNum++;
-        if(starUsers.indexOf(message.author.id) > -1) {
-        	return;
-        } else {
-        	starUsers.push(message.author.id);
-        	fs.writeFile("starusers.txt", starUsers, function(err) {
-            if (err) return console.log(err);
+        starUsers.push(message.author.id);
+        fs.appendFile('starusers.txt', '-' + message.author.id, function(err) {
+            if (err) throw err;
+            console.log('Star user logged');
         });
-        	return;
-        }
+        userEmojis.push("✨");
+        fs.appendFile('useremojis.txt', '-✨', function(err) {
+            if (err) throw err;
+            console.log('User emoji logged');
+        });
         return;
     }
     if (message.channel.type == "dm" && message.author.bot != true) {
@@ -658,7 +673,6 @@ client.on("message", async message => {
 });
         } else if (isRoulette) {
             var rand = Math.random();
-            console.log(rand);
             if(rand < 0.2) {
                 client.channels.get(instantChannel).send(new Discord.RichEmbed()
                     .setColor('#FF0000')
