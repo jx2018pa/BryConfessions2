@@ -638,6 +638,7 @@ client.on("message", async message => {
         var cooldown = 20000;
         if (postWarn[userIndex] == true) {
             cooldown = 86400000;
+            postWarn[userIndex] == false;
         }
         //console.log(userIndex);
         //console.log("Array is at "+userIndex);
