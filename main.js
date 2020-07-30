@@ -45,7 +45,7 @@ let instantChannel = "675350296142282752";
 
 let postIds = [];
 let postTimes = [];
-let postWarn = [];
+//let postWarn = [];
 
 let repPostNum = [];
 let repPostUser = [];
@@ -70,6 +70,15 @@ var userInd;
 var options;
 var s,v;
 var anonyPoll = false;
+
+let tempBanUsers = [];
+let tempBanTimes = [];
+
+var startTime = 0;
+
+let rouletteHit = 0;
+let rouletteSave = 0;
+
 
 function addReaction() {
 
@@ -116,6 +125,7 @@ function retArr(array) {
 client.on("ready", () => {
     console.log(`Bot has started, with ${client.users.size} users, in ${client.channels.size} channels of ${client.guilds.size} guilds.`);
     client.user.setActivity("Type \"bryhelp\" or \"bryrules\" for more info");
+    startTime = Date.now();
 });
 
 client.on("guildCreate", guild => {
@@ -228,6 +238,20 @@ client.on("message", async message => {
             .setColor('#ffff00')
             .setTitle('Bry Confessions Rules')
             .setDescription('Any content that can be perceived as hateful, harmful, dangerous or otherwise highly distasteful can result in a temporary or permanent ban.\nRepetitive spam may result in a 24hour cooldown or possibly a ban if behavior continues.')
+        );
+        return;
+    }
+    if(message.content.toLowerCase() == "brystatus") {
+        var banNum = 0;
+        for (var i = 0; i < tempBanUsers.length; i++) {
+            if(tempBanUsers[i] != "free") {
+                banNum++;
+            }
+        }
+        message.channel.send(new Discord.RichEmbed()
+            .setColor('#0000FF')
+            .setTitle('Bry Confessions Status')
+            .setDescription('Bot has been online for '+Math.round((startTime-Date.now())/3600000)+' hours.\nThere are currently '+banNum+' tempbanned users, and '+banList.bans.length+' permabanned users.\n'+starUsers.length+' users have perks!\nOut of all roulette confessions, '+rouletteHit+' have been revealed and '+rouletteSave+' have not.')
         );
         return;
     }
@@ -403,6 +427,10 @@ client.on("message", async message => {
         const reportsNeeded = 3;
         if (repPostNum.indexOf(reported) > -1) {
             let reportIndex = repPostNum.indexOf(reported);
+            if(repPostVol[reportIndex] == -100) {
+            	message.channel.send("This confession has already been successfully reported!");
+            	return;
+            }
             for (i = 0; i < (repPostReppers[reportIndex].length / 18); i++) {
                 userInd = parseInt(repPostReppers[reportIndex].slice(i * 18, i * 18 + 18));
                 if (userInd == message.author.id) {
@@ -412,7 +440,14 @@ client.on("message", async message => {
             }
             if (repPostVol[reportIndex] >= reportsNeeded) {
                 var reportUserIndex = postIds.indexOf(repPostUser[reportIndex]);
-                postWarn[reportUserIndex] = true;
+                //postWarn[reportUserIndex] = true;
+                if(tempBanUsers.indexOf(repPostUser[reportUserIndex]) > -1) {
+                	//do nothing
+                } else {
+                	tempBanUsers.push(repPostUser[reportUserIndex]);
+                	tempBanTimes.push(Date.now()+86400000);
+                }
+                repPostVol[reportIndex] = -100;
                 message.channel.send("Your report for confession #" + repPostNum[reportIndex] + " has been counted. The user who sent the confession now has a 24 hour cooldown.");
                 return;
             }
@@ -636,9 +671,17 @@ client.on("message", async message => {
         }
         var userIndex = postIds.indexOf(hashedId);
         var cooldown = 20000;
-        if (postWarn[userIndex] == true) {
-            cooldown = 86400000;
-            postWarn[userIndex] == false;
+        // 
+        
+        if(tempBanUsers.indexOf(hashedId) == -1 || tempBanUsers[tempBanUsers.indexOf(hashedId)] == "free") {
+            cooldown = 20000;
+        } else if(Date.now() >= tempBanTimes[tempBanUsers.indexOf(hashedId)]) {
+            tempBanUsers[tempBanUsers.indexOf(hashedId)] = "free";
+            cooldown = 20000;
+        } else if(tempBanUsers.indexOf(hashedId) > -1 && Date.now() <= tempBanTimes[tempBanUsers.indexOf(hashedId)]) {
+        	cooldown = (tempBanTimes[tempBanUsers.indexOf(hashedId)]-(Date.now()));
+            client.users.get(message.author.id).send("Temporary ban! You cannot send a message for the next " + Math.round((tempBanTimes[tempBanUsers.indexOf(hashedId)]-(Date.now()))/60000) + " minutes");
+            return;
         }
         //console.log(userIndex);
         //console.log("Array is at "+userIndex);
@@ -672,6 +715,7 @@ client.on("message", async message => {
             ).then(sentMessage => {
     sentMessage.delete(45000);
 });
+            return;
         } else if (isRoulette) {
             var rand = Math.random();
             if(rand < 0.2) {
@@ -681,6 +725,7 @@ client.on("message", async message => {
                     .setDescription(message.content.slice(10))
                     .addField('ROULETTE', '😱 The author of this confession was <@'+message.author.id+'>!!!\n20% chance')
                 );
+                rouletteHit++;
             } else {
                 client.channels.get(instantChannel).send(new Discord.RichEmbed()
                     .setColor('#bfff00')
@@ -688,6 +733,7 @@ client.on("message", async message => {
                     .setDescription(message.content.slice(10))
                     .addField('ROULETTE', '😌 The author of this confession will stay anonymous!\n80% chance')
                 );
+                rouletteSave++;
             }
         } else if (verifyNum > -1) {
             client.channels.get(instantChannel).send(new Discord.RichEmbed()
@@ -711,11 +757,11 @@ client.on("message", async message => {
             );
         }
         if (userIndex > -1) {
-            postTimes[userIndex] = Date.now()
+            postTimes[userIndex] = Date.now();
         } else {
             postIds.push(hashedId);
             postTimes.push(Date.now());
-            postWarn.push(false);
+            //postWarn.push(false);
         }
         repPostNum.push(cNum);
         repPostVol.push(0);
@@ -747,15 +793,6 @@ client.on("message", async message => {
         //  .setDescription('IM sent!')
         //);
         //message.content = message.content.replace("!noreact", "");
-        return;
-    }
-
-    if (message.content.trim().split(" ").length < 3 && message.content.trim().length < 15) {
-        message.channel.send(new Discord.RichEmbed()
-            .setColor('#d08770')
-            .setTitle('Error')
-            .setDescription('Sorry, confessions should be longer than 3 words or 15 characters')
-        );
         return;
     }
 });
