@@ -159,7 +159,7 @@ client.on("message", async message => {
         serious = true;
     }
     if(message.channel.id == "735897976861360248") {
-        if(message.content.slice(0,4) == "vote" || message.content.slice(0,6) == "report") {
+        if(message.content.slice(0,4) == "vote") {
             message.channel.send("This command must be performed in #bry-confessions!");
             return;
         }
@@ -419,7 +419,7 @@ client.on("message", async message => {
         pollVoters = pollVoters + message.author.id.toString();
         return;
     }
-    if (message.channel.id == instantChannel && message.content.toLowerCase().slice(0, 6).includes("report")) {
+    if (message.channel.type != "dm" && message.content.toLowerCase().slice(0, 6).includes("report")) {
         args = message.content.slice(7);
         let reported = parseInt(args);
         let repUsrId = message.author.id.toString();
@@ -432,7 +432,7 @@ client.on("message", async message => {
             	message.channel.send("This confession is too old to report!");
             	return;
             }
-            if(repPostVol[reportIndex] == -100) {
+            if(repPostVol[reportIndex] >= 100) {
             	message.channel.send("This confession has already been successfully reported!");
             	return;
             }
@@ -452,7 +452,7 @@ client.on("message", async message => {
                 	tempBanUsers.push(repPostUser[reportUserIndex]);
                 	tempBanTimes.push(Date.now()+86400000);
                 }
-                repPostVol[reportIndex] = -100;
+                repPostVol[reportIndex] = 100;
                 message.channel.send("Your report for confession #" + repPostNum[reportIndex] + " has been counted. The user who sent the confession now has a 24 hour cooldown.");
                 return;
             }
