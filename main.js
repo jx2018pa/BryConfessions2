@@ -22,25 +22,29 @@
 
 // Load up the discord.js library
 const Discord = require("discord.js");
+const store = require('data-store')('persistent');
 
 //md5
 const md5 = require('md5');
 //write to file
 const fs = require('fs');
-let cNum = parseInt(fs.readFileSync("confnum.txt", "utf8"));
-let starUsers = fs.readFileSync('starusers.txt').toString().split("-");
-let userEmojis = fs.readFileSync('useremojis.txt').toString().split("-");
-const secret = parseInt(fs.readFileSync("secretkey.txt", "utf8"));
+//let cNum = parseInt(fs.readFileSync("confnum.txt", "utf8"));
+let cNum = store.get('cNum');
+let starUsers = store.get('starUsers');
+let userEmojis = store.get('userEmojis');
+const secret = store.get('secretKey');
 const client = new Discord.Client();
 
 const auth = require("./auth.json");
 
+let bannedIds = store.get('banUserIds');
+let bannedExpiry = store.get('banUserExpiry');
 const banList = require("./banlist.json"); //this should never be uploaded publicly
 const config = require("./config.json");
 
 
 //const logChannel = "675193177656918039";
-let instantChannel = "675350296142282752";
+let instantChannel = store.get('instChan');
 //const slowChannels = ["675201659558690875", "675350296142282752", "675381993642393641"];
 
 let postIds = [];
@@ -71,14 +75,9 @@ var userInd;
 var options;
 var s,v;
 var anonyPoll = false;
-
-let tempBanUsers = [];
-let tempBanTimes = [];
-
 var startTime = 0;
-
-let rouletteHit = 0;
-let rouletteSave = 0;
+let rouletteHit = store.get('rouletteHits');
+let rouletteSave = store.get('rouletteSaves');
 
 
 function addReaction() {
@@ -121,6 +120,19 @@ function hashId(authId) {
 function retArr(array) {
     var indX = Math.floor(Math.random() * array.length);
     return array[indX];
+}
+
+function readableDate(ms) {
+var diff = Math.abs(ms-Date.now());
+if(diff < 60000) {
+  return Math.round((ms - Date.now()) / 1000) + " seconds";
+} else if (diff < 3600000) {
+  return Math.round((ms-Date.now()) / 60000)+" minutes";
+} else if (diff < 86400000) {
+  return Math.round((ms - Date.now()) / 3600000) + " hours";
+} else {
+  return Math.round((ms - Date.now()) / 86400000) + " days";
+}
 }
 
 client.on("ready", () => {
@@ -197,6 +209,8 @@ client.on("message", async message => {
     	} else {
     		console.log(message.content.slice(10,12));
     		userEmojis[starUsers.indexOf(message.author.id)] = message.content.slice(10,12);
+            store.set('userEmojis', userEmojis);
+            console.log(store.get('userEmojis'));
     		message.channel.send("Emoji set! Please note that only true emojis will work.");
     	}
     	return;
@@ -244,15 +258,15 @@ client.on("message", async message => {
     }
     if(message.content.toLowerCase() == "brystatus") {
         var banNum = 0;
-        for (var i = 0; i < tempBanUsers.length; i++) {
-            if(tempBanUsers[i] != "free") {
+        for (var i = 0; i < bannedIds.length; i++) {
+            if(bannedIds[i] != "free") {
                 banNum++;
             }
         }
         message.channel.send(new Discord.RichEmbed()
             .setColor('#0000FF')
             .setTitle('Bry Confessions Status')
-            .setDescription('Bot has been online for '+Math.round(((Date.now())/3600000)-startTime)+' hours.\nThere are currently '+banNum+' tempbanned users, and '+banList.bans.length+' permabanned users.\n'+starUsers.length+' users have perks!\nOut of all roulette confessions, '+rouletteHit+' have been revealed and '+rouletteSave+' have not.')
+            .setDescription('Bot has been online for '+readableDate(startTime)+' hours.\nThere are currently '+banNum+' tempbanned users, and '+banList.bans.length+' permabanned users.\n'+starUsers.length+' users have perks!\nOut of all roulette confessions, '+rouletteHit+' have been revealed and '+rouletteSave+' have not.')
         );
         return;
     }
@@ -351,7 +365,7 @@ client.on("message", async message => {
     		message.channel.send("There is no poll currently running!");
     		return;
     	}
-    	client.channels.get(instantChannel).send("Title: "+currentPollTitle+"\nOption 1: "+currentPollOpt1+"\nOption 2: "+currentPollOpt2+"\nAnonymous: "+anonyPoll+"\nEnds in: "+Math.round(((pollEndTime-Date.now()) / 1000) / 60)+" minutes\n"+(option1+option2)+" people have voted");
+    	client.channels.get(instantChannel).send("Title: "+currentPollTitle+"\nOption 1: "+currentPollOpt1+"\nOption 2: "+currentPollOpt2+"\nAnonymous: "+anonyPoll+"\nEnds in: "+readableDate(pollEndTime)+"\n"+(option1+option2)+" people have voted");
     	return;
     }
     if(message.content.toLowerCase() == "createpoll" || message.content.toLowerCase() == "pollhelp") {
@@ -446,11 +460,11 @@ client.on("message", async message => {
             if (repPostVol[reportIndex] >= reportsNeeded) {
                 var reportUserIndex = postIds.indexOf(repPostUser[reportIndex]);
                 //postWarn[reportUserIndex] = true;
-                if(tempBanUsers.indexOf(repPostUser[reportUserIndex]) > -1) {
+                if(bannedIds.indexOf(repPostUser[reportUserIndex]) > -1) {
                 	//do nothing
                 } else {
-                	tempBanUsers.push(repPostUser[reportUserIndex]);
-                	tempBanTimes.push(Date.now()+86400000);
+                	bannedIds.push(repPostUser[reportUserIndex]);
+                	bannedExpiry.push(Date.now()+86400000);
                 }
                 repPostVol[reportIndex] = 100;
                 message.channel.send("Your report for confession #" + repPostNum[reportIndex] + " has been counted. The user who sent the confession now has a 24 hour cooldown.");
@@ -478,16 +492,21 @@ client.on("message", async message => {
             .setDescription('Congratulations to <@'+message.author.id+'> for sending confession #'+cNum+'!!!!')
         );
         cNum++;
+        store.set('cNum', cNum);
         starUsers.push(message.author.id);
-        fs.appendFile('starusers.txt', '-' + message.author.id, function(err) {
+        /*fs.appendFile('starusers.txt', '-' + message.author.id, function(err) {
             if (err) throw err;
             console.log('Star user logged');
-        });
+        });*/
+        store.set('starUsers', starUsers);
         userEmojis.push("✨");
+        store.set('userEmojis', userEmojis);
+        /*
         fs.appendFile('useremojis.txt', '-✨', function(err) {
             if (err) throw err;
             console.log('User emoji logged');
         });
+        */
         return;
     }
     if (message.channel.type == "dm" && message.author.bot != true) {
@@ -678,20 +697,20 @@ client.on("message", async message => {
         var cooldown = 20000;
         // 
         
-        if(tempBanUsers.indexOf(hashedId) == -1 || tempBanUsers[tempBanUsers.indexOf(hashedId)] == "free") {
+        if(bannedIds.indexOf(hashedId) == -1 || bannedIds[bannedIds.indexOf(hashedId)] == "free") {
             cooldown = 20000;
-        } else if(Date.now() >= tempBanTimes[tempBanUsers.indexOf(hashedId)]) {
-            tempBanUsers[tempBanUsers.indexOf(hashedId)] = "free";
+        } else if(Date.now() >= bannedExpiry[bannedIds.indexOf(hashedId)]) {
+            bannedIds[bannedIds.indexOf(hashedId)] = "free";
             cooldown = 20000;
-        } else if(tempBanUsers.indexOf(hashedId) > -1 && Date.now() <= tempBanTimes[tempBanUsers.indexOf(hashedId)]) {
-        	cooldown = (tempBanTimes[tempBanUsers.indexOf(hashedId)]-(Date.now()));
-            client.users.get(message.author.id).send("Temporary ban! You cannot send a message for the next " + Math.round((tempBanTimes[tempBanUsers.indexOf(hashedId)]-(Date.now()))/60000) + " minutes");
+        } else if(bannedIds.indexOf(hashedId) > -1 && Date.now() <= bannedExpiry[bannedIds.indexOf(hashedId)]) {
+        	cooldown = (bannedExpiry[bannedIds.indexOf(hashedId)]-(Date.now()));
+            client.users.get(message.author.id).send("Temporary ban! You cannot send a message for the next " + readableDate(bannedExpiry[bannedIds.indexOf(hashedId)]));
             return;
         }
         //console.log(userIndex);
         //console.log("Array is at "+userIndex);
         if ((Date.now() - postTimes[userIndex]) <= cooldown && userIndex != -1) {
-            client.users.get(message.author.id).send("Cooldown! You cannot send a message for the next " + Math.round((cooldown - (Date.now() - postTimes[userIndex])) / 1000) + " seconds");
+            client.users.get(message.author.id).send("Cooldown! You cannot send a message for the next " + readableDate(cooldown+postTimes[userIndex]));
             return;
         }
         
@@ -778,6 +797,7 @@ client.on("message", async message => {
         message.react("✅");
         if(explo == false) {
         	cNum++;
+            store.set('cNum', cNum);
         }
         if(message.attachments.size > 0) {
              fs.appendFile('messagelogs.txt', '\n' + hashedId + '-' + attach[0].url, function(err) {
@@ -792,9 +812,11 @@ client.on("message", async message => {
             console.log('Confession logged');
         });
     }
+    /*
         fs.writeFile("confnum.txt", cNum, function(err) {
             if (err) return console.log(err);
         });
+        */
         //message.channel.send(new Discord.RichEmbed()
         //  .setColor('#88c0d0')
         //  .setTitle('Success')
