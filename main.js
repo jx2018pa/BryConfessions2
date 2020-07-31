@@ -50,6 +50,7 @@ let postTimes = [];
 let repPostNum = [];
 let repPostUser = [];
 let repPostVol = [];
+let repPostTime = [];
 let repPostReppers = [];
 let currentPoll = false;
 let option1 = 0;
@@ -251,7 +252,7 @@ client.on("message", async message => {
         message.channel.send(new Discord.RichEmbed()
             .setColor('#0000FF')
             .setTitle('Bry Confessions Status')
-            .setDescription('Bot has been online for '+Math.round((startTime-Date.now())/3600000)+' hours.\nThere are currently '+banNum+' tempbanned users, and '+banList.bans.length+' permabanned users.\n'+starUsers.length+' users have perks!\nOut of all roulette confessions, '+rouletteHit+' have been revealed and '+rouletteSave+' have not.')
+            .setDescription('Bot has been online for '+Math.round(((Date.now())/3600000)-startTime)+' hours.\nThere are currently '+banNum+' tempbanned users, and '+banList.bans.length+' permabanned users.\n'+starUsers.length+' users have perks!\nOut of all roulette confessions, '+rouletteHit+' have been revealed and '+rouletteSave+' have not.')
         );
         return;
     }
@@ -427,6 +428,10 @@ client.on("message", async message => {
         const reportsNeeded = 3;
         if (repPostNum.indexOf(reported) > -1) {
             let reportIndex = repPostNum.indexOf(reported);
+            if(Date.now()-repPostTime[reportIndex] > 86400000) {
+            	message.channel.send("This confession is too old to report!");
+            	return;
+            }
             if(repPostVol[reportIndex] == -100) {
             	message.channel.send("This confession has already been successfully reported!");
             	return;
@@ -715,7 +720,7 @@ client.on("message", async message => {
             ).then(sentMessage => {
     sentMessage.delete(45000);
 });
-            return;
+            //return;
         } else if (isRoulette) {
             var rand = Math.random();
             if(rand < 0.2) {
@@ -767,10 +772,13 @@ client.on("message", async message => {
         repPostVol.push(0);
         repPostUser.push(hashedId);
         repPostReppers.push("111111111111111111");
+        repPostTime.push(Date.now());
         //repPostReporters.push(cNum);
 
         message.react("✅");
-        cNum++;
+        if(explo == false) {
+        	cNum++;
+        }
         if(message.attachments.size > 0) {
              fs.appendFile('messagelogs.txt', '\n' + hashedId + '-' + attach[0].url, function(err) {
             if (err) throw err;
