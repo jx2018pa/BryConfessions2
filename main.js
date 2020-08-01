@@ -35,9 +35,11 @@ let userEmojis = store.get('userEmojis');
 const secret = store.get('secretKey');
 const auth = require("./auth.json");
 
+
 let bannedIds = store.get('banUserIds');
 let bannedExpiry = store.get('banUserExpiry');
 let bannedNum = store.get('bannedNum');
+let bannedAppealed = store.get('bannedAppealed');
 //const banList = require("./banlist.json"); //this should never be uploaded publicly
 const config = require("./config.json");
 
@@ -55,6 +57,9 @@ let repPostUser = [];
 let repPostVol = [];
 let repPostTime = [];
 let repPostReppers = [];
+let appealNums = 0;
+let appealVol = 0;
+let appealVoters = "111111111111111111";
 let currentPoll = false;
 let option1 = 0;
 let option2 = 0;
@@ -271,11 +276,17 @@ client.on("message", async message => {
         return;
     }
     if (message.content.toLowerCase() == "viewbans") {
+        var totalBans = 0;
     	for(var i = 0; i < bannedIds.length; i++) {
     		if (bannedExpiry[i] != -1) {
                 message.channel.send("Confession #"+bannedNum[i]+" - Ban expires in "+readableDate(bannedExpiry[i]));
             }
     	}
+        if(totalBans == 0) {
+            message.channel.send("There are no bans!");
+        } else {
+            message.channel.send("Total active bans: "+totalBans);
+        }
     	return;
     }
     if (message.content == "neil") {
@@ -441,6 +452,50 @@ client.on("message", async message => {
         pollVoters = pollVoters + message.author.id.toString();
         return;
     }
+
+    if (message.channel.type != "dm" && message.content.toLowerCase().slice(0, 6).includes("accept")) {
+        let nnum = parseInt(message.content.slice(7));
+        //let appealIndex = bannedNum.indexOf(nnum);
+        let bannedUserIndex = bannedNum.indexOf(nnum);
+        let votesNeed = 5;
+        if(appealNums == 0) {
+            message.channel.send("Appeal vote error!");
+            return;
+        }
+        if((bannedExpiry[bannedUserIndex] - Date.now()) < 86400000) {
+            votesNeed = 2;
+        } else if((bannedExpiry[bannedUserIndex] - Date.now()) < 604800000) {
+            votesNeed = 4;
+        } else {
+            votesNeed = 7;
+        }
+        
+        for (i = 0; i < (appealVoters.length / 18); i++) {
+                var uId = parseInt(appealVoters.slice(i * 18, i * 18 + 18));
+                if (message.author.id == uId) {
+                    message.channel.send("You have already supported the appeal for confession #" + nnum + "!");
+                    return;
+                }
+        }
+        
+        if(appealVol <= votesNeed) {
+            message.channel.send("You have voted to accept the appeal for #"+nnum+"! "+(votesNeed-appealVol)+" additional acceptances are needed to free the author of #"+nnum+".");
+            appealVoters = appealVoters + message.author.id;
+            appealVol++;
+            return;
+        }
+        if(appealVol[appealIndex] == votesNeed) {
+            message.channel.send("You have voted to accept the appeal for #"+nnum+"! This user's ban has now been removed.");
+            bannedExpiry[bannedUserIndex] = -1;
+            appealNums = 0;
+            appealVol = 0;
+            appealVoters = "111111111111111111";
+            return;
+        }
+        message.channel.send("Error accepting appeal!");
+        return;
+    }
+
     if (message.channel.type != "dm" && message.content.toLowerCase().slice(0, 6).includes("report")) {
         args = message.content.slice(7);
         let reported = parseInt(args);
@@ -462,6 +517,7 @@ client.on("message", async message => {
                     return;
                 }
             }
+            
             
 
             if (repPostVol[reportIndex] >= 100) {
@@ -487,6 +543,8 @@ client.on("message", async message => {
                     store.set('banUserExpiry', bannedExpiry);
                     bannedNum[reportedUserIndex] = repPostNum[reportIndex];
                     store.set('bannedNum', bannedNum);
+                    bannedAppealed[reportedUserIndex] = false;
+                    store.set('bannedAppealed', bannedAppealed);
                 } else {
                     bannedIds.push(repPostUser[reportIndex]);
                     store.set('banUserIds', bannedIds);
@@ -494,6 +552,8 @@ client.on("message", async message => {
                     store.set('banUserExpiry', bannedExpiry);
                     bannedNum.push(repPostNum[reportIndex]);
                     store.set('bannedNum', bannedNum);
+                    bannedAppealed.push(false);
+                    store.set('bannedAppealed', bannedAppealed);
                 }
                 repPostVol[reportIndex] = 100;
                 message.channel.send("Your report for confession #" + repPostNum[reportIndex] + " has been counted. The user who sent the confession has been banned for 24 hours. Each addition report will add another day to the ban.");
@@ -520,6 +580,36 @@ client.on("message", async message => {
     var cooldown = 20000;
     // 
 
+    if (message.content.includes("!appeal")) {
+    	var banListId = bannedIds.indexOf(hashedId);
+        if(appealNums != 0) {
+            message.channel.send("There is already an ongoing appeal!");
+            return;
+        }
+    	if(bannedExpiry[banListId] == -1 || banListId == -1) {
+    		message.channel.send("You are not banned!");
+    		return;
+    	}
+        if(bannedAppealed[banListId] == true) {
+            message.channel.send("You have already used up your appeal!");
+            return;
+        }
+    	
+    	client.channels.get(instantChannel).send(new Discord.RichEmbed()
+            .setColor('#008080')
+            .setTitle('Appeal for Confession #' + bannedNum[banListId])
+            .setDescription('Reason for appeal: '+message.content.slice(8))
+            .addField('Do you support this appeal?', 'Type \"accept '+bannedNum[banListId]+'\" to support this appeal!\n')
+        );
+        appealVoters = "111111111111111111";
+        appealVol = 0;
+        appealNums = bannedNum[banListId];
+        bannedAppealed[banListId] = true;
+        store.set('bannedAppealed', bannedAppealed);
+        message.react("✅");
+        return;
+    }
+
     if (bannedIds.indexOf(hashedId) == -1 || bannedExpiry[bannedIds.indexOf(hashedId)] == -1) {
         cooldown = 20000;
     } else if (Date.now() >= bannedExpiry[bannedIds.indexOf(hashedId)]) {
@@ -528,7 +618,7 @@ client.on("message", async message => {
         cooldown = 20000;
     } else if (bannedIds.indexOf(hashedId) > -1 && Date.now() <= bannedExpiry[bannedIds.indexOf(hashedId)]) {
         cooldown = (bannedExpiry[bannedIds.indexOf(hashedId)] - (Date.now()));
-        client.users.get(message.author.id).send("You are banned! You cannot send a message for the next " + readableDate(bannedExpiry[bannedIds.indexOf(hashedId)]));
+        client.users.get(message.author.id).send("You are banned! You cannot send a message for the next " + readableDate(bannedExpiry[bannedIds.indexOf(hashedId)])+"\nWant to appeal your ban? Use \"!appeal <your appeal reason here>\"");
         return;
     }
 
