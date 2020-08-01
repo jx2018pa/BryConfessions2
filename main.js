@@ -173,13 +173,12 @@ client.on("message", async message => {
     		rateUserTime.push(Date.now());
 
     	} else {
-    		if((rateUserTime[rateUserIndex] - Date.now()) < 240000) {
-    			
-    			if(Math.random() < 0.4) {
-    				vv = false;
-    			}
+    		if((Date.now() - rateUserTime[rateUserIndex]) < 30000) {
+    			vv = false;
+    		} else {
+    			rateUserTime[rateUserIndex] = Date.now();
     		}
-    		rateUserTime[rateUserIndex] = Date.now();
+    		
     	}
         let moneyIndex = cashUserIds.indexOf(message.author.id);
         let randomN = Math.random();
@@ -215,7 +214,7 @@ client.on("message", async message => {
     	return;
      }
 
-if(message.content.toLowerCase().includes("shop")) {
+if(message.content.toLowerCase()=="bryshop") {
         for(i = 0; i < cashShopListings.length; i++) {
             message.channel.send(cashShopListings[i]+"\n Cost: "+cashShopCosts[i]+" Brycoins")
         }
@@ -385,6 +384,7 @@ if(message.content.toLowerCase().includes("shop")) {
     	for(var i = 0; i < bannedIds.length; i++) {
     		if (bannedExpiry[i] != -1) {
                 message.channel.send("Confession #"+bannedNum[i]+" - Ban expires in "+readableDate(bannedExpiry[i]));
+                totalBans++;
             }
     	}
         if(totalBans == 0) {
