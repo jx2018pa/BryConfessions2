@@ -28,18 +28,17 @@ const store = require('data-store')('persistent');
 const md5 = require('md5');
 //write to file
 const fs = require('fs');
+const client = new Discord.Client();
 //let cNum = parseInt(fs.readFileSync("confnum.txt", "utf8"));
 let cNum = store.get('cNum');
 let starUsers = store.get('starUsers');
 let userEmojis = store.get('userEmojis');
 const secret = store.get('secretKey');
-const client = new Discord.Client();
-
 const auth = require("./auth.json");
 
 let bannedIds = store.get('banUserIds');
 let bannedExpiry = store.get('banUserExpiry');
-const banList = require("./banlist.json"); //this should never be uploaded publicly
+//const banList = require("./banlist.json"); //this should never be uploaded publicly
 const config = require("./config.json");
 
 
@@ -177,9 +176,11 @@ client.on("message", async message => {
         }
     }
     var hashedId = hashId(message.author.id);
+    /*
     if (banList.bans.indexOf(hashedId) >= 0 && message.channel.type == "dm") {
             return;
     }
+    */
     explo = false;
     if(message.content.slice(0,17) == "!explodingmessage") {
         explo = true;
@@ -207,10 +208,10 @@ client.on("message", async message => {
     	if(starUsers.indexOf(message.author.id) == -1) {
     		message.channel.send("You do not have a perk!");
     	} else {
-    		console.log(message.content.slice(10,12));
+    		//console.log(message.content.slice(10,12));
     		userEmojis[starUsers.indexOf(message.author.id)] = message.content.slice(10,12);
             store.set('userEmojis', userEmojis);
-            console.log(store.get('userEmojis'));
+            //console.log(store.get('userEmojis'));
     		message.channel.send("Emoji set! Please note that only true emojis will work.");
     	}
     	return;
@@ -259,14 +260,14 @@ client.on("message", async message => {
     if(message.content.toLowerCase() == "brystatus") {
         var banNum = 0;
         for (var i = 0; i < bannedIds.length; i++) {
-            if(bannedIds[i] != "free") {
+            if(bannedExpiry[i] != -1) {
                 banNum++;
             }
         }
         message.channel.send(new Discord.RichEmbed()
             .setColor('#0000FF')
             .setTitle('Bry Confessions Status')
-            .setDescription('Bot has been online for '+readableDate(startTime)+' hours.\nThere are currently '+banNum+' tempbanned users, and '+banList.bans.length+' permabanned users.\n'+starUsers.length+' users have perks!\nOut of all roulette confessions, '+rouletteHit+' have been revealed and '+rouletteSave+' have not.')
+            .setDescription('Bot has been online for '+readableDate(startTime)+'.\nThere are currently '+banNum+' banned users.\n'+starUsers.length+' users have perks!\nOut of all roulette confessions, '+rouletteHit+' have been revealed and '+rouletteSave+' have not.')
         );
         return;
     }
@@ -439,17 +440,14 @@ client.on("message", async message => {
         let repUsrId = message.author.id.toString();
         //console.log("received report for conf "+reported);
         //console.log(repPostReporters);
-        const reportsNeeded = 3;
+        const reportsNeeded = 1;
         if (repPostNum.indexOf(reported) > -1) {
             let reportIndex = repPostNum.indexOf(reported);
             if(Date.now()-repPostTime[reportIndex] > 86400000) {
             	message.channel.send("This confession is too old to report!");
             	return;
             }
-            if(repPostVol[reportIndex] >= 100) {
-            	message.channel.send("This confession has already been successfully reported!");
-            	return;
-            }
+            /*
             for (i = 0; i < (repPostReppers[reportIndex].length / 18); i++) {
                 userInd = parseInt(repPostReppers[reportIndex].slice(i * 18, i * 18 + 18));
                 if (userInd == message.author.id) {
@@ -457,17 +455,37 @@ client.on("message", async message => {
                     return;
                 }
             }
+            */
+            if(repPostVol[reportIndex] >= 100) {
+                var reportUserIndex = bannedIds.indexOf(hashedId);
+                var dayBan = (repPostVol-100)+2;
+                //console.log(dayBan);
+                repPostVol[reportIndex]++;
+                message.channel.send("Your report for confession #" + repPostNum[reportIndex] + " has been counted. The user who sent the confession now has a "+dayBan+" day ban! Each additional report will add another day to the ban.");
+                bannedExpiry[reportUserIndex] = (Date.now()+(86400000*dayBan))
+                store.set('banUserExpiry', bannedExpiry);
+                return;
+            }
             if (repPostVol[reportIndex] >= reportsNeeded) {
-                var reportUserIndex = postIds.indexOf(repPostUser[reportIndex]);
+                var reportUserIndex = bannedIds.indexOf(hashedId);
+                console.log(reportUserIndex);
                 //postWarn[reportUserIndex] = true;
-                if(bannedIds.indexOf(repPostUser[reportUserIndex]) > -1) {
-                	//do nothing
+                if(bannedIds.indexOf(repPostUser[reportUserIndex]) > -1 && bannedExpiry[bannedIds.indexOf(repPostUser[reportUserIndex])] != -1) {
+                    //console.log("id exists and running ban");
+                    //nothing                    
+                } else if(bannedExpiry[bannedIds.indexOf(repPostUser[reportUserIndex])] == -1) {
+                    bannedExpiry[bannedIds.indexOf(repPostUser[reportUserIndex])] = (Date.now()+86400000);
+                    store.set('banUserExpiry', bannedExpiry);
+                    //console.log("id exists and no ban");
                 } else {
-                	bannedIds.push(repPostUser[reportUserIndex]);
+                	bannedIds.push(hashedId);
+                    store.set('banUserIds', bannedIds);
                 	bannedExpiry.push(Date.now()+86400000);
+                    store.set('banUserExpiry', bannedExpiry);
+                    //console.log("new ban");
                 }
                 repPostVol[reportIndex] = 100;
-                message.channel.send("Your report for confession #" + repPostNum[reportIndex] + " has been counted. The user who sent the confession now has a 24 hour cooldown.");
+                message.channel.send("Your report for confession #" + repPostNum[reportIndex] + " has been counted. The user who sent the confession has been banned for 24 hours. Each addition report will add another day to the ban.");
                 return;
             }
             message.channel.send("Your report for confession #" + repPostNum[reportIndex] + " has been counted. " + (reportsNeeded - repPostVol[reportIndex]) + " more report(s) are needed.");
@@ -485,6 +503,23 @@ client.on("message", async message => {
     if (message.channel.type != "dm") {
         return;
     }
+
+    var userIndex = postIds.indexOf(hashedId);
+        var cooldown = 20000;
+        // 
+        
+        if(bannedIds.indexOf(hashedId) == -1 || bannedExpiry[bannedIds.indexOf(hashedId)] == -1) {
+            cooldown = 20000;
+        } else if(Date.now() >= bannedExpiry[bannedIds.indexOf(hashedId)]) {
+            bannedExpiry[bannedIds.indexOf(hashedId)] = -1;
+            store.set('banUserExpiry', bannedExpiry);
+            cooldown = 20000;
+        } else if(bannedIds.indexOf(hashedId) > -1 && Date.now() <= bannedExpiry[bannedIds.indexOf(hashedId)]) {
+            cooldown = (bannedExpiry[bannedIds.indexOf(hashedId)]-(Date.now()));
+            client.users.get(message.author.id).send("You are banned! You cannot send a message for the next " + readableDate(bannedExpiry[bannedIds.indexOf(hashedId)]));
+            return;
+    }
+
     if(cNum%1000 == 0) {
     	client.channels.get(instantChannel).send(new Discord.RichEmbed()
             .setColor('#ffa500')
@@ -693,20 +728,7 @@ client.on("message", async message => {
 
             }
         }
-        var userIndex = postIds.indexOf(hashedId);
-        var cooldown = 20000;
-        // 
         
-        if(bannedIds.indexOf(hashedId) == -1 || bannedIds[bannedIds.indexOf(hashedId)] == "free") {
-            cooldown = 20000;
-        } else if(Date.now() >= bannedExpiry[bannedIds.indexOf(hashedId)]) {
-            bannedIds[bannedIds.indexOf(hashedId)] = "free";
-            cooldown = 20000;
-        } else if(bannedIds.indexOf(hashedId) > -1 && Date.now() <= bannedExpiry[bannedIds.indexOf(hashedId)]) {
-        	cooldown = (bannedExpiry[bannedIds.indexOf(hashedId)]-(Date.now()));
-            client.users.get(message.author.id).send("Temporary ban! You cannot send a message for the next " + readableDate(bannedExpiry[bannedIds.indexOf(hashedId)]));
-            return;
-        }
         //console.log(userIndex);
         //console.log("Array is at "+userIndex);
         if ((Date.now() - postTimes[userIndex]) <= cooldown && userIndex != -1) {
@@ -732,12 +754,19 @@ client.on("message", async message => {
                 //.addField('Word of rngesus', addReaction())
             );
         } else if (explo) {
+            let tN = cNum;
             client.channels.get(instantChannel).send(new Discord.RichEmbed()
                 .setColor('#FF0000')
-                .setTitle('Exploding Message')
+                .setTitle('Exploding Message #'+tN)
                 .setDescription(message.content.slice(17))
             ).then(sentMessage => {
-    sentMessage.delete(45000);
+                setTimeout(function(){
+    sentMessage.edit(new Discord.RichEmbed()
+                .setColor('#FF0000')
+                .setTitle('Exploding Message #'+tN)
+                .setDescription('*Deleted*')
+            );
+            }, 45000)
 });
             //return;
         } else if (isRoulette) {
@@ -750,6 +779,7 @@ client.on("message", async message => {
                     .addField('ROULETTE', '😱 The author of this confession was <@'+message.author.id+'>!!!\n20% chance')
                 );
                 rouletteHit++;
+                store.set('rouletteHits', rouletteHit);
             } else {
                 client.channels.get(instantChannel).send(new Discord.RichEmbed()
                     .setColor('#bfff00')
@@ -758,6 +788,7 @@ client.on("message", async message => {
                     .addField('ROULETTE', '😌 The author of this confession will stay anonymous!\n80% chance')
                 );
                 rouletteSave++;
+                store.set('rouletteSaves', rouletteSave);
             }
         } else if (verifyNum > -1) {
             client.channels.get(instantChannel).send(new Discord.RichEmbed()
@@ -795,10 +826,7 @@ client.on("message", async message => {
         //repPostReporters.push(cNum);
 
         message.react("✅");
-        if(explo == false) {
-        	cNum++;
-            store.set('cNum', cNum);
-        }
+        
         if(message.attachments.size > 0) {
              fs.appendFile('messagelogs.txt', '\n' + hashedId + '-' + attach[0].url, function(err) {
             if (err) throw err;
@@ -807,10 +835,12 @@ client.on("message", async message => {
         } else {
 
         
-        fs.appendFile('messagelogs.txt', '\n' + hashedId + '-' + message.content, function(err) {
+        fs.appendFile('messagelogs.txt', '\n' + cNum + '-' + hashedId + '-' + message.content, function(err) {
             if (err) throw err;
             console.log('Confession logged');
         });
+        cNum++;
+        store.set('cNum', cNum);
     }
     /*
         fs.writeFile("confnum.txt", cNum, function(err) {
