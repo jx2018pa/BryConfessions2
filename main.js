@@ -72,7 +72,7 @@ let isRoulette = false;
 var args;
 var userInd;
 var options;
-var s,v;
+var s, v;
 var anonyPoll = false;
 var startTime = 0;
 let rouletteHit = store.get('rouletteHits');
@@ -90,26 +90,26 @@ function addReaction() {
 }
 
 function generateShip() {
-	v = Math.random();
-   	v = config.starts.length * v;
+    v = Math.random();
+    v = config.starts.length * v;
     v = v - v % 1;
-		s = Math.random();
-		s = config.ends.length * s;
-		s = s - s % 1;
-		while (s === v) {
-			s = Math.random();
-			s = config.ends.length * s;
-			s = s - s % 1;
-		}
-		if(config.starts[v].slice(config.starts[v].length-1) == config.ends[s].slice(0,1)) {
-  return config.starts[v].slice(0,config.starts[v].length-1)+config.ends[s];
+    s = Math.random();
+    s = config.ends.length * s;
+    s = s - s % 1;
+    while (s === v) {
+        s = Math.random();
+        s = config.ends.length * s;
+        s = s - s % 1;
+    }
+    if (config.starts[v].slice(config.starts[v].length - 1) == config.ends[s].slice(0, 1)) {
+        return config.starts[v].slice(0, config.starts[v].length - 1) + config.ends[s];
 
-}
-		return config.starts[v] + config.ends[s];
+    }
+    return config.starts[v] + config.ends[s];
 }
 
 function hashId(authId) {
-	var haId = md5(authId);
+    var haId = md5(authId);
     for (i = 0; i < secret; i++) {
         haId = md5(haId);
     }
@@ -122,16 +122,16 @@ function retArr(array) {
 }
 
 function readableDate(ms) {
-var diff = Math.abs(ms-Date.now());
-if(diff < 60000) {
-  return Math.round((ms - Date.now()) / 1000) + " seconds";
-} else if (diff < 3600000) {
-  return Math.round((ms-Date.now()) / 60000)+" minutes";
-} else if (diff < 86400000) {
-  return Math.round((ms - Date.now()) / 3600000) + " hours";
-} else {
-  return Math.round((ms - Date.now()) / 86400000) + " days";
-}
+    var diff = Math.abs(ms - Date.now());
+    if (diff < 60000) {
+        return Math.round((ms - Date.now()) / 1000) + " seconds";
+    } else if (diff < 3600000) {
+        return Math.round((ms - Date.now()) / 60000) + " minutes";
+    } else if (diff < 86400000) {
+        return Math.round((ms - Date.now()) / 3600000) + " hours";
+    } else {
+        return Math.round((ms - Date.now()) / 86400000) + " days";
+    }
 }
 
 client.on("ready", () => {
@@ -153,24 +153,23 @@ client.on("message", async message => {
     if (message.author.bot) {
         return;
     }
-    if(starUsers.indexOf(message.author.id) > -1 && message.channel.type != "dm") {
-    	try {
-    		message.react(userEmojis[starUsers.indexOf(message.author.id)]);
-    	}
-    	catch(err) {
-    		console.log("User react failed");
-    	}
-    	
+    if (starUsers.indexOf(message.author.id) > -1 && message.channel.type != "dm") {
+        try {
+            message.react(userEmojis[starUsers.indexOf(message.author.id)]);
+        } catch (err) {
+            console.log("User react failed");
+        }
+
     }
     instantChannel = "675350296142282752";
     serious = false;
     verifyNum = -1;
-    if(message.content.toLowerCase().slice(0, 8) == "!serious") {
+    if (message.content.toLowerCase().slice(0, 8) == "!serious") {
         instantChannel = "735897976861360248";
         serious = true;
     }
-    if(message.channel.id == "735897976861360248") {
-        if(message.content.slice(0,4) == "vote") {
+    if (message.channel.id == "735897976861360248") {
+        if (message.content.slice(0, 4) == "vote") {
             message.channel.send("This command must be performed in #bry-confessions!");
             return;
         }
@@ -182,18 +181,18 @@ client.on("message", async message => {
     }
     */
     explo = false;
-    if(message.content.slice(0,17) == "!explodingmessage") {
+    if (message.content.slice(0, 17) == "!explodingmessage") {
         explo = true;
     }
 
     var veri = message.content.split(" ");
     var spliceArea = message.content.indexOf(" ");
-    if(message.content.slice(0,7) == "verify|" && message.channel.type == "dm") {
-        
+    if (message.content.slice(0, 7) == "verify|" && message.channel.type == "dm") {
+
         var veriNumArr = veri[0].split("|");
         var veriNum = parseInt(veriNumArr[1]);
         var veriConfIndex = repPostNum.indexOf(veriNum);
-        if(repPostUser[veriConfIndex] == hashedId) {
+        if (repPostUser[veriConfIndex] == hashedId) {
             verifyNum = veriNumArr[1];
         } else {
             message.channel.send("Verification failure!");
@@ -201,41 +200,41 @@ client.on("message", async message => {
         }
     }
     isRoulette = false;
-    if(message.content.slice(0,9) == "!roulette") {
+    if (message.content.slice(0, 9) == "!roulette") {
         isRoulette = true;
     }
-    if(message.content.includes("!setemoji")) {
-    	if(starUsers.indexOf(message.author.id) == -1) {
-    		message.channel.send("You do not have a perk!");
-    	} else {
-    		//console.log(message.content.slice(10,12));
-    		userEmojis[starUsers.indexOf(message.author.id)] = message.content.slice(10,12);
+    if (message.content.includes("!setemoji")) {
+        if (starUsers.indexOf(message.author.id) == -1) {
+            message.channel.send("You do not have a perk!");
+        } else {
+            //console.log(message.content.slice(10,12));
+            userEmojis[starUsers.indexOf(message.author.id)] = message.content.slice(10, 12);
             store.set('userEmojis', userEmojis);
             //console.log(store.get('userEmojis'));
-    		message.channel.send("Emoji set! Please note that only true emojis will work.");
-    	}
-    	return;
+            message.channel.send("Emoji set! Please note that only true emojis will work.");
+        }
+        return;
     }
-    if(message.content.includes("brypic")) {
-    	var picarr = message.content.split(" ");
-    	var brynum = parseInt(picarr[1])
+    if (message.content.includes("brypic")) {
+        var picarr = message.content.split(" ");
+        var brynum = parseInt(picarr[1])
 
-    	if(picarr.length == 2) {
-    		if(picarr[1].includes("latest")) {
-    			message.channel.send("Brypic #"+(config.brypics.length));
-    			message.channel.send(config.brypics[config.brypics.length-1]);
-    		} else if(brynum >= 1 && brynum <= config.brypics.length) {
-    			message.channel.send("Brypic #"+brynum);
-    			message.channel.send(config.brypics[brynum-1]);
-    		} else {
-    			message.channel.send("Invalid input!");
-    		}
-    		
-    	} else if(message.content == "brypic") {
-    		var brypic = Math.floor(Math.random() * config.brypics.length);
-    		message.channel.send("Brypic #"+(brypic+1));
-    		message.channel.send(config.brypics[brypic]);
-    	} else {
+        if (picarr.length == 2) {
+            if (picarr[1].includes("latest")) {
+                message.channel.send("Brypic #" + (config.brypics.length));
+                message.channel.send(config.brypics[config.brypics.length - 1]);
+            } else if (brynum >= 1 && brynum <= config.brypics.length) {
+                message.channel.send("Brypic #" + brynum);
+                message.channel.send(config.brypics[brynum - 1]);
+            } else {
+                message.channel.send("Invalid input!");
+            }
+
+        } else if (message.content == "brypic") {
+            var brypic = Math.floor(Math.random() * config.brypics.length);
+            message.channel.send("Brypic #" + (brypic + 1));
+            message.channel.send(config.brypics[brypic]);
+        } else {
             message.channel.send("Invalid input!");
         }
         return;
@@ -257,102 +256,102 @@ client.on("message", async message => {
         );
         return;
     }
-    if(message.content.toLowerCase() == "brystatus") {
+    if (message.content.toLowerCase() == "brystatus") {
         var banNum = 0;
         for (var i = 0; i < bannedIds.length; i++) {
-            if(bannedExpiry[i] != -1) {
+            if (bannedExpiry[i] != -1) {
                 banNum++;
             }
         }
         message.channel.send(new Discord.RichEmbed()
             .setColor('#0000FF')
             .setTitle('Bry Confessions Status')
-            .setDescription('Bot has been online for '+readableDate(startTime)+'.\nThere are currently '+banNum+' banned users.\n'+starUsers.length+' users have perks!\nOut of all roulette confessions, '+rouletteHit+' have been revealed and '+rouletteSave+' have not.')
+            .setDescription('Bot has been online for ' + readableDate(startTime) + '.\nThere are currently ' + banNum + ' banned users.\n' + starUsers.length + ' users have perks!\nOut of all roulette confessions, ' + rouletteHit + ' have been revealed and ' + rouletteSave + ' have not.')
         );
         return;
     }
-    if(message.content == "neil") {
+    if (message.content == "neil") {
         message.channel.send(retArr(config.neil));
         return;
     }
-    if(message.content == "ben") {
+    if (message.content == "ben") {
         message.channel.send(retArr(config.ben));
         return;
     }
-    if(message.content == "anthony") {
+    if (message.content == "anthony") {
         message.channel.send(retArr(config.anthony));
         return;
     }
-    if(message.content == "vincent") {
+    if (message.content == "vincent") {
         message.channel.send(retArr(config.vincent));
         return;
     }
-    if(message.content == "memoli") {
+    if (message.content == "memoli") {
         message.channel.send(retArr(config.memoli));
         return;
     }
-    if(message.content == "franklin") {
+    if (message.content == "franklin") {
         message.channel.send(retArr(config.franklin));
         return;
     }
-    if(message.content == "pal") {
+    if (message.content == "pal") {
         message.channel.send(retArr(config.pal));
         return;
     }
-    if(message.content == "brymeme") {
+    if (message.content == "brymeme") {
         message.channel.send(retArr(config.brymeme));
         return;
     }
-    if(message.content == "john") {
+    if (message.content == "john") {
         message.channel.send(retArr(config.john));
         return;
     }
-    if(message.content == "willy") {
+    if (message.content == "willy") {
         message.channel.send(retArr(config.willy));
         return;
     }
-    if(message.content == "angela") {
+    if (message.content == "angela") {
         message.channel.send(retArr(config.angela));
         return;
     }
-    if(message.content == "pastconf") {
+    if (message.content == "pastconf") {
         var dex = Math.floor(Math.random() * config.pastconfs.length);
         var pConfSplit = config.pastconfs[dex].split("BBSEP");
-        if(pConfSplit.length == 2) {
+        if (pConfSplit.length == 2) {
             message.channel.send(new Discord.RichEmbed()
-            .setColor('#88c0d0')
-            .setTitle(pConfSplit[0])
-            .setDescription(pConfSplit[1])
-        );
-        return;
-    } else {
-         message.channel.send(new Discord.RichEmbed()
-            .setColor('#88c0d0')
-            .setTitle(pConfSplit[0])
-            .setDescription(pConfSplit[1])
-            .addField('Word of rngesus', pConfSplit[2])
-        );
+                .setColor('#88c0d0')
+                .setTitle(pConfSplit[0])
+                .setDescription(pConfSplit[1])
+            );
+            return;
+        } else {
+            message.channel.send(new Discord.RichEmbed()
+                .setColor('#88c0d0')
+                .setTitle(pConfSplit[0])
+                .setDescription(pConfSplit[1])
+                .addField('Word of rngesus', pConfSplit[2])
+            );
+        }
+
     }
-        
-    }
-    if(message.content.includes("bryquote")) {
+    if (message.content.includes("bryquote")) {
         var picarr = message.content.split(" ");
         var brynum = parseInt(picarr[1])
 
-        if(picarr.length == 2) {
-            if(picarr[1].includes("latest")) {
-                message.channel.send("Bryquote #"+(config.bryquotes.length));
-                message.channel.send(config.bryquotes[config.bryquotes.length-1]);
-            } else if(brynum >= 1 && brynum <= config.bryquotes.length) {
-                message.channel.send("Bryquote #"+brynum);
-                message.channel.send(config.bryquotes[brynum-1]);
+        if (picarr.length == 2) {
+            if (picarr[1].includes("latest")) {
+                message.channel.send("Bryquote #" + (config.bryquotes.length));
+                message.channel.send(config.bryquotes[config.bryquotes.length - 1]);
+            } else if (brynum >= 1 && brynum <= config.bryquotes.length) {
+                message.channel.send("Bryquote #" + brynum);
+                message.channel.send(config.bryquotes[brynum - 1]);
             } else {
                 message.channel.send("Invalid input!");
             }
-            
-        } else if(message.content == "bryquote") {
+
+        } else if (message.content == "bryquote") {
             var brypic = Math.floor(Math.random() * config.bryquotes.length);
-            message.channel.send("Bryquote #"+(brypic+1));
+            message.channel.send("Bryquote #" + (brypic + 1));
             message.channel.send(config.bryquotes[brypic]);
         } else {
             message.channel.send("Invalid input!");
@@ -361,22 +360,22 @@ client.on("message", async message => {
 
     }
 
-    if(message.content.toLowerCase() == "pollstatus") {
-    	if(currentPoll == false) {
-    		message.channel.send("There is no poll currently running!");
-    		return;
-    	}
-    	client.channels.get(instantChannel).send("Title: "+currentPollTitle+"\nOption 1: "+currentPollOpt1+"\nOption 2: "+currentPollOpt2+"\nAnonymous: "+anonyPoll+"\nEnds in: "+readableDate(pollEndTime)+"\n"+(option1+option2)+" people have voted");
-    	return;
+    if (message.content.toLowerCase() == "pollstatus") {
+        if (currentPoll == false) {
+            message.channel.send("There is no poll currently running!");
+            return;
+        }
+        client.channels.get(instantChannel).send("Title: " + currentPollTitle + "\nOption 1: " + currentPollOpt1 + "\nOption 2: " + currentPollOpt2 + "\nAnonymous: " + anonyPoll + "\nEnds in: " + readableDate(pollEndTime) + "\n" + (option1 + option2) + " people have voted");
+        return;
     }
-    if(message.content.toLowerCase() == "createpoll" || message.content.toLowerCase() == "pollhelp") {
-		message.channel.send("DM the bot \"createpoll|<option1>|<option2>|<title (optional)>|anonpoll (optional)|duration (in minutes, optional)\"");
-		return;
+    if (message.content.toLowerCase() == "createpoll" || message.content.toLowerCase() == "pollhelp") {
+        message.channel.send("DM the bot \"createpoll|<option1>|<option2>|<title (optional)>|anonpoll (optional)|duration (in minutes, optional)\"");
+        return;
     }
-    if(message.content.toLowerCase() == "ship") {
-    	message.react("✅");
-		client.channels.get(instantChannel).send("Bry declares that " + generateShip() + " is the new hip ship in town.");
-		return;
+    if (message.content.toLowerCase() == "ship") {
+        message.react("✅");
+        client.channels.get(instantChannel).send("Bry declares that " + generateShip() + " is the new hip ship in town.");
+        return;
     }
 
     if (message.content.toLowerCase() == "vote a" && message.channel.type == "dm" && anonyPoll == true) {
@@ -443,11 +442,11 @@ client.on("message", async message => {
         const reportsNeeded = 1;
         if (repPostNum.indexOf(reported) > -1) {
             let reportIndex = repPostNum.indexOf(reported);
-            if(Date.now()-repPostTime[reportIndex] > 86400000) {
-            	message.channel.send("This confession is too old to report!");
-            	return;
+            if (Date.now() - repPostTime[reportIndex] > 86400000) {
+                message.channel.send("This confession is too old to report!");
+                return;
             }
-            
+
             for (i = 0; i < (repPostReppers[reportIndex].length / 18); i++) {
                 userInd = parseInt(repPostReppers[reportIndex].slice(i * 18, i * 18 + 18));
                 if (userInd == message.author.id) {
@@ -455,14 +454,14 @@ client.on("message", async message => {
                     return;
                 }
             }
-            
-            if(repPostVol[reportIndex] >= 100) {
+
+            if (repPostVol[reportIndex] >= 100) {
                 var reportUserIndex = bannedIds.indexOf(hashedId);
-                var dayBan = (repPostVol-100)+2;
+                var dayBan = (repPostVol - 100) + 2;
                 //console.log(dayBan);
                 repPostVol[reportIndex]++;
-                message.channel.send("Your report for confession #" + repPostNum[reportIndex] + " has been counted. The user who sent the confession now has a "+dayBan+" day ban! Each additional report will add another day to the ban.");
-                bannedExpiry[reportUserIndex] = (Date.now()+(86400000*dayBan))
+                message.channel.send("Your report for confession #" + repPostNum[reportIndex] + " has been counted. The user who sent the confession now has a " + dayBan + " day ban! Each additional report will add another day to the ban.");
+                bannedExpiry[reportUserIndex] = (Date.now() + (86400000 * dayBan))
                 store.set('banUserExpiry', bannedExpiry);
                 return;
             }
@@ -470,17 +469,17 @@ client.on("message", async message => {
                 var reportUserIndex = bannedIds.indexOf(hashedId);
                 console.log(reportUserIndex);
                 //postWarn[reportUserIndex] = true;
-                if(bannedIds.indexOf(repPostUser[reportUserIndex]) > -1 && bannedExpiry[bannedIds.indexOf(repPostUser[reportUserIndex])] != -1) {
+                if (bannedIds.indexOf(repPostUser[reportUserIndex]) > -1 && bannedExpiry[bannedIds.indexOf(repPostUser[reportUserIndex])] != -1) {
                     //console.log("id exists and running ban");
                     //nothing                    
-                } else if(bannedExpiry[bannedIds.indexOf(repPostUser[reportUserIndex])] == -1) {
-                    bannedExpiry[bannedIds.indexOf(repPostUser[reportUserIndex])] = (Date.now()+86400000);
+                } else if (bannedExpiry[bannedIds.indexOf(repPostUser[reportUserIndex])] == -1) {
+                    bannedExpiry[bannedIds.indexOf(repPostUser[reportUserIndex])] = (Date.now() + 86400000);
                     store.set('banUserExpiry', bannedExpiry);
                     //console.log("id exists and no ban");
                 } else {
-                	bannedIds.push(hashedId);
+                    bannedIds.push(hashedId);
                     store.set('banUserIds', bannedIds);
-                	bannedExpiry.push(Date.now()+86400000);
+                    bannedExpiry.push(Date.now() + 86400000);
                     store.set('banUserExpiry', bannedExpiry);
                     //console.log("new ban");
                 }
@@ -505,26 +504,26 @@ client.on("message", async message => {
     }
 
     var userIndex = postIds.indexOf(hashedId);
-        var cooldown = 20000;
-        // 
-        
-        if(bannedIds.indexOf(hashedId) == -1 || bannedExpiry[bannedIds.indexOf(hashedId)] == -1) {
-            cooldown = 20000;
-        } else if(Date.now() >= bannedExpiry[bannedIds.indexOf(hashedId)]) {
-            bannedExpiry[bannedIds.indexOf(hashedId)] = -1;
-            store.set('banUserExpiry', bannedExpiry);
-            cooldown = 20000;
-        } else if(bannedIds.indexOf(hashedId) > -1 && Date.now() <= bannedExpiry[bannedIds.indexOf(hashedId)]) {
-            cooldown = (bannedExpiry[bannedIds.indexOf(hashedId)]-(Date.now()));
-            client.users.get(message.author.id).send("You are banned! You cannot send a message for the next " + readableDate(bannedExpiry[bannedIds.indexOf(hashedId)]));
-            return;
+    var cooldown = 20000;
+    // 
+
+    if (bannedIds.indexOf(hashedId) == -1 || bannedExpiry[bannedIds.indexOf(hashedId)] == -1) {
+        cooldown = 20000;
+    } else if (Date.now() >= bannedExpiry[bannedIds.indexOf(hashedId)]) {
+        bannedExpiry[bannedIds.indexOf(hashedId)] = -1;
+        store.set('banUserExpiry', bannedExpiry);
+        cooldown = 20000;
+    } else if (bannedIds.indexOf(hashedId) > -1 && Date.now() <= bannedExpiry[bannedIds.indexOf(hashedId)]) {
+        cooldown = (bannedExpiry[bannedIds.indexOf(hashedId)] - (Date.now()));
+        client.users.get(message.author.id).send("You are banned! You cannot send a message for the next " + readableDate(bannedExpiry[bannedIds.indexOf(hashedId)]));
+        return;
     }
 
-    if(cNum%1000 == 0) {
-    	client.channels.get(instantChannel).send(new Discord.RichEmbed()
+    if (cNum % 1000 == 0) {
+        client.channels.get(instantChannel).send(new Discord.RichEmbed()
             .setColor('#ffa500')
-            .setTitle('CONFESSION #'+cNum)
-            .setDescription('Congratulations to <@'+message.author.id+'> for sending confession #'+cNum+'!!!!')
+            .setTitle('CONFESSION #' + cNum)
+            .setDescription('Congratulations to <@' + message.author.id + '> for sending confession #' + cNum + '!!!!')
         );
         cNum++;
         store.set('cNum', cNum);
@@ -546,26 +545,26 @@ client.on("message", async message => {
     }
     if (message.channel.type == "dm" && message.author.bot != true) {
         if (message.content.toLowerCase().slice(0, 11).includes("createpoll|")) {
-        	pollTime = 300000;
-        	pollMinutes = 5;
+            pollTime = 300000;
+            pollMinutes = 5;
             if (currentPoll == true) {
                 client.users.get(message.author.id).send("There is already a poll running! Please wait for that one to finish.");
                 return;
             } else {
                 options = message.content.slice(11);
                 var optionsArray = options.split("|");
-                if(parseInt(optionsArray[optionsArray.length-1]) >= 2 && parseInt(optionsArray[optionsArray.length-1]) <= 45 && isNaN(parseInt(optionsArray[optionsArray.length-1])) == false) {
-                	pollMinutes = parseInt(optionsArray[optionsArray.length-1]);
-                	pollTime = pollMinutes*60000;
-                	optionsArray.pop();
-                } else if(isNaN(parseInt(optionsArray[optionsArray.length-1])) == false) {
-                	message.channel.send("Invalid number! Poll duration must be more than 2 minutes and less than 45 minutes inclusive.");
-                	return;
+                if (parseInt(optionsArray[optionsArray.length - 1]) >= 2 && parseInt(optionsArray[optionsArray.length - 1]) <= 45 && isNaN(parseInt(optionsArray[optionsArray.length - 1])) == false) {
+                    pollMinutes = parseInt(optionsArray[optionsArray.length - 1]);
+                    pollTime = pollMinutes * 60000;
+                    optionsArray.pop();
+                } else if (isNaN(parseInt(optionsArray[optionsArray.length - 1])) == false) {
+                    message.channel.send("Invalid number! Poll duration must be more than 2 minutes and less than 45 minutes inclusive.");
+                    return;
                 }
                 pollEndTime = Date.now() + pollTime;
-				currentPollOpt1 = optionsArray[0];
-				currentPollOpt2 = optionsArray[1];
-				currentPollTitle = "";
+                currentPollOpt1 = optionsArray[0];
+                currentPollOpt2 = optionsArray[1];
+                currentPollTitle = "";
                 if (optionsArray.length == 3) {
                     if (optionsArray[2].toLowerCase().includes("anonpoll")) {
                         //noTitleAnon = true;
@@ -579,7 +578,7 @@ client.on("message", async message => {
                         currentPoll = true;
                         message.react("✅");
 
-                        
+
 
                         fs.appendFile('messagelogs.txt', '\n' + hashedId + '-' + message.content, function(err) {
                             if (err) throw err;
@@ -589,7 +588,7 @@ client.on("message", async message => {
                             .setColor('#800080')
                             .setTitle('Anonymous Poll')
                             .setDescription('A: ' + optionsArray[0] + '\nB: ' + optionsArray[1])
-                            .addField('ANONYMOUS POLL', 'Bot will only accept votes via DM! Send \"vote a\" or \"vote b\" to cast your vote!\nPoll runs for '+pollMinutes+' minutes.\nType \"pollstatus\" to check on the poll!')
+                            .addField('ANONYMOUS POLL', 'Bot will only accept votes via DM! Send \"vote a\" or \"vote b\" to cast your vote!\nPoll runs for ' + pollMinutes + ' minutes.\nType \"pollstatus\" to check on the poll!')
                         );
                         setTimeout(() => {
                             client.channels.get(instantChannel).send(new Discord.RichEmbed()
@@ -631,7 +630,7 @@ client.on("message", async message => {
                             .setColor('#800080')
                             .setTitle('Anonymous Poll - ' + optionsArray[2])
                             .setDescription('A: ' + optionsArray[0] + '\nB: ' + optionsArray[1])
-                            .addField('ANONYMOUS POLL', 'Bot will only accept votes via DM! Send \"vote a\" or \"vote b\" to cast your vote!\nPoll runs for '+pollMinutes+' minutes.\nType \"pollstatus\" to check on the poll!')
+                            .addField('ANONYMOUS POLL', 'Bot will only accept votes via DM! Send \"vote a\" or \"vote b\" to cast your vote!\nPoll runs for ' + pollMinutes + ' minutes.\nType \"pollstatus\" to check on the poll!')
                         );
                         setTimeout(() => {
                             client.channels.get(instantChannel).send(new Discord.RichEmbed()
@@ -673,7 +672,7 @@ client.on("message", async message => {
                         .setColor('#FFA500')
                         .setTitle('Poll - ' + optionsArray[2])
                         .setDescription('A: ' + optionsArray[0] + '\nB: ' + optionsArray[1])
-                        .addField('Vote now!', 'Type \"vote a\" or \"vote b\" to cast your vote!\nPoll runs for '+pollMinutes+' minutes.\nType \"pollstatus\" to check on the poll!')
+                        .addField('Vote now!', 'Type \"vote a\" or \"vote b\" to cast your vote!\nPoll runs for ' + pollMinutes + ' minutes.\nType \"pollstatus\" to check on the poll!')
                     );
                     setTimeout(() => {
                         client.channels.get(instantChannel).send(new Discord.RichEmbed()
@@ -708,7 +707,7 @@ client.on("message", async message => {
                         .setColor('#FFA500')
                         .setTitle('Poll')
                         .setDescription('A: ' + optionsArray[0] + '\nB: ' + optionsArray[1])
-                        .addField('Vote now!', 'Type \"vote a\" or \"vote b\" to cast your vote!\nPoll runs for '+pollMinutes+' minutes.\nType \"pollstatus\" to check on the poll!')
+                        .addField('Vote now!', 'Type \"vote a\" or \"vote b\" to cast your vote!\nPoll runs for ' + pollMinutes + ' minutes.\nType \"pollstatus\" to check on the poll!')
                     );
                     setTimeout(() => {
                         client.channels.get(instantChannel).send(new Discord.RichEmbed()
@@ -728,22 +727,22 @@ client.on("message", async message => {
 
             }
         }
-        
+
         //console.log(userIndex);
         //console.log("Array is at "+userIndex);
         if ((Date.now() - postTimes[userIndex]) <= cooldown && userIndex != -1) {
-            client.users.get(message.author.id).send("Cooldown! You cannot send a message for the next " + readableDate(cooldown+postTimes[userIndex]));
+            client.users.get(message.author.id).send("Cooldown! You cannot send a message for the next " + readableDate(cooldown + postTimes[userIndex]));
             return;
         }
-        
+
         //message.content = message.content.replace("!instant", "");
-        
-        if(message.attachments.size > 0) {
+
+        if (message.attachments.size > 0) {
             var attach = (message.attachments).array();
             client.channels.get(instantChannel).send('Confession #' + cNum);
             client.channels.get(instantChannel).send(attach[0].url);
             //return;
-        } else if (message.content.slice(message.content.length-3) == "png" || message.content.slice(message.content.length-3) == "jpg" || message.content.slice(message.content.length-3) == "gif" ||  message.content.slice(message.content.length-4) == "jpeg" || message.content.includes("youtube.com") || message.content.includes("youtu.be") || message.content.includes("imgur.com") || message.content.includes("twitter.com") || message.content.includes("tenor.com")) {
+        } else if (message.content.slice(message.content.length - 3) == "png" || message.content.slice(message.content.length - 3) == "jpg" || message.content.slice(message.content.length - 3) == "gif" || message.content.slice(message.content.length - 4) == "jpeg" || message.content.includes("youtube.com") || message.content.includes("youtu.be") || message.content.includes("imgur.com") || message.content.includes("twitter.com") || message.content.includes("tenor.com")) {
             client.channels.get(instantChannel).send('Confession #' + cNum);
             client.channels.get(instantChannel).send(message.content);
         } else if (serious) {
@@ -759,29 +758,29 @@ client.on("message", async message => {
                 .setTitle('Exploding Message')
                 .setDescription(message.content.slice(17))
             ).then(sentMessage => {
-                setTimeout(function(){
-    sentMessage.edit(new Discord.RichEmbed()
-                .setColor('#FF0000')
-                .setTitle('Exploding Message')
-                .setDescription('*Deleted*')
-            );
-            }, 45000)
-});
+                setTimeout(function() {
+                    sentMessage.edit(new Discord.RichEmbed()
+                        .setColor('#FF0000')
+                        .setTitle('Exploding Message')
+                        .setDescription('*Deleted*')
+                    );
+                }, 45000)
+            });
 
             fs.appendFile('messagelogs.txt', '\n' + cNum + '-' + hashedId + '-' + message.content, function(err) {
-            if (err) throw err;
-            console.log('Exploding message logged');
-        });
+                if (err) throw err;
+                console.log('Exploding message logged');
+            });
 
             return;
         } else if (isRoulette) {
             var rand = Math.random();
-            if(rand < 0.2) {
+            if (rand < 0.2) {
                 client.channels.get(instantChannel).send(new Discord.RichEmbed()
                     .setColor('#FF0000')
                     .setTitle('Bryconf Roulette #' + cNum)
                     .setDescription(message.content.slice(10))
-                    .addField('ROULETTE', '😱 The author of this confession was <@'+message.author.id+'>!!!\n20% chance')
+                    .addField('ROULETTE', '😱 The author of this confession was <@' + message.author.id + '>!!!\n20% chance')
                 );
                 rouletteHit++;
                 store.set('rouletteHits', rouletteHit);
@@ -800,7 +799,7 @@ client.on("message", async message => {
                 .setColor('#13fc03')
                 .setTitle('Confession #' + cNum)
                 .setDescription(message.content.slice(spliceArea))
-                .addField('Verified!', "✅ This user also wrote confession #"+verifyNum)
+                .addField('Verified!', "✅ This user also wrote confession #" + verifyNum)
             );
         } else if (Math.random() < 0.4) {
             client.channels.get(instantChannel).send(new Discord.RichEmbed()
@@ -831,21 +830,21 @@ client.on("message", async message => {
         //repPostReporters.push(cNum);
 
         message.react("✅");
-        
-        if(message.attachments.size > 0) {
-             fs.appendFile('messagelogs.txt', '\n' + cNum + '-' + hashedId + '-' + attach[0].url, function(err) {
-            if (err) throw err;
-            console.log('Confession logged');
-        });
+
+        if (message.attachments.size > 0) {
+            fs.appendFile('messagelogs.txt', '\n' + cNum + '-' + hashedId + '-' + attach[0].url, function(err) {
+                if (err) throw err;
+                console.log('Confession logged');
+            });
         } else {
 
-        
-        fs.appendFile('messagelogs.txt', '\n' + cNum + '-' + hashedId + '-' + message.content, function(err) {
-            if (err) throw err;
-            console.log('Confession logged');
-        });
-        
-    }
+
+            fs.appendFile('messagelogs.txt', '\n' + cNum + '-' + hashedId + '-' + message.content, function(err) {
+                if (err) throw err;
+                console.log('Confession logged');
+            });
+
+        }
 
         cNum++;
         store.set('cNum', cNum);
