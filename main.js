@@ -29,9 +29,14 @@ const md5 = require('md5');
 const fs = require('fs');
 const client = new Discord.Client();
 //let cNum = parseInt(fs.readFileSync("confnum.txt", "utf8"));
+
 let cNum = store.get('cNum');
 let starUsers = store.get('starUsers');
 let userEmojis = store.get('userEmojis');
+let cashUserIds = store.get('userIds');
+let cashUserBals = store.get('userBals');
+const cashShopListings = store.get('shopListings');
+const cashShopCosts = store.get('shopCosts');
 const secret = store.get('secretKey');
 const auth = require("./auth.json");
 
@@ -158,6 +163,67 @@ client.on("message", async message => {
     if (message.author.bot) {
         return;
     }
+    if(message.channel.type != "dm") {
+        let moneyIndex = cashUserIds.indexOf(message.author.id);
+        let randomN = Math.random();
+        if(moneyIndex == -1) {
+            cashUserIds.push(message.author.id);
+            cashUserBals.push(1);
+        } else {
+            cashUserBals[moneyIndex]++;
+        }
+        store.set('userIds', cashUserIds);
+        store.set('userBals', cashUserBals);
+    }
+
+if(message.content.toLowerCase().includes("shop")) {
+        for(i = 0; i < cashShopListings.length; i++) {
+            message.channel.send(cashShopListings[i]+"\n Cost: "+cashShopCosts[i]+" Brycoins")
+        }
+        return;
+    }
+
+    if(message.content.toLowerCase().includes("balance")) {
+        
+        let targetUserId = message.author.id;
+        let sluice = message.content.slice(11,29);
+        if(sluice.length > 2) {
+            targetUserId = sluice;
+        }
+        let indd = cashUserIds.indexOf(targetUserId);
+        if(indd == -1) {
+            message.channel.send("The specified user does not have a balance!");
+            return;
+        }
+        message.channel.send(new Discord.RichEmbed()
+            .setColor('#FFDF00')
+            .setTitle('Balance')
+            .setDescription('<@'+targetUserId+'> - '+cashUserBals[indd]+' Brycoins')
+        );
+        return;
+    }
+    var b2s = Array.from(cashUserBals);
+    if(message.content.toLowerCase() == "leaderboard") {
+        //var b2s = cashUserBals;
+        b2s.sort(function(a, b){return b-a});
+        let fulltxt = [];
+        for (i = 0; i < 5; i++) {
+            var ussInd = cashUserBals.indexOf(b2s[i]);
+            //const User = Client.fetchUser(cashUserIds[i]);
+            fulltxt.push('<@'+cashUserIds[ussInd] + "> - "+b2s[i]+" Brycoins");
+        }
+        message.channel.send(new Discord.RichEmbed()
+            .setColor('#FFDF00')
+            .setTitle('Leaderboard')
+            .setDescription(fulltxt[0]+"\n"+fulltxt[1]+"\n"+fulltxt[2]+"\n"+fulltxt[3]+"\n"+fulltxt[4])
+        );
+        return;
+    }
+    
+    
+    
+
+    
     if (starUsers.indexOf(message.author.id) > -1 && message.channel.type != "dm") {
         try {
             message.react(userEmojis[starUsers.indexOf(message.author.id)]);
@@ -378,7 +444,6 @@ client.on("message", async message => {
         return;
 
     }
-
     if (message.content.toLowerCase() == "pollstatus") {
         if (currentPoll == false) {
             message.channel.send("There is no poll currently running!");
@@ -396,6 +461,7 @@ client.on("message", async message => {
         client.channels.get(instantChannel).send("Bry declares that " + generateShip() + " is the new hip ship in town.");
         return;
     }
+
 
     if (message.content.toLowerCase() == "vote a" && message.channel.type == "dm" && anonyPoll == true) {
         for (i = 0; i < (pollVoters.length / 18); i++) {
