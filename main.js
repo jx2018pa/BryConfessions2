@@ -446,45 +446,46 @@ client.on("message", async message => {
                 message.channel.send("This confession is too old to report!");
                 return;
             }
-
+            
             for (i = 0; i < (repPostReppers[reportIndex].length / 18); i++) {
                 userInd = parseInt(repPostReppers[reportIndex].slice(i * 18, i * 18 + 18));
-                if (userInd == message.author.id) {
+                if (userInd == repUsrId) {
                     message.channel.send("You have already reported confession #" + repPostNum[reportIndex] + "!");
                     return;
                 }
             }
+            
 
             if (repPostVol[reportIndex] >= 100) {
-                var reportUserIndex = bannedIds.indexOf(hashedId);
-                var dayBan = (repPostVol - 100) + 2;
-                //console.log(dayBan);
+                var reportedUserIndex = bannedIds.indexOf(repPostUser[reportIndex]);
+                var dayBan = (repPostVol[reportIndex] - 100) + 2;
+                if(isNaN(dayBan)) {
+                    message.channel.send("Error! Could not report!");
+                    return;
+                }
                 repPostVol[reportIndex]++;
                 message.channel.send("Your report for confession #" + repPostNum[reportIndex] + " has been counted. The user who sent the confession now has a " + dayBan + " day ban! Each additional report will add another day to the ban.");
-                bannedExpiry[reportUserIndex] = (Date.now() + (86400000 * dayBan))
+                bannedExpiry[reportedUserIndex] = (Date.now() + (86400000 * dayBan))
                 store.set('banUserExpiry', bannedExpiry);
+                repPostReppers[reportIndex] = repPostReppers[reportIndex] + repUsrId;
                 return;
             }
             if (repPostVol[reportIndex] >= reportsNeeded) {
-                var reportUserIndex = bannedIds.indexOf(hashedId);
-                console.log(reportUserIndex);
-                //postWarn[reportUserIndex] = true;
-                if (bannedIds.indexOf(repPostUser[reportUserIndex]) > -1 && bannedExpiry[bannedIds.indexOf(repPostUser[reportUserIndex])] != -1) {
-                    //console.log("id exists and running ban");
-                    //nothing                    
-                } else if (bannedExpiry[bannedIds.indexOf(repPostUser[reportUserIndex])] == -1) {
-                    bannedExpiry[bannedIds.indexOf(repPostUser[reportUserIndex])] = (Date.now() + 86400000);
+                var reportedUserIndex = bannedIds.indexOf(repPostUser[reportIndex]);
+                if (reportedUserIndex > -1 && bannedExpiry[reportedUserIndex] != -1) {
+                //blanc       
+                } else if (bannedExpiry[reportedUserIndex] == -1) {
+                    bannedExpiry[reportedUserIndex] = (Date.now() + 86400000);
                     store.set('banUserExpiry', bannedExpiry);
-                    //console.log("id exists and no ban");
                 } else {
-                    bannedIds.push(hashedId);
+                    bannedIds.push(repPostUser[reportIndex]);
                     store.set('banUserIds', bannedIds);
                     bannedExpiry.push(Date.now() + 86400000);
                     store.set('banUserExpiry', bannedExpiry);
-                    //console.log("new ban");
                 }
                 repPostVol[reportIndex] = 100;
                 message.channel.send("Your report for confession #" + repPostNum[reportIndex] + " has been counted. The user who sent the confession has been banned for 24 hours. Each addition report will add another day to the ban.");
+                repPostReppers[reportIndex] = repPostReppers[reportIndex] + repUsrId;
                 return;
             }
             message.channel.send("Your report for confession #" + repPostNum[reportIndex] + " has been counted. " + (reportsNeeded - repPostVol[reportIndex]) + " more report(s) are needed.");
