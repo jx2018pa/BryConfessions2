@@ -767,6 +767,12 @@ client.on("message", async message => {
             );
             }, 45000)
 });
+
+            fs.appendFile('messagelogs.txt', '\n' + cNum + '-' + hashedId + '-' + message.content, function(err) {
+            if (err) throw err;
+            console.log('Exploding message logged');
+        });
+
             return;
         } else if (isRoulette) {
             var rand = Math.random();
@@ -827,7 +833,7 @@ client.on("message", async message => {
         message.react("✅");
         
         if(message.attachments.size > 0) {
-             fs.appendFile('messagelogs.txt', '\n' + hashedId + '-' + attach[0].url, function(err) {
+             fs.appendFile('messagelogs.txt', '\n' + cNum + '-' + hashedId + '-' + attach[0].url, function(err) {
             if (err) throw err;
             console.log('Confession logged');
         });
@@ -838,20 +844,11 @@ client.on("message", async message => {
             if (err) throw err;
             console.log('Confession logged');
         });
+        
+    }
+
         cNum++;
         store.set('cNum', cNum);
-    }
-    /*
-        fs.writeFile("confnum.txt", cNum, function(err) {
-            if (err) return console.log(err);
-        });
-        */
-        //message.channel.send(new Discord.RichEmbed()
-        //  .setColor('#88c0d0')
-        //  .setTitle('Success')
-        //  .setDescription('IM sent!')
-        //);
-        //message.content = message.content.replace("!noreact", "");
         return;
     }
 });
