@@ -65,6 +65,8 @@ let repPostReppers = [];
 let appealNums = 0;
 let appealVol = 0;
 let appealVoters = "111111111111111111";
+let rateUserId = ["x"];
+let rateUserTime = [2];
 let currentPoll = false;
 let option1 = 0;
 let option2 = 0;
@@ -164,17 +166,54 @@ client.on("message", async message => {
         return;
     }
     if(message.channel.type != "dm") {
+    	let vv = true;
+    	let rateUserIndex = rateUserId.indexOf(message.author.id);
+    	if(rateUserIndex == -1) {
+    		rateUserId.push(message.author.id);
+    		rateUserTime.push(Date.now());
+
+    	} else {
+    		if((rateUserTime[rateUserIndex] - Date.now()) < 240000) {
+    			
+    			if(Math.random() < 0.4) {
+    				vv = false;
+    			}
+    		}
+    		rateUserTime[rateUserIndex] = Date.now();
+    	}
         let moneyIndex = cashUserIds.indexOf(message.author.id);
         let randomN = Math.random();
         if(moneyIndex == -1) {
             cashUserIds.push(message.author.id);
             cashUserBals.push(1);
         } else {
-            cashUserBals[moneyIndex]++;
+        	if(vv) {
+        		cashUserBals[moneyIndex]++;
+        	}
+            
         }
         store.set('userIds', cashUserIds);
         store.set('userBals', cashUserBals);
     }
+
+    if(message.channel.type != "dm" && message.content.includes("transfer")) {
+    	let recipient = message.content.slice(12,30);
+    	let numb = parseInt(message.content.slice(32));
+    	let recipIndex = cashUserIds.indexOf(recipient);
+    	let senderIndex = cashUserIds.indexOf(message.author.id);
+    	if(recipIndex == -1 || isNaN(numb) || senderIndex == -1) {
+    		message.channel.send("Error with transfer!")
+    		return;
+    	}
+    	if(numb > cashUserBals[senderIndex] || numb < 0) {
+    		message.channel.send("You do not have the necessary brycoins!");
+    		return;
+    	}
+    	cashUserBals[senderIndex] = cashUserBals[senderIndex] - numb;
+    	cashUserBals[recipIndex] = cashUserBals[recipIndex] + numb;
+    	message.channel.send("Transfer successful!");
+    	return;
+     }
 
 if(message.content.toLowerCase().includes("shop")) {
         for(i = 0; i < cashShopListings.length; i++) {
@@ -457,8 +496,7 @@ if(message.content.toLowerCase().includes("shop")) {
         return;
     }
     if (message.content.toLowerCase() == "ship") {
-        message.react("✅");
-        client.channels.get(instantChannel).send("Bry declares that " + generateShip() + " is the new hip ship in town.");
+        message.channel.send("Bry declares that " + generateShip() + " is the new hip ship in town.");
         return;
     }
 
