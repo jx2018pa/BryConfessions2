@@ -447,7 +447,7 @@ client.on("message", async message => {
             	message.channel.send("This confession is too old to report!");
             	return;
             }
-            /*
+            
             for (i = 0; i < (repPostReppers[reportIndex].length / 18); i++) {
                 userInd = parseInt(repPostReppers[reportIndex].slice(i * 18, i * 18 + 18));
                 if (userInd == message.author.id) {
@@ -455,7 +455,7 @@ client.on("message", async message => {
                     return;
                 }
             }
-            */
+            
             if(repPostVol[reportIndex] >= 100) {
                 var reportUserIndex = bannedIds.indexOf(hashedId);
                 var dayBan = (repPostVol-100)+2;
@@ -754,21 +754,20 @@ client.on("message", async message => {
                 //.addField('Word of rngesus', addReaction())
             );
         } else if (explo) {
-            let tN = cNum;
             client.channels.get(instantChannel).send(new Discord.RichEmbed()
                 .setColor('#FF0000')
-                .setTitle('Exploding Message #'+tN)
+                .setTitle('Exploding Message')
                 .setDescription(message.content.slice(17))
             ).then(sentMessage => {
                 setTimeout(function(){
     sentMessage.edit(new Discord.RichEmbed()
                 .setColor('#FF0000')
-                .setTitle('Exploding Message #'+tN)
+                .setTitle('Exploding Message')
                 .setDescription('*Deleted*')
             );
             }, 45000)
 });
-            //return;
+            return;
         } else if (isRoulette) {
             var rand = Math.random();
             if(rand < 0.2) {
