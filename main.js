@@ -23,7 +23,6 @@
 // Load up the discord.js library
 const Discord = require("discord.js");
 const store = require('data-store')('persistent');
-
 //md5
 const md5 = require('md5');
 //write to file
@@ -38,6 +37,7 @@ const auth = require("./auth.json");
 
 let bannedIds = store.get('banUserIds');
 let bannedExpiry = store.get('banUserExpiry');
+let bannedNum = store.get('bannedNum');
 //const banList = require("./banlist.json"); //this should never be uploaded publicly
 const config = require("./config.json");
 
@@ -270,6 +270,14 @@ client.on("message", async message => {
         );
         return;
     }
+    if (message.content.toLowerCase() == "viewbans") {
+    	for(var i = 0; i < bannedIds.length; i++) {
+    		if (bannedExpiry[i] != -1) {
+                message.channel.send("Confession #"+bannedNum[i]+" - Ban expires in "+readableDate(bannedExpiry[i]));
+            }
+    	}
+    	return;
+    }
     if (message.content == "neil") {
         message.channel.send(retArr(config.neil));
         return;
@@ -477,11 +485,15 @@ client.on("message", async message => {
                 } else if (bannedExpiry[reportedUserIndex] == -1) {
                     bannedExpiry[reportedUserIndex] = (Date.now() + 86400000);
                     store.set('banUserExpiry', bannedExpiry);
+                    bannedNum[reportedUserIndex] = repPostNum[reportIndex];
+                    store.set('bannedNum', bannedNum);
                 } else {
                     bannedIds.push(repPostUser[reportIndex]);
                     store.set('banUserIds', bannedIds);
                     bannedExpiry.push(Date.now() + 86400000);
                     store.set('banUserExpiry', bannedExpiry);
+                    bannedNum.push(repPostNum[reportIndex]);
+                    store.set('bannedNum', bannedNum);
                 }
                 repPostVol[reportIndex] = 100;
                 message.channel.send("Your report for confession #" + repPostNum[reportIndex] + " has been counted. The user who sent the confession has been banned for 24 hours. Each addition report will add another day to the ban.");
