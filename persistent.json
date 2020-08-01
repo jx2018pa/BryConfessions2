@@ -1,0 +1,19 @@
+{
+  "cNum": 1,
+  "secretKey": 2,
+  "starUsers": [
+    "User ID"
+  ],
+  "userEmojis": [
+    "💦"
+  ],
+  "banUserIds": [
+    "Hashed ID"
+  ],
+  "banUserExpiry": [
+    -1
+  ],
+  "rouletteHits": 0,
+  "rouletteSaves": 0,
+  "instChan": "Channel ID"
+}
