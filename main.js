@@ -221,10 +221,6 @@ client.on("message", async message => {
     	return;
      }
 
-     if(message.channel.type != "dm" && message.content.includes("buy")) {
-        
-     }
-
 if(message.content.toLowerCase()=="bryshop") {
         for(i = 0; i < cashShopListings.length; i++) {
             message.channel.send(cashShopListings[i]+"\n Cost: "+cashShopCosts[i]+" Brycoins - ID:"+i)
