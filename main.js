@@ -257,6 +257,32 @@ client.on("message", async message => {
         return;
     }
 
+    if(message.content.toLowerCase.includes("gamble")) {
+        let wager = parseInt(message.content.slice(7));
+        let userInd = cashUserIds.indexOf(message.author.id);
+        if(wager > cashUserBals[userInd] || isNan(wager)) {
+            message.channel.send("Bet failed!");
+        }
+        if(Math.random() < 0.45) {
+            cashUserBals[userInd] += wager;
+            message.channel.send(new Discord.RichEmbed()
+            .setColor('#00FF00')
+            .setTitle('You Win!')
+            .setDescription('<@' + targetUserId + '> - You won!\n'+wager+' Brycoins were credited to your account')
+            .addField('Odds','You had a 45% chance of winning your initial bet')
+        );
+        } else {
+            cashUserBals[userInd] -= wager;
+            message.channel.send(new Discord.RichEmbed()
+            .setColor('#ff0000')
+            .setTitle('You Lose!')
+            .setDescription('<@' + targetUserId + '> - You lost!\n'+wager+' Brycoins were removed from your account')
+            .addField('Odds','You had a 45% chance of winning your initial bet')
+        );
+        }
+        return;
+    }
+
     if (message.content.toLowerCase().includes("inventory")) {
         let targetUserId = message.author.id;
         let sluice = message.content.slice(13, 31);
