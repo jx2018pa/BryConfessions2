@@ -167,9 +167,16 @@ client.on("message", async message => {
     }
     if(message.channel.type != "dm") {
     	let moneyIndex = cashUserIds.indexOf(message.author.id);
+    	if(Math.random() < 0.01) {
+    		message.channel.send("You got a mini prize! This has a 1% chance of happening per message 😱\nYou gained 50 brycoins!");
+    		cashUserBals[moneyIndex] = cashUserBals[moneyIndex] + 50;
+    		store.set('userIds', cashUserIds);
+    		store.set('userBals', cashUserBals);
+    		return;
+    	}
     	if(Math.random() < 0.0001) {
-    		message.channel.send("YOU HIT THE JACKPOT!!!! This has a 0.01% chance of happening per message 😱\nYou gained 10000 brycoins!");
-    		cashUserBals[moneyIndex] = cashUserBals[moneyIndex] + 10000;
+    		message.channel.send("YOU HIT THE JACKPOT!!!! This has a 0.01% chance of happening per message 😱\nYou gained 1600 brycoins!");
+    		cashUserBals[moneyIndex] = cashUserBals[moneyIndex] + 1600;
     		store.set('userIds', cashUserIds);
     		store.set('userBals', cashUserBals);
     		return;
