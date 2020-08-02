@@ -166,6 +166,14 @@ client.on("message", async message => {
         return;
     }
     if(message.channel.type != "dm") {
+    	let moneyIndex = cashUserIds.indexOf(message.author.id);
+    	if(Math.random() < 0.0001) {
+    		message.channel.send("YOU HIT THE JACKPOT!!!! This has a 0.01% chance of happening per message 😱\nYou gained 10000 brycoins!");
+    		cashUserBals[moneyIndex] = cashUserBals[moneyIndex] + 10000;
+    		store.set('userIds', cashUserIds);
+    		store.set('userBals', cashUserBals);
+    		return;
+    	}
     	let vv = true;
     	let rateUserIndex = rateUserId.indexOf(message.author.id);
     	if(rateUserIndex == -1) {
@@ -180,8 +188,7 @@ client.on("message", async message => {
     		}
     		
     	}
-        let moneyIndex = cashUserIds.indexOf(message.author.id);
-        let randomN = Math.random();
+        
         if(moneyIndex == -1) {
             cashUserIds.push(message.author.id);
             cashUserBals.push(1);
@@ -214,9 +221,13 @@ client.on("message", async message => {
     	return;
      }
 
+     if(message.channel.type != "dm" && message.content.includes("buy")) {
+        
+     }
+
 if(message.content.toLowerCase()=="bryshop") {
         for(i = 0; i < cashShopListings.length; i++) {
-            message.channel.send(cashShopListings[i]+"\n Cost: "+cashShopCosts[i]+" Brycoins")
+            message.channel.send(cashShopListings[i]+"\n Cost: "+cashShopCosts[i]+" Brycoins - ID:"+i)
         }
         return;
     }
