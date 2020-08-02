@@ -165,65 +165,65 @@ client.on("message", async message => {
     if (message.author.bot) {
         return;
     }
-    if(message.channel.type != "dm") {
-    	let moneyIndex = cashUserIds.indexOf(message.author.id);
-    	
-    	let vv = true;
-    	let rateUserIndex = rateUserId.indexOf(message.author.id);
-    	if(rateUserIndex == -1) {
-    		rateUserId.push(message.author.id);
-    		rateUserTime.push(Date.now());
+    if (message.channel.type != "dm") {
+        let moneyIndex = cashUserIds.indexOf(message.author.id);
 
-    	} else {
-    		if((Date.now() - rateUserTime[rateUserIndex]) < 30000) {
-    			vv = false;
-    		} else {
-                if(Math.random() < 0.0001) {
-            message.channel.send("YOU HIT THE JACKPOT!!!! This has a 0.01% chance of happening per message 😱\nYou gained 3000 brycoins!");
-            cashUserBals[moneyIndex] = cashUserBals[moneyIndex] + 3000;
-            store.set('userIds', cashUserIds);
-            store.set('userBals', cashUserBals);
-            return;
-        }
-            if(Math.random() < 0.01) {
-            message.channel.send("You got a mini prize! This has a 1% chance of happening per message 😱\nYou gained 75 brycoins!");
-            cashUserBals[moneyIndex] = cashUserBals[moneyIndex] + 75;
-            store.set('userIds', cashUserIds);
-            store.set('userBals', cashUserBals);
-            return;
+        let vv = true;
+        let rateUserIndex = rateUserId.indexOf(message.author.id);
+        if (rateUserIndex == -1) {
+            rateUserId.push(message.author.id);
+            rateUserTime.push(Date.now());
+
+        } else {
+            if ((Date.now() - rateUserTime[rateUserIndex]) < 30000) {
+                vv = false;
+            } else {
+                if (Math.random() < 0.0001) {
+                    message.channel.send("YOU HIT THE JACKPOT!!!! This has a 0.01% chance of happening per message 😱\nYou gained 3000 brycoins!");
+                    cashUserBals[moneyIndex] = cashUserBals[moneyIndex] + 3000;
+                    store.set('userIds', cashUserIds);
+                    store.set('userBals', cashUserBals);
+                    return;
+                }
+                if (Math.random() < 0.01) {
+                    message.channel.send("You got a mini prize! This has a 1% chance of happening per message 😱\nYou gained 75 brycoins!");
+                    cashUserBals[moneyIndex] = cashUserBals[moneyIndex] + 75;
+                    store.set('userIds', cashUserIds);
+                    store.set('userBals', cashUserBals);
+                    return;
+                }
+
+                rateUserTime[rateUserIndex] = Date.now();
+            }
+
         }
 
-    			rateUserTime[rateUserIndex] = Date.now();
-    		}
-    		
-    	}
-        
-        if(moneyIndex == -1) {
+        if (moneyIndex == -1) {
             cashUserIds.push(message.author.id);
             cashUserBals.push(1);
         } else {
-        	if(vv) {
-        		cashUserBals[moneyIndex] += 2;
-        	}
-            
+            if (vv) {
+                cashUserBals[moneyIndex] += 2;
+            }
+
         }
         store.set('userIds', cashUserIds);
         store.set('userBals', cashUserBals);
     }
 
-    if(message.channel.type != "dm" && message.content.includes("buy")) {
+    if (message.channel.type != "dm" && message.content.includes("buy")) {
         let itemInd = parseInt(message.content.slice(4));
         let buyerInd = cashUserIds.indexOf(message.author.id);
-        if(buyerInd == -1 || isNan(item) || itemInd < 0 || itemInd >= cashShopListings.length) {
+        if (buyerInd == -1 || isNan(item) || itemInd < 0 || itemInd >= cashShopListings.length) {
             message.channel.send("Could not buy item!");
             return;
         }
-        if(cashUserBals[buyerInd] < cashShopCosts[itemInd]) {
+        if (cashUserBals[buyerInd] < cashShopCosts[itemInd]) {
             message.channel.send("You do not have enough brycoins to buy this!");
             return;
-        } else if((cashUserBals[buyerInd]-cashShopCosts[itemInd]) >= 0){
-            cashUserBals[moneyIndex] = (cashUserBals[buyerInd]-cashShopCosts[itemInd]);
-            cashUserInv[buyerInd] += ","+itemInd;
+        } else if ((cashUserBals[buyerInd] - cashShopCosts[itemInd]) >= 0) {
+            cashUserBals[moneyIndex] = (cashUserBals[buyerInd] - cashShopCosts[itemInd]);
+            cashUserInv[buyerInd] += "," + itemInd;
             message.channel.send("Purchase successful! Please check your inventory to see your new items");
             return;
 
@@ -231,98 +231,99 @@ client.on("message", async message => {
         return;
     }
 
-    if(message.channel.type != "dm" && message.content.includes("transfer")) {
-    	let recipient = message.content.slice(12,30);
-    	let numb = parseInt(message.content.slice(32));
-    	let recipIndex = cashUserIds.indexOf(recipient);
-    	let senderIndex = cashUserIds.indexOf(message.author.id);
-    	if(recipIndex == -1 || isNaN(numb) || senderIndex == -1) {
-    		message.channel.send("Error with transfer!")
-    		return;
-    	}
-    	if(numb > cashUserBals[senderIndex] || numb < 0) {
-    		message.channel.send("You do not have the necessary brycoins!");
-    		return;
-    	}
-    	cashUserBals[senderIndex] = cashUserBals[senderIndex] - numb;
-    	cashUserBals[recipIndex] = cashUserBals[recipIndex] + numb;
-    	message.channel.send("Transfer successful!");
-    	return;
-     }
+    if (message.channel.type != "dm" && message.content.includes("transfer")) {
+        let recipient = message.content.slice(12, 30);
+        let numb = parseInt(message.content.slice(32));
+        let recipIndex = cashUserIds.indexOf(recipient);
+        let senderIndex = cashUserIds.indexOf(message.author.id);
+        if (recipIndex == -1 || isNaN(numb) || senderIndex == -1) {
+            message.channel.send("Error with transfer!")
+            return;
+        }
+        if (numb > cashUserBals[senderIndex] || numb < 0) {
+            message.channel.send("You do not have the necessary brycoins!");
+            return;
+        }
+        cashUserBals[senderIndex] = cashUserBals[senderIndex] - numb;
+        cashUserBals[recipIndex] = cashUserBals[recipIndex] + numb;
+        message.channel.send("Transfer successful!");
+        return;
+    }
 
-if(message.content.toLowerCase()=="bryshop") {
-        for(i = 0; i < cashShopListings.length; i++) {
-            message.channel.send(cashShopListings[i]+"\n Cost: "+cashShopCosts[i]+" Brycoins - ID:"+i)
+    if (message.content.toLowerCase() == "bryshop") {
+        for (i = 0; i < cashShopListings.length; i++) {
+            message.channel.send(cashShopListings[i] + "\n Cost: " + cashShopCosts[i] + " Brycoins - ID:" + i)
         }
         return;
     }
 
-    if(message.content.toLowerCase().includes("inventory")) {
+    if (message.content.toLowerCase().includes("inventory")) {
         let targetUserId = message.author.id;
-        let sluice = message.content.slice(13,31);
-        if(sluice.length > 2) {
+        let sluice = message.content.slice(13, 31);
+        if (sluice.length > 2) {
             targetUserId = sluice;
         }
         let indd = cashUserIds.indexOf(targetUserId);
-        if(indd == -1) {
+        if (indd == -1) {
             message.channel.send("The specified user does not have an inventory!");
             return;
         }
         let userInv = cashuserInv.split(",");
         let dispInv = "";
-        for(var i = 0; i < userInv.length; i++) {
-            dispInv += ("\n"+cashShopListings[parseInt(userInv[i])]);
+        for (var i = 0; i < userInv.length; i++) {
+            dispInv += ("\n" + cashShopListings[parseInt(userInv[i])]);
         }
 
         message.channel.send(new Discord.RichEmbed()
             .setColor('#FFDF00')
             .setTitle('Inventory')
-            .setDescription('<@'+targetUserId+'> - '+dispInv)
+            .setDescription('<@' + targetUserId + '> - ' + dispInv)
         );
         return;
     }
 
-    if(message.content.toLowerCase().includes("balance")) {
-        
+    if (message.content.toLowerCase().includes("balance")) {
+
         let targetUserId = message.author.id;
-        let sluice = message.content.slice(11,29);
-        if(sluice.length > 2) {
+        let sluice = message.content.slice(11, 29);
+        if (sluice.length > 2) {
             targetUserId = sluice;
         }
         let indd = cashUserIds.indexOf(targetUserId);
-        if(indd == -1) {
+        if (indd == -1) {
             message.channel.send("The specified user does not have a balance!");
             return;
         }
         message.channel.send(new Discord.RichEmbed()
             .setColor('#FFDF00')
             .setTitle('Balance')
-            .setDescription('<@'+targetUserId+'> - '+cashUserBals[indd]+' Brycoins')
+            .setDescription('<@' + targetUserId + '> - ' + cashUserBals[indd] + ' Brycoins')
         );
         return;
     }
     var b2s = Array.from(cashUserBals);
-    if(message.content.toLowerCase() == "leaderboard") {
+    if (message.content.toLowerCase() == "leaderboard") {
         //var b2s = cashUserBals;
-        b2s.sort(function(a, b){return b-a});
+        b2s.sort(function(a, b) {
+            return b - a
+        });
         let fulltxt = [];
         for (i = 0; i < 5; i++) {
             var ussInd = cashUserBals.indexOf(b2s[i]);
             //const User = Client.fetchUser(cashUserIds[i]);
-            fulltxt.push('<@'+cashUserIds[ussInd] + "> - "+b2s[i]+" Brycoins");
+            fulltxt.push('<@' + cashUserIds[ussInd] + "> - " + b2s[i] + " Brycoins");
         }
         message.channel.send(new Discord.RichEmbed()
             .setColor('#FFDF00')
             .setTitle('Leaderboard')
-            .setDescription(fulltxt[0]+"\n"+fulltxt[1]+"\n"+fulltxt[2]+"\n"+fulltxt[3]+"\n"+fulltxt[4])
+            .setDescription(fulltxt[0] + "\n" + fulltxt[1] + "\n" + fulltxt[2] + "\n" + fulltxt[3] + "\n" + fulltxt[4])
         );
         return;
     }
-    
-    
-    
 
-    
+
+
+
     if (starUsers.indexOf(message.author.id) > -1 && message.channel.type != "dm") {
         try {
             message.react(userEmojis[starUsers.indexOf(message.author.id)]);
@@ -442,18 +443,18 @@ if(message.content.toLowerCase()=="bryshop") {
     }
     if (message.content.toLowerCase() == "viewbans") {
         var totalBans = 0;
-    	for(var i = 0; i < bannedIds.length; i++) {
-    		if (bannedExpiry[i] != -1) {
-                message.channel.send("Confession #"+bannedNum[i]+" - Ban expires in "+readableDate(bannedExpiry[i]));
+        for (var i = 0; i < bannedIds.length; i++) {
+            if (bannedExpiry[i] != -1) {
+                message.channel.send("Confession #" + bannedNum[i] + " - Ban expires in " + readableDate(bannedExpiry[i]));
                 totalBans++;
             }
-    	}
-        if(totalBans == 0) {
+        }
+        if (totalBans == 0) {
             message.channel.send("There are no bans!");
         } else {
-            message.channel.send("Total active bans: "+totalBans);
+            message.channel.send("Total active bans: " + totalBans);
         }
-    	return;
+        return;
     }
     if (message.content == "neil") {
         message.channel.send(retArr(config.neil));
@@ -623,34 +624,34 @@ if(message.content.toLowerCase()=="bryshop") {
         //let appealIndex = bannedNum.indexOf(nnum);
         let bannedUserIndex = bannedNum.indexOf(nnum);
         let votesNeed = 5;
-        if(appealNums == 0) {
+        if (appealNums == 0) {
             message.channel.send("Appeal vote error!");
             return;
         }
-        if((bannedExpiry[bannedUserIndex] - Date.now()) < 86400000) {
+        if ((bannedExpiry[bannedUserIndex] - Date.now()) < 86400000) {
             votesNeed = 2;
-        } else if((bannedExpiry[bannedUserIndex] - Date.now()) < 604800000) {
+        } else if ((bannedExpiry[bannedUserIndex] - Date.now()) < 604800000) {
             votesNeed = 4;
         } else {
             votesNeed = 7;
         }
-        
+
         for (i = 0; i < (appealVoters.length / 18); i++) {
-                var uId = parseInt(appealVoters.slice(i * 18, i * 18 + 18));
-                if (message.author.id == uId) {
-                    message.channel.send("You have already supported the appeal for confession #" + nnum + "!");
-                    return;
-                }
+            var uId = parseInt(appealVoters.slice(i * 18, i * 18 + 18));
+            if (message.author.id == uId) {
+                message.channel.send("You have already supported the appeal for confession #" + nnum + "!");
+                return;
+            }
         }
-        
-        if(appealVol <= votesNeed) {
-            message.channel.send("You have voted to accept the appeal for #"+nnum+"! "+(votesNeed-appealVol)+" additional acceptances are needed to free the author of #"+nnum+".");
+
+        if (appealVol <= votesNeed) {
+            message.channel.send("You have voted to accept the appeal for #" + nnum + "! " + (votesNeed - appealVol) + " additional acceptances are needed to free the author of #" + nnum + ".");
             appealVoters = appealVoters + message.author.id;
             appealVol++;
             return;
         }
-        if(appealVol[appealIndex] == votesNeed) {
-            message.channel.send("You have voted to accept the appeal for #"+nnum+"! This user's ban has now been removed.");
+        if (appealVol[appealIndex] == votesNeed) {
+            message.channel.send("You have voted to accept the appeal for #" + nnum + "! This user's ban has now been removed.");
             bannedExpiry[bannedUserIndex] = -1;
             appealNums = 0;
             appealVol = 0;
@@ -674,7 +675,7 @@ if(message.content.toLowerCase()=="bryshop") {
                 message.channel.send("This confession is too old to report!");
                 return;
             }
-            
+
             for (i = 0; i < (repPostReppers[reportIndex].length / 18); i++) {
                 userInd = parseInt(repPostReppers[reportIndex].slice(i * 18, i * 18 + 18));
                 if (userInd == repUsrId) {
@@ -682,13 +683,13 @@ if(message.content.toLowerCase()=="bryshop") {
                     return;
                 }
             }
-            
-            
+
+
 
             if (repPostVol[reportIndex] >= 100) {
                 var reportedUserIndex = bannedIds.indexOf(repPostUser[reportIndex]);
                 var dayBan = (repPostVol[reportIndex] - 100) + 2;
-                if(isNaN(dayBan)) {
+                if (isNaN(dayBan)) {
                     message.channel.send("Error! Could not report!");
                     return;
                 }
@@ -702,7 +703,7 @@ if(message.content.toLowerCase()=="bryshop") {
             if (repPostVol[reportIndex] >= reportsNeeded) {
                 var reportedUserIndex = bannedIds.indexOf(repPostUser[reportIndex]);
                 if (reportedUserIndex > -1 && bannedExpiry[reportedUserIndex] != -1) {
-                //blanc       
+                    //blanc       
                 } else if (bannedExpiry[reportedUserIndex] == -1) {
                     bannedExpiry[reportedUserIndex] = (Date.now() + 86400000);
                     store.set('banUserExpiry', bannedExpiry);
@@ -746,25 +747,25 @@ if(message.content.toLowerCase()=="bryshop") {
     // 
 
     if (message.content.includes("!appeal")) {
-    	var banListId = bannedIds.indexOf(hashedId);
-        if(appealNums != 0) {
+        var banListId = bannedIds.indexOf(hashedId);
+        if (appealNums != 0) {
             message.channel.send("There is already an ongoing appeal!");
             return;
         }
-    	if(bannedExpiry[banListId] == -1 || banListId == -1) {
-    		message.channel.send("You are not banned!");
-    		return;
-    	}
-        if(bannedAppealed[banListId] == true) {
+        if (bannedExpiry[banListId] == -1 || banListId == -1) {
+            message.channel.send("You are not banned!");
+            return;
+        }
+        if (bannedAppealed[banListId] == true) {
             message.channel.send("You have already used up your appeal!");
             return;
         }
-    	
-    	client.channels.get(instantChannel).send(new Discord.RichEmbed()
+
+        client.channels.get(instantChannel).send(new Discord.RichEmbed()
             .setColor('#008080')
             .setTitle('Appeal for Confession #' + bannedNum[banListId])
-            .setDescription('Reason for appeal: '+message.content.slice(8))
-            .addField('Do you support this appeal?', 'Type \"accept '+bannedNum[banListId]+'\" to support this appeal!\n')
+            .setDescription('Reason for appeal: ' + message.content.slice(8))
+            .addField('Do you support this appeal?', 'Type \"accept ' + bannedNum[banListId] + '\" to support this appeal!\n')
         );
         appealVoters = "111111111111111111";
         appealVol = 0;
@@ -783,7 +784,7 @@ if(message.content.toLowerCase()=="bryshop") {
         cooldown = 20000;
     } else if (bannedIds.indexOf(hashedId) > -1 && Date.now() <= bannedExpiry[bannedIds.indexOf(hashedId)]) {
         cooldown = (bannedExpiry[bannedIds.indexOf(hashedId)] - (Date.now()));
-        client.users.get(message.author.id).send("You are banned! You cannot send a message for the next " + readableDate(bannedExpiry[bannedIds.indexOf(hashedId)])+"\nWant to appeal your ban? Use \"!appeal <your appeal reason here>\"");
+        client.users.get(message.author.id).send("You are banned! You cannot send a message for the next " + readableDate(bannedExpiry[bannedIds.indexOf(hashedId)]) + "\nWant to appeal your ban? Use \"!appeal <your appeal reason here>\"");
         return;
     }
 
