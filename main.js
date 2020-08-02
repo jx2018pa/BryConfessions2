@@ -167,20 +167,7 @@ client.on("message", async message => {
     }
     if(message.channel.type != "dm") {
     	let moneyIndex = cashUserIds.indexOf(message.author.id);
-    	if(Math.random() < 0.01) {
-    		message.channel.send("You got a mini prize! This has a 1% chance of happening per message 😱\nYou gained 50 brycoins!");
-    		cashUserBals[moneyIndex] = cashUserBals[moneyIndex] + 50;
-    		store.set('userIds', cashUserIds);
-    		store.set('userBals', cashUserBals);
-    		return;
-    	}
-    	if(Math.random() < 0.0001) {
-    		message.channel.send("YOU HIT THE JACKPOT!!!! This has a 0.01% chance of happening per message 😱\nYou gained 1600 brycoins!");
-    		cashUserBals[moneyIndex] = cashUserBals[moneyIndex] + 1600;
-    		store.set('userIds', cashUserIds);
-    		store.set('userBals', cashUserBals);
-    		return;
-    	}
+    	
     	let vv = true;
     	let rateUserIndex = rateUserId.indexOf(message.author.id);
     	if(rateUserIndex == -1) {
@@ -191,6 +178,21 @@ client.on("message", async message => {
     		if((Date.now() - rateUserTime[rateUserIndex]) < 30000) {
     			vv = false;
     		} else {
+                if(Math.random() < 0.0001) {
+            message.channel.send("YOU HIT THE JACKPOT!!!! This has a 0.01% chance of happening per message 😱\nYou gained 3000 brycoins!");
+            cashUserBals[moneyIndex] = cashUserBals[moneyIndex] + 3000;
+            store.set('userIds', cashUserIds);
+            store.set('userBals', cashUserBals);
+            return;
+        }
+            if(Math.random() < 0.01) {
+            message.channel.send("You got a mini prize! This has a 1% chance of happening per message 😱\nYou gained 75 brycoins!");
+            cashUserBals[moneyIndex] = cashUserBals[moneyIndex] + 75;
+            store.set('userIds', cashUserIds);
+            store.set('userBals', cashUserBals);
+            return;
+        }
+
     			rateUserTime[rateUserIndex] = Date.now();
     		}
     		
@@ -201,12 +203,32 @@ client.on("message", async message => {
             cashUserBals.push(1);
         } else {
         	if(vv) {
-        		cashUserBals[moneyIndex]++;
+        		cashUserBals[moneyIndex] += 2;
         	}
             
         }
         store.set('userIds', cashUserIds);
         store.set('userBals', cashUserBals);
+    }
+
+    if(message.channel.type != "dm" && message.content.includes("buy")) {
+        let itemInd = parseInt(message.content.slice(4));
+        let buyerInd = cashUserIds.indexOf(message.author.id);
+        if(buyerInd == -1 || isNan(item) || itemInd < 0 || itemInd >= cashShopListings.length) {
+            message.channel.send("Could not buy item!");
+            return;
+        }
+        if(cashUserBals[buyerInd] < cashShopCosts[itemInd]) {
+            message.channel.send("You do not have enough brycoins to buy this!");
+            return;
+        } else if((cashUserBals[buyerInd]-cashShopCosts[itemInd]) >= 0){
+            cashUserBals[moneyIndex] = (cashUserBals[buyerInd]-cashShopCosts[itemInd]);
+            cashUserInv[buyerInd] += ","+itemInd;
+            message.channel.send("Purchase successful! Please check your inventory to see your new items");
+            return;
+
+        }
+        return;
     }
 
     if(message.channel.type != "dm" && message.content.includes("transfer")) {
@@ -232,6 +254,31 @@ if(message.content.toLowerCase()=="bryshop") {
         for(i = 0; i < cashShopListings.length; i++) {
             message.channel.send(cashShopListings[i]+"\n Cost: "+cashShopCosts[i]+" Brycoins - ID:"+i)
         }
+        return;
+    }
+
+    if(message.content.toLowerCase().includes("inventory")) {
+        let targetUserId = message.author.id;
+        let sluice = message.content.slice(13,31);
+        if(sluice.length > 2) {
+            targetUserId = sluice;
+        }
+        let indd = cashUserIds.indexOf(targetUserId);
+        if(indd == -1) {
+            message.channel.send("The specified user does not have an inventory!");
+            return;
+        }
+        let userInv = cashuserInv.split(",");
+        let dispInv = "";
+        for(var i = 0; i < userInv.length; i++) {
+            dispInv += ("\n"+cashShopListings[parseInt(userInv[i])]);
+        }
+
+        message.channel.send(new Discord.RichEmbed()
+            .setColor('#FFDF00')
+            .setTitle('Inventory')
+            .setDescription('<@'+targetUserId+'> - '+dispInv)
+        );
         return;
     }
 
