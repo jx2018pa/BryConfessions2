@@ -282,13 +282,13 @@ client.on("message", async message => {
             message.channel.send("Bet failed!");
             return;
         }
-        if (Math.random() < 0.45) {
+        if (Math.random() < 0.48) {
             cashUserBals[userInd] += wager;
             message.channel.send(new Discord.RichEmbed()
                 .setColor('#00FF00')
                 .setTitle('You Win!')
                 .setDescription('<@' + message.author.id + '> - You won!\n' + wager + ' Brycoins were credited to your account')
-                .addField('Odds', 'You had a 45% chance of winning your initial bet')
+                .addField('Odds', 'You had a 48% chance of winning your initial bet')
             );
             store.set('userBals', cashUserBals);
         } else {
@@ -297,7 +297,7 @@ client.on("message", async message => {
                 .setColor('#ff0000')
                 .setTitle('You Lose!')
                 .setDescription('<@' + message.author.id + '> - You lost!\n' + wager + ' Brycoins were removed from your account')
-                .addField('Odds', 'You had a 45% chance of winning your initial bet')
+                .addField('Odds', 'You had a 48% chance of winning your initial bet')
             );
             store.set('userBals', cashUserBals);
         }
