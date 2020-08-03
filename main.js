@@ -257,8 +257,8 @@ client.on("message", async message => {
                     return;
                 }
                 if (Math.random() < 0.01) {
-                    message.channel.send(addTitle(message.author.id) + " got a mini prize! This has a 1% chance of happening per message 😱\nYou gained 125 brycoins!");
-                    cashUserBals[moneyIndex] = cashUserBals[moneyIndex] + 125;
+                    message.channel.send(addTitle(message.author.id) + " got a mini prize! This has a 1% chance of happening per message 😱\nYou gained 175 brycoins!");
+                    cashUserBals[moneyIndex] = cashUserBals[moneyIndex] + 175;
                     store.set('userIds', cashUserIds);
                     store.set('userBals', cashUserBals);
                     return;
@@ -304,15 +304,12 @@ client.on("message", async message => {
         let indexxxx = cashUserIds.indexOf(message.author.id);
     let userInv = cashUserInv[indexxxx].split(",");
     let full = "";
-    let g = false;
     let rankId = parseInt(userInv[0]);
     if(userInv[0] == "inv") {
         rankId = -1;
     } else if(userInv[0].slice(0,1) == "f") {
-        g = true;
         rankId = parseInt(userInv[0].slice(1));
     }else {
-        g = false;
         rankId = parseInt(userInv[0].slice(1));
     }
     let nextCost = Math.round(Math.pow((rankId+2),1.8)*200);
