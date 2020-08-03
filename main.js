@@ -222,6 +222,7 @@ client.on("message", async message => {
         }
         store.set('userIds', cashUserIds);
         store.set('userBals', cashUserBals);
+        store.set('userInv', cashUserInv);
     }
 
     if (message.channel.type != "dm" && message.content.includes("buy")) {
@@ -237,6 +238,7 @@ client.on("message", async message => {
         } else if ((cashUserBals[buyerInd] - cashShopCosts[itemInd]) >= 0) {
             cashUserBals[buyerInd] = (cashUserBals[buyerInd] - cashShopCosts[itemInd]);
             cashUserInv[buyerInd] += "," + itemInd;
+            store.set('userInv', cashUserInv);
             message.channel.send("Purchase successful! Please check your inventory to see your new items.");
             return;
 
