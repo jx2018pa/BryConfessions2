@@ -30,15 +30,14 @@ const fs = require('fs');
 const client = new Discord.Client();
 //let cNum = parseInt(fs.readFileSync("confnum.txt", "utf8"));
 
-
-
-
 let cNum = store.get('cNum');
 let starUsers = store.get('starUsers');
 let userEmojis = store.get('userEmojis');
 let cashUserIds = store.get('userIds');
 let cashUserBals = store.get('userBals');
 let cashUserInv = store.get('userInv');
+let cashUserBank = store.get('userBank');
+let cashUserDeposit = store.get('userDeposit');
 const cashShopListings = store.get('shopListings');
 const cashShopCosts = store.get('shopCosts');
 const secret = store.get('secretKey');
@@ -214,6 +213,8 @@ client.on("message", async message => {
             cashUserIds.push(message.author.id);
             cashUserBals.push(1);
             cashUserInv.push("inv");
+            cashUserBank.push(0);
+            cashUserDeposit.push(0);
         } else {
             if (vv) {
                 cashUserBals[moneyIndex] += 2;
@@ -223,6 +224,60 @@ client.on("message", async message => {
         store.set('userIds', cashUserIds);
         store.set('userBals', cashUserBals);
         store.set('userInv', cashUserInv);
+    }
+
+    if(message.channel.type != "dm" && message.content=="brybank"){
+
+    	let ussIndd = cashUserIds.indexOf(message.author.id);
+    	if(cashUserBank[ussIndd] == 0) {
+    		message.channel.send("You have no bank balance! To deposit, type \"brybank deposit <number>\"");
+    		return;
+    	}
+    	let epoch = Math.floor((Date.now()-cashUserDeposit[ussIndd])/86400000);
+    	let theoBal = Math.floor(cashUserBank[ussIndd]*((1.06)^epoch));
+    	message.channel.send(new Discord.RichEmbed()
+            .setColor('#FFDF00')
+            .setTitle('Bry Bank')
+            .setDescription("Your current bank balance: "+theoBal)
+            .addField("Stats", "You have been earning 6% daily interest for "+epoch+" days.\nYou have earned "+(theoBal-cashUserBank[ussIndd])+" Brycoins so far.\nTo withdraw, type \"brybank withdraw\"")
+        );
+        return;
+    }
+
+    if(message.channel.type != "dm" && message.content.includes("brybank")){
+    	let ussIndd = cashUserIds.indexOf(message.author.id);
+    	let epoch = Math.floor((Date.now()-cashUserDeposit[ussIndd])/86400000);
+    	let theoBal = Math.floor(cashUserBank[ussIndd]*((1.06)^epoch));
+    	let ddarr = message.content.split(" ");
+    	if(ddarr[1] == "withdraw") {
+            if(cashUserBank[ussIndd] == 0) {
+                message.channel.send("You have no bank balance!");
+                return;
+            }
+    		cashUserBals[ussIndd] += theoBal;
+    		cashUserBank[ussIndd] = 0;
+    		message.channel.send("Withdrawal successful! New balance: "+cashUserBals[ussIndd]);
+    		return;
+    	}
+    	if(ddarr[1] == "deposit") {
+    		if(cashUserBank[ussIndd] != 0) {
+    			message.channel.send("You cannot deposit until your brybank balance is 0! Withdraw first!");
+    			return;
+    		}
+    		let depNum = parseInt(ddarr[2]);
+    		if(depNum > cashUserBals[ussIndd] || depNum < 1 || isNaN(depNum)) {
+    			message.channel.send("Deposit failed!");
+    			return;
+    		} else {
+    			cashUserBals[ussIndd] -= depNum;
+    			cashUserBank[ussIndd] += depNum;
+    			message.channel.send("Deposit successful! New bank balance: "+cashUserBank[ussIndd]);
+    			cashUserDeposit[ussIndd] = Date.now();
+    			return;
+    		}
+    	}
+    	message.channel.send("Bank operation failed!");
+    	return;
     }
 
     if (message.channel.type != "dm" && message.content.includes("buy")) {
@@ -352,7 +407,7 @@ client.on("message", async message => {
         message.channel.send(new Discord.RichEmbed()
             .setColor('#FFDF00')
             .setTitle('Balance')
-            .setDescription('<@' + targetUserId + '> - ' + cashUserBals[indd] + ' Brycoins')
+            .setDescription('<@' + targetUserId + '> \n' + cashUserBals[indd] + ' Brycoins in Wallet\n'+cashUserBank[indd]+' Brycoins in Brybank')
         );
         return;
     }
@@ -366,7 +421,7 @@ client.on("message", async message => {
         for (i = 0; i < 20; i++) {
             var ussInd = cashUserBals.indexOf(b2s[i]);
             //const User = Client.fetchUser(cashUserIds[i]);
-            fulltxt += "<@" + cashUserIds[ussInd] + "> - " + b2s[i] + " Brycoins\n";
+            fulltxt += "<@" + cashUserIds[ussInd] + "> - " + b2s[i] + " Wallet Brycoins, "+cashUserBank[ussInd]+" Bank Brycoins\n";
         }
         message.channel.send(new Discord.RichEmbed()
             .setColor('#FFDF00')
