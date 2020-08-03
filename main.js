@@ -363,7 +363,7 @@ client.on("message", async message => {
             return b - a
         });
         let fulltxt = "";
-        for (i = 0; i < 15; i++) {
+        for (i = 0; i < 20; i++) {
             var ussInd = cashUserBals.indexOf(b2s[i]);
             //const User = Client.fetchUser(cashUserIds[i]);
             fulltxt += "<@" + cashUserIds[ussInd] + "> - " + b2s[i] + " Brycoins\n";
