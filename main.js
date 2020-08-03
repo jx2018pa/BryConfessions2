@@ -198,8 +198,8 @@ client.on("message", async message => {
                     return;
                 }
                 if (Math.random() < 0.01) {
-                    message.channel.send("You got a mini prize! This has a 1% chance of happening per message 😱\nYou gained 150 brycoins!");
-                    cashUserBals[moneyIndex] = cashUserBals[moneyIndex] + 150;
+                    message.channel.send("You got a mini prize! This has a 1% chance of happening per message 😱\nYou gained 125 brycoins!");
+                    cashUserBals[moneyIndex] = cashUserBals[moneyIndex] + 125;
                     store.set('userIds', cashUserIds);
                     store.set('userBals', cashUserBals);
                     return;
@@ -362,16 +362,16 @@ client.on("message", async message => {
         b2s.sort(function(a, b) {
             return b - a
         });
-        let fulltxt = [];
-        for (i = 0; i < 5; i++) {
+        let fulltxt = "";
+        for (i = 0; i < 15; i++) {
             var ussInd = cashUserBals.indexOf(b2s[i]);
             //const User = Client.fetchUser(cashUserIds[i]);
-            fulltxt.push('<@' + cashUserIds[ussInd] + "> - " + b2s[i] + " Brycoins");
+            fulltxt += "<@" + cashUserIds[ussInd] + "> - " + b2s[i] + " Brycoins\n";
         }
         message.channel.send(new Discord.RichEmbed()
             .setColor('#FFDF00')
             .setTitle('Leaderboard')
-            .setDescription(fulltxt[0] + "\n" + fulltxt[1] + "\n" + fulltxt[2] + "\n" + fulltxt[3] + "\n" + fulltxt[4])
+            .setDescription(fulltxt)
         );
         return;
     }
