@@ -234,12 +234,15 @@ client.on("message", async message => {
     		return;
     	}
     	let epoch = Math.floor((Date.now()-cashUserDeposit[ussIndd])/86400000);
-    	let theoBal = Math.floor(cashUserBank[ussIndd]*((1.06)^epoch));
+    	let theoBal = Math.floor(cashUserBank[ussIndd]*Math.pow(1.04,epoch));
+        if((theoBal-cashuserBank[ussIndd]) > 7500) {
+            theoBal = cashUserBank[ussIndd]+7500;
+        }
     	message.channel.send(new Discord.RichEmbed()
             .setColor('#FFDF00')
             .setTitle('Bry Bank')
             .setDescription("Your current bank balance: "+theoBal)
-            .addField("Stats", "You have been earning 6% daily interest for "+epoch+" days.\nYou have earned "+(theoBal-cashUserBank[ussIndd])+" Brycoins so far.\nTo withdraw, type \"brybank withdraw\"")
+            .addField("Stats", "You have been earning 4% daily interest for "+epoch+" days.\nYou have earned "+(theoBal-cashUserBank[ussIndd])+" Brycoins so far.\nTo withdraw, type \"brybank withdraw\"\nYou can earn a maximum of 7500 Brycoins from the bank.")
         );
         return;
     }
@@ -247,8 +250,11 @@ client.on("message", async message => {
     if(message.channel.type != "dm" && message.content.includes("brybank")){
     	let ussIndd = cashUserIds.indexOf(message.author.id);
     	let epoch = Math.floor((Date.now()-cashUserDeposit[ussIndd])/86400000);
-    	let theoBal = Math.floor(cashUserBank[ussIndd]*((1.06)^epoch));
+    	let theoBal = Math.floor(cashUserBank[ussIndd]*Math.pow(1.04,epoch));
     	let ddarr = message.content.split(" ");
+        if((theoBal-cashuserBank[ussIndd]) > 7500) {
+            theoBal = cashUserBank[ussIndd]+7500;
+        }
     	if(ddarr[1] == "withdraw") {
             if(cashUserBank[ussIndd] == 0) {
                 message.channel.send("You have no bank balance!");
@@ -260,9 +266,13 @@ client.on("message", async message => {
     		return;
     	}
     	if(ddarr[1] == "deposit") {
+            if(cashUserBals[ussIndd] > 15000) {
+                message.channel.send("You have too many brycoins to use the bank! Try spending some coins or getting income another way!");
+                return; 
+            }
     		if(cashUserBank[ussIndd] != 0) {
     			message.channel.send("You cannot deposit until your brybank balance is 0! Withdraw first!");
-    			return;
+                return;
     		}
     		let depNum = parseInt(ddarr[2]);
     		if(depNum > cashUserBals[ussIndd] || depNum < 1 || isNaN(depNum)) {
