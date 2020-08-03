@@ -169,20 +169,6 @@ client.on("message", async message => {
     if (message.author.bot) {
         return;
     }
-    
-    if(message.content.includes("gamblesim")) {
-    	var win = 0;
-    	var lose = 0;
-    	for(var i = 0; i < 100; i++) {
-    		if(Math.random() < 0.45) {
-    			win++;
-    		} else {
-    			lose++;
-    		}
-    	}
-    	message.channel.send(win+" Wins, "+lose+" Losses");
-    	return;
-    }
 
     if (message.channel.type != "dm") {
         let moneyIndex = cashUserIds.indexOf(message.author.id);
@@ -194,14 +180,14 @@ client.on("message", async message => {
             rateUserTime.push(Date.now());
             rateUserRefresh.push(Date.now());
         } else {
-        	if((Date.now() - rateUserRefresh[rateUserIndex]) > 86400000) {
-        		message.channel.send("Welcome back <@"+message.author.id+"> - Your daily 75 Brycoin bonus has been deposited into your account!");
-        		cashUserBals[moneyIndex] = cashUserBals[moneyIndex] + 75;
-        		store.set('userIds', cashUserIds);
-                    store.set('userBals', cashUserBals);
+            if ((Date.now() - rateUserRefresh[rateUserIndex]) > 86400000) {
+                message.channel.send("Hey <@" + message.author.id + "> - Your daily 85 Brycoin bonus has been deposited into your account!");
+                cashUserBals[moneyIndex] = cashUserBals[moneyIndex] + 85;
+                store.set('userIds', cashUserIds);
+                store.set('userBals', cashUserBals);
                 rateUserRefresh[rateUserIndex] = Date.now();
-        		return;
-        	} else if ((Date.now() - rateUserTime[rateUserIndex]) < 30000) {
+                return;
+            } else if ((Date.now() - rateUserTime[rateUserIndex]) < 30000) {
                 vv = false;
             } else {
                 if (Math.random() < 0.0001) {
@@ -277,9 +263,15 @@ client.on("message", async message => {
     }
 
     if (message.content.toLowerCase() == "bryshop") {
-        for (i = 0; i < cashShopListings.length; i++) {
-            message.channel.send(cashShopListings[i] + "\n Cost: " + cashShopCosts[i] + " Brycoins - ID:" + i)
+    	let allListings = "";
+        for (var i = 0; i < cashShopListings.length; i++) {
+        	allListings += cashShopListings[i] + "\n Cost: " + cashShopCosts[i] + " Brycoins - ID:" + i+"\n";
         }
+        message.channel.send(new Discord.RichEmbed()
+            .setColor('#FFDF00')
+            .setTitle('Bry Shop!')
+            .setDescription(allListings)
+        );
         return;
     }
 
@@ -326,12 +318,12 @@ client.on("message", async message => {
         let userInv = cashUserInv[indd].split(",");
         let dispInv = "";
         for (var i = 0; i < userInv.length; i++) {
-        	if(userInv[i].includes("inv")) {
-        		//do nothing
-        	} else {
-        		dispInv += ("\n" + cashShopListings[parseInt(userInv[i])]);
-        	}
-            
+            if (userInv[i].includes("inv")) {
+                //do nothing
+            } else {
+                dispInv += ("\n" + cashShopListings[parseInt(userInv[i])]);
+            }
+
         }
 
         message.channel.send(new Discord.RichEmbed()
