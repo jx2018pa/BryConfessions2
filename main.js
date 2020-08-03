@@ -67,6 +67,7 @@ let appealVol = 0;
 let appealVoters = "111111111111111111";
 let rateUserId = ["x"];
 let rateUserTime = [2];
+let rateUserRefresh = [4];
 let currentPoll = false;
 let option1 = 0;
 let option2 = 0;
@@ -173,21 +174,28 @@ client.on("message", async message => {
         if (rateUserIndex == -1) {
             rateUserId.push(message.author.id);
             rateUserTime.push(Date.now());
-
+            rateUserRefresh.push(Date.now());
         } else {
-            if ((Date.now() - rateUserTime[rateUserIndex]) < 30000) {
+        	if((Date.now() - rateUserRefresh[rateUserIndex]) > 86400000) {
+        		message.channel.send("Welcome back <@"+message.author.id+"> - Your daily 75 Brycoin bonus has been deposited into your account!");
+        		cashUserBals[moneyIndex] = cashUserBals[moneyIndex] + 75;
+        		store.set('userIds', cashUserIds);
+                    store.set('userBals', cashUserBals);
+                rateUserRefresh[rateUserIndex] = Date.now();
+        		return;
+        	} else if ((Date.now() - rateUserTime[rateUserIndex]) < 30000) {
                 vv = false;
             } else {
                 if (Math.random() < 0.0001) {
-                    message.channel.send("YOU HIT THE JACKPOT!!!! This has a 0.01% chance of happening per message 😱\nYou gained 3000 brycoins!");
+                    message.channel.send("YOU HIT THE JACKPOT!!!! This has a 0.01% chance of happening per message 😱\nYou gained 5000 brycoins!");
                     cashUserBals[moneyIndex] = cashUserBals[moneyIndex] + 3000;
                     store.set('userIds', cashUserIds);
                     store.set('userBals', cashUserBals);
                     return;
                 }
                 if (Math.random() < 0.01) {
-                    message.channel.send("You got a mini prize! This has a 1% chance of happening per message 😱\nYou gained 75 brycoins!");
-                    cashUserBals[moneyIndex] = cashUserBals[moneyIndex] + 75;
+                    message.channel.send("You got a mini prize! This has a 1% chance of happening per message 😱\nYou gained 150 brycoins!");
+                    cashUserBals[moneyIndex] = cashUserBals[moneyIndex] + 150;
                     store.set('userIds', cashUserIds);
                     store.set('userBals', cashUserBals);
                     return;
@@ -522,7 +530,7 @@ client.on("message", async message => {
         message.channel.send(retArr(config.willy));
         return;
     }
-    if (message.content == "angela") {
+    if (message.content.includes("angela")) {
         message.channel.send(retArr(config.angela));
         return;
     }
