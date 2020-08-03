@@ -235,7 +235,7 @@ client.on("message", async message => {
     	}
     	let epoch = Math.floor((Date.now()-cashUserDeposit[ussIndd])/86400000);
     	let theoBal = Math.floor(cashUserBank[ussIndd]*Math.pow(1.04,epoch));
-        if((theoBal-cashuserBank[ussIndd]) > 7500) {
+        if((theoBal-cashUserBank[ussIndd]) > 7500) {
             theoBal = cashUserBank[ussIndd]+7500;
         }
     	message.channel.send(new Discord.RichEmbed()
@@ -252,7 +252,7 @@ client.on("message", async message => {
     	let epoch = Math.floor((Date.now()-cashUserDeposit[ussIndd])/86400000);
     	let theoBal = Math.floor(cashUserBank[ussIndd]*Math.pow(1.04,epoch));
     	let ddarr = message.content.split(" ");
-        if((theoBal-cashuserBank[ussIndd]) > 7500) {
+        if((theoBal-cashUserBank[ussIndd]) > 7500) {
             theoBal = cashUserBank[ussIndd]+7500;
         }
     	if(ddarr[1] == "withdraw") {
