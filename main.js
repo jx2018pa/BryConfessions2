@@ -30,16 +30,19 @@ const fs = require('fs');
 const client = new Discord.Client();
 //let cNum = parseInt(fs.readFileSync("confnum.txt", "utf8"));
 
+
+
+
 let cNum = store.get('cNum');
 let starUsers = store.get('starUsers');
 let userEmojis = store.get('userEmojis');
 let cashUserIds = store.get('userIds');
 let cashUserBals = store.get('userBals');
+let cashUserInv = store.get('userInv');
 const cashShopListings = store.get('shopListings');
 const cashShopCosts = store.get('shopCosts');
 const secret = store.get('secretKey');
 const auth = require("./auth.json");
-
 
 let bannedIds = store.get('banUserIds');
 let bannedExpiry = store.get('banUserExpiry');
@@ -166,6 +169,21 @@ client.on("message", async message => {
     if (message.author.bot) {
         return;
     }
+    
+    if(message.content.includes("gamblesim")) {
+    	var win = 0;
+    	var lose = 0;
+    	for(var i = 0; i < 100; i++) {
+    		if(Math.random() < 0.45) {
+    			win++;
+    		} else {
+    			lose++;
+    		}
+    	}
+    	message.channel.send(win+" Wins, "+lose+" Losses");
+    	return;
+    }
+
     if (message.channel.type != "dm") {
         let moneyIndex = cashUserIds.indexOf(message.author.id);
 
@@ -222,7 +240,7 @@ client.on("message", async message => {
     if (message.channel.type != "dm" && message.content.includes("buy")) {
         let itemInd = parseInt(message.content.slice(4));
         let buyerInd = cashUserIds.indexOf(message.author.id);
-        if (buyerInd == -1 || isNan(item) || itemInd < 0 || itemInd >= cashShopListings.length) {
+        if (buyerInd == -1 || isNaN(itemInd) || itemInd < 0 || itemInd >= cashShopListings.length) {
             message.channel.send("Could not buy item!");
             return;
         }
@@ -230,9 +248,9 @@ client.on("message", async message => {
             message.channel.send("You do not have enough brycoins to buy this!");
             return;
         } else if ((cashUserBals[buyerInd] - cashShopCosts[itemInd]) >= 0) {
-            cashUserBals[moneyIndex] = (cashUserBals[buyerInd] - cashShopCosts[itemInd]);
+            cashUserBals[buyerInd] = (cashUserBals[buyerInd] - cashShopCosts[itemInd]);
             cashUserInv[buyerInd] += "," + itemInd;
-            message.channel.send("Purchase successful! Please check your inventory to see your new items");
+            message.channel.send("Purchase successful! Please check your inventory to see your new items.");
             return;
 
         }
@@ -265,28 +283,31 @@ client.on("message", async message => {
         return;
     }
 
-    if (message.content.toLowerCase.includes("gamble")) {
+    if (message.content.toLowerCase().includes("gamble")) {
         let wager = parseInt(message.content.slice(7));
         let userInd = cashUserIds.indexOf(message.author.id);
-        if (wager > cashUserBals[userInd] || isNan(wager)) {
+        if (wager > cashUserBals[userInd] || isNaN(wager) || wager < 0) {
             message.channel.send("Bet failed!");
+            return;
         }
         if (Math.random() < 0.45) {
             cashUserBals[userInd] += wager;
             message.channel.send(new Discord.RichEmbed()
                 .setColor('#00FF00')
                 .setTitle('You Win!')
-                .setDescription('<@' + targetUserId + '> - You won!\n' + wager + ' Brycoins were credited to your account')
+                .setDescription('<@' + message.author.id + '> - You won!\n' + wager + ' Brycoins were credited to your account')
                 .addField('Odds', 'You had a 45% chance of winning your initial bet')
             );
+            store.set('userBals', cashUserBals);
         } else {
             cashUserBals[userInd] -= wager;
             message.channel.send(new Discord.RichEmbed()
                 .setColor('#ff0000')
                 .setTitle('You Lose!')
-                .setDescription('<@' + targetUserId + '> - You lost!\n' + wager + ' Brycoins were removed from your account')
+                .setDescription('<@' + message.author.id + '> - You lost!\n' + wager + ' Brycoins were removed from your account')
                 .addField('Odds', 'You had a 45% chance of winning your initial bet')
             );
+            store.set('userBals', cashUserBals);
         }
         return;
     }
@@ -302,16 +323,21 @@ client.on("message", async message => {
             message.channel.send("The specified user does not have an inventory!");
             return;
         }
-        let userInv = cashuserInv.split(",");
+        let userInv = cashUserInv[indd].split(",");
         let dispInv = "";
         for (var i = 0; i < userInv.length; i++) {
-            dispInv += ("\n" + cashShopListings[parseInt(userInv[i])]);
+        	if(userInv[i].includes("inv")) {
+        		//do nothing
+        	} else {
+        		dispInv += ("\n" + cashShopListings[parseInt(userInv[i])]);
+        	}
+            
         }
 
         message.channel.send(new Discord.RichEmbed()
             .setColor('#FFDF00')
             .setTitle('Inventory')
-            .setDescription('<@' + targetUserId + '> - ' + dispInv)
+            .setDescription('<@' + targetUserId + '>' + dispInv)
         );
         return;
     }
