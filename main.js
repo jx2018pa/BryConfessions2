@@ -213,6 +213,7 @@ client.on("message", async message => {
         if (moneyIndex == -1) {
             cashUserIds.push(message.author.id);
             cashUserBals.push(1);
+            cashUserInv.push("inv");
         } else {
             if (vv) {
                 cashUserBals[moneyIndex] += 2;
