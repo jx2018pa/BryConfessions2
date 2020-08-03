@@ -325,6 +325,7 @@ client.on("message", async message => {
         userInv[0] = "n"+rankId;
         cashUserInv[indexxxx] = userInv.toString();
         store.set('userInv', cashUserInv);
+        store.set('userBals', cashUserBals);
         message.channel.send("Success! You are now "+addTitle(message.author.id)+"\nThis transaction cost you "+nextCost);
         return;
     }
