@@ -102,6 +102,8 @@ let allTitles = ["🗑️ Bum",
     "🥪 Earl",
     "🔮 Magistrate",
     "🐔 Chanticleer",
+    "⚔️ Knight",
+    "🥄 Aristocrat",
     "🏰 His Excellency/🏰 Her Excellency",
     "👲 Duke/👲 Duchess",
     "🐴 Prince/🐴 Princess",
@@ -113,7 +115,8 @@ let allTitles = ["🗑️ Bum",
     "🔺 President",
     "👑 King/👑 Queen",
     "🌟 The Holy One",
-    "✨ Bry Himself"];
+    "✨ Bry Himself"
+];
 
 function addReaction() {
 
@@ -177,33 +180,33 @@ function addTitle(id) {
     let full = "";
     let g = false;
     let rankId = 0;
-    
-    if(userInv[0] == "inv") {
-        return "🥔 Peasant <@"+id+">"; 
+
+    if (userInv[0] == "inv") {
+        return "🥔 Peasant <@" + id + ">";
     }
-    if (userInv[0].slice(0,1) == "f") {
+    if (userInv[0].slice(0, 1) == "f") {
         g = true;
         rankId = parseInt(userInv[0].slice(1));
     } else {
         g = false;
         rankId = parseInt(userInv[0].slice(1));
     }
-    
-    if(isNaN(rankId)) {
-        return "<@"+id+">";
+
+    if (isNaN(rankId)) {
+        return "<@" + id + ">";
     }
 
-    if(userInv[0] == "inv" || rankId == isNaN(rankId)) {
-        return "Peasant <@"+id+">";
+    if (userInv[0] == "inv" || rankId == isNaN(rankId)) {
+        return "🗑️ Bum <@" + id + ">";
     } else {
         let title = allTitles[rankId].split("/");
-        if(g==false || title.length == 1) {
-            return title[0]+" <@"+id+">";
+        if (g == false || title.length == 1) {
+            return title[0] + " <@" + id + ">";
         } else {
-            return title[1]+" <@"+id+">";
+            return title[1] + " <@" + id + ">";
         }
     }
-    return "<@"+id+">";
+    return "<@" + id + ">";
 }
 
 client.on("ready", () => {
@@ -228,20 +231,32 @@ client.on("message", async message => {
 
     if (message.channel.type != "dm") {
         let moneyIndex = cashUserIds.indexOf(message.author.id);
-
+        let userInv = cashUserInv[moneyIndex].split(",");
+        let rankId = 0;
+        if (userInv[0] == "inv") {
+            rankId = 0;
+        } else if (userInv[0].slice(0, 1) == "f") {
+            rankId = parseInt(userInv[0].slice(1));
+        } else {
+            rankId = parseInt(userInv[0].slice(1));
+        }
         let vv = true;
         let rateUserIndex = rateUserId.indexOf(message.author.id);
-        if(cashUserBals[moneyIndex] == null) {
+        let rankCost = Math.round(Math.pow((rankId + 1), 1.9) * 200);
+        if (cashUserBals[moneyIndex] == null) {
             cashUserBals[moneyIndex] = 1;
+        }
+        if ((cashUserBals[moneyIndex]) > (rankCost * 2)) {
+            message.channel.send("Hey " + addTitle(message.author.id) + " - Your current balance is above the maximum your rank can safely keep, which is " + (rankCost * 2) + "! Rank up now to keep earning Brycoins and stay safe from robbers!");
         }
         if (rateUserIndex == -1) {
             rateUserId.push(message.author.id);
             rateUserTime.push(Date.now());
             rateUserRefresh.push(Date.now());
         } else {
-            if ((Date.now() - rateUserRefresh[rateUserIndex]) > 86400000) {
-                message.channel.send("Hey "+addTitle(message.author.id) + " - Your daily 85 Brycoin bonus has been deposited into your account!");
-                cashUserBals[moneyIndex] = cashUserBals[moneyIndex] + 85;
+            if ((Date.now() - rateUserRefresh[rateUserIndex]) > 3600000) {
+                message.channel.send("Hey " + addTitle(message.author.id) + " - Your hourly 65 Brycoin bonus has been deposited into your account!");
+                cashUserBals[moneyIndex] = cashUserBals[moneyIndex] + 65;
                 store.set('userIds', cashUserIds);
                 store.set('userBals', cashUserBals);
                 rateUserRefresh[rateUserIndex] = Date.now();
@@ -257,8 +272,8 @@ client.on("message", async message => {
                     return;
                 }
                 if (Math.random() < 0.01) {
-                    message.channel.send(addTitle(message.author.id) + " got a mini prize! This has a 1% chance of happening per message 😱\nYou gained 175 brycoins!");
-                    cashUserBals[moneyIndex] = cashUserBals[moneyIndex] + 175;
+                    message.channel.send(addTitle(message.author.id) + " got a mini prize! This has a 1% chance of happening per message 😱\nYou gained 200 brycoins!");
+                    cashUserBals[moneyIndex] = cashUserBals[moneyIndex] + 200;
                     store.set('userIds', cashUserIds);
                     store.set('userBals', cashUserBals);
                     return;
@@ -286,12 +301,12 @@ client.on("message", async message => {
         store.set('userInv', cashUserInv);
     }
 
-    if(message.channel.type != "dm" && message.content=="titles"){
+    if (message.channel.type != "dm" && message.content == "titles") {
         let fulll = "";
         for (var i = 0; i < allTitles.length; i++) {
-            fulll += allTitles[i] + " | Cost: " + Math.round(Math.pow((i+1),1.8)*200) + " Brycoins\n";
+            fulll += allTitles[i] + " | Cost: " + Math.round(Math.pow((i + 1), 1.9) * 200) + " Brycoins\n";
         }
-        fulll+="Want to buy a new title? Type \"rankup\"!\nTo switch between title genders type \"togglerank\"";
+        fulll += "Want to buy a new title? Type \"rankup\"!\nTo switch between title genders type \"togglerank\"";
         message.channel.send(new Discord.RichEmbed()
             .setColor('#FFDF00')
             .setTitle('Title Shop')
@@ -300,125 +315,199 @@ client.on("message", async message => {
         return;
     }
 
-    if(message.content=="rankup") {
-        let indexxxx = cashUserIds.indexOf(message.author.id);
-    let userInv = cashUserInv[indexxxx].split(",");
-    let full = "";
-    let rankId = parseInt(userInv[0]);
-    if(userInv[0] == "inv") {
-        rankId = -1;
-    } else if(userInv[0].slice(0,1) == "f") {
-        rankId = parseInt(userInv[0].slice(1));
-    }else {
-        rankId = parseInt(userInv[0].slice(1));
-    }
-    let nextCost = Math.round(Math.pow((rankId+2),1.8)*200);
-    if(nextCost > cashUserBals[indexxxx] || rankId > (allTitles.length-2) || isNaN(rankId)) {
-        message.channel.send("Error buying next rank!");
-        return;
-    } else {
-        cashUserBals[indexxxx] -= nextCost;
-        rankId += 1;
-        userInv[0] = "n"+rankId;
-        cashUserInv[indexxxx] = userInv.toString();
-        store.set('userInv', cashUserInv);
-        store.set('userBals', cashUserBals);
-        message.channel.send("Success! You are now "+addTitle(message.author.id)+"\nThis transaction cost you "+nextCost);
-        return;
-    }
-
-    }
-
-    if(message.channel.type != "dm" && message.content=="togglerank"){
+    if (message.content == "rankup") {
         let indexxxx = cashUserIds.indexOf(message.author.id);
         let userInv = cashUserInv[indexxxx].split(",");
-        if(userInv[0] == "inv") {
-            message.channel.send("Success! You are now "+addTitle(message.author.id));
+        let full = "";
+        let rankId = parseInt(userInv[0]);
+        if (userInv[0] == "inv") {
+            rankId = -1;
+        } else if (userInv[0].slice(0, 1) == "f") {
+            rankId = parseInt(userInv[0].slice(1));
+        } else {
+            rankId = parseInt(userInv[0].slice(1));
+        }
+        let nextCost = Math.round(Math.pow((rankId + 2), 1.9) * 200);
+        if (nextCost > cashUserBals[indexxxx] || rankId > (allTitles.length - 2) || isNaN(rankId)) {
+            message.channel.send("Error buying next rank!");
+            return;
+        } else {
+            cashUserBals[indexxxx] -= nextCost;
+            rankId += 1;
+            userInv[0] = "n" + rankId;
+            cashUserInv[indexxxx] = userInv.toString();
+            store.set('userInv', cashUserInv);
+            store.set('userBals', cashUserBals);
+            message.channel.send("Success! You are now " + addTitle(message.author.id) + "\nThis transaction cost you " + nextCost);
+            return;
+        }
+
+    }
+
+
+    if (message.channel.type != "dm" && message.content.slice(0, 3) == "rob") {
+        console.log(message.content);
+        let indexxxx = cashUserIds.indexOf(message.author.id);
+        let targetedUser = message.content.slice(7, 25);
+        let targId = cashUserIds.indexOf(targetedUser);
+        let targInv = cashUserInv[targId].split(",");
+        if (targId == -1) {
+            message.channel.send("Invalid target!");
+            return;
+        }
+        let rankId = 0;
+        if (targInv[0] == "inv") {
+            rankId = 0;
+        } else if (targInv[0].slice(0, 1) == "f") {
+            rankId = parseInt(targInv[0].slice(1));
+        } else {
+            rankId = parseInt(targInv[0].slice(1));
+        }
+        let rankCost = Math.round(Math.pow((rankId + 1), 1.9) * 200);
+        if (rankId == 0) {
+            rankCost = 0;
+        }
+        if (cashUserBals[targId] < rankCost) {
+            message.channel.send(new Discord.RichEmbed()
+                .setColor('#FFDF00')
+                .setTitle('Failure!')
+                .setDescription(addTitle(targetedUser) + " has a balance under their insurance, disallowing you to steal from them.")
+            );
+            return;
+        }
+
+        if (Math.random() < 0.5) {
+            message.channel.send(new Discord.RichEmbed()
+                .setColor('#FFDF00')
+                .setTitle('Oh No!')
+                .setDescription("The police caught you before you could rob anyone! They took " + Math.floor(0.3 * cashUserBals[indexxxx]) + " from your wallet.")
+                .addField("Stats", "There is a 50% of a robbery failing due to police.")
+            );
+            cashUserBals[indexxxx] -= Math.floor(0.3 * cashUserBals[indexxxx]);
+            store.set('userBals', cashUserBals);
+            return;
+        }
+        if (Math.random() < (1 - (rankId / allTitles.length))) {
+            var stealAmt = Math.floor(cashUserBals[targId] * 0.25);
+            message.channel.send(new Discord.RichEmbed()
+                .setColor('#FFDF00')
+                .setTitle('Success!')
+                .setDescription("You successfully robbed " + addTitle(targetedUser) + " ! You stole " + Math.floor(stealAmt) + " from their wallet.")
+                .addField("Stats", "There is a 50% of a robbery failing due to police, and " + addTitle(targetedUser) + " had rank protection adding a " + ((rankId / allTitles.length) * 100) + "% chance of failure after you evaded the police.")
+            );
+            cashUserBals[targId] -= Math.floor(stealAmt);
+            cashUserBals[indexxxx] += Math.floor(stealAmt);
+            store.set('userBals', cashUserBals);
+            return;
+        } else {
+            message.channel.send(new Discord.RichEmbed()
+                .setColor('#FFDF00')
+                .setTitle('Failure!')
+                .setDescription(addTitle(targetedUser) + " managed to defend themselves and took " + Math.floor(0.3 * cashUserBals[indexxxx]) + " from your wallet.")
+                .addField("Stats", "There is a 50% of a robbery failing due to police, and " + addTitle(targetedUser) + " had rank protection adding a " + ((rankId / allTitles.length) * 100) + "% chance of failure.")
+            );
+            cashUserBals[indexxxx] -= Math.floor(0.3 * cashUserBals[indexxxx]);
+            cashUserBals[targId] += Math.floor(0.3 * cashUserBals[indexxxx]);
+            store.set('userBals', cashUserBals);
+            return;
+        }
+    }
+
+
+    if (message.channel.type != "dm" && message.content == "togglerank") {
+        let indexxxx = cashUserIds.indexOf(message.author.id);
+        let userInv = cashUserInv[indexxxx].split(",");
+        if (userInv[0] == "inv") {
+            message.channel.send("Success! You are now " + addTitle(message.author.id));
             return;
         }
         rankId = userInv[0].slice(1);
-        if(userInv[0].slice(0,1) == "f") {
-            userInv[0] = "n"+rankId;
+        if (userInv[0].slice(0, 1) == "f") {
+            userInv[0] = "n" + rankId;
             cashUserInv[indexxxx] = userInv.toString();
-        store.set('userInv', cashUserInv);
-        message.channel.send("Success! You are now "+addTitle(message.author.id));
+            store.set('userInv', cashUserInv);
+            message.channel.send("Success! You are now " + addTitle(message.author.id));
             return;
         } else {
-            userInv[0] = "f"+rankId;
+            userInv[0] = "f" + rankId;
             cashUserInv[indexxxx] = userInv.toString();
-        store.set('userInv', cashUserInv);
-        message.channel.send("Success! You are now "+addTitle(message.author.id));
+            store.set('userInv', cashUserInv);
+            message.channel.send("Success! You are now " + addTitle(message.author.id));
             return;
         }
-       message.channel.send("Success! You are now "+addTitle(message.author.id));
+        message.channel.send("Success! You are now " + addTitle(message.author.id));
         return;
     }
 
-    if(message.channel.type != "dm" && message.content=="brybank"){
+    if (message.channel.type != "dm" && message.content == "brybank") {
 
-    	let ussIndd = cashUserIds.indexOf(message.author.id);
-    	if(cashUserBank[ussIndd] == 0) {
-    		message.channel.send("You have no bank balance! To deposit, type \"brybank deposit <number>\"");
-    		return;
-    	}
-    	let epoch = Math.floor((Date.now()-cashUserDeposit[ussIndd])/86400000);
-    	let theoBal = Math.floor(cashUserBank[ussIndd]*Math.pow(1.03,epoch));
-        if((theoBal-cashUserBank[ussIndd]) > 10000) {
-            theoBal = cashUserBank[ussIndd]+10000;
+        let ussIndd = cashUserIds.indexOf(message.author.id);
+        if (cashUserBank[ussIndd] == 0) {
+            message.channel.send("You have no bank balance! To deposit, type \"brybank deposit <number>\"");
+            return;
         }
-    	message.channel.send(new Discord.RichEmbed()
+        let epoch = Math.floor((Date.now() - cashUserDeposit[ussIndd]) / 86400000);
+        let theoBal = Math.floor(cashUserBank[ussIndd] * Math.pow(1.05, epoch));
+        if ((theoBal - cashUserBank[ussIndd]) > 10000) {
+            theoBal = cashUserBank[ussIndd] + 10000;
+        }
+        message.channel.send(new Discord.RichEmbed()
             .setColor('#FFDF00')
             .setTitle('Bry Bank')
-            .setDescription("Your current bank balance: "+theoBal)
-            .addField("Stats", "You have been earning 3% daily interest for "+epoch+" days.\nYou have earned "+(theoBal-cashUserBank[ussIndd])+" Brycoins so far.\nTo withdraw, type \"brybank withdraw\"\nYou can earn a maximum of 10000 Brycoins from the bank.")
+            .setDescription("Your current bank balance: " + theoBal)
+            .addField("Stats", "You have been earning 5% daily interest for " + epoch + " days.\nYou have earned " + (theoBal - cashUserBank[ussIndd]) + " Brycoins so far.\nTo withdraw, type \"brybank withdraw\"\nYou can earn a maximum of 10000 Brycoins from the bank.")
         );
         return;
     }
 
-    if(message.channel.type != "dm" && message.content.includes("brybank")){
-    	let ussIndd = cashUserIds.indexOf(message.author.id);
-    	let epoch = Math.floor((Date.now()-cashUserDeposit[ussIndd])/86400000);
-    	let theoBal = Math.floor(cashUserBank[ussIndd]*Math.pow(1.03,epoch));
-    	let ddarr = message.content.split(" ");
-        if((theoBal-cashUserBank[ussIndd]) > 10000) {
-            theoBal = cashUserBank[ussIndd]+10000;
+    if (message.channel.type != "dm" && message.content.startsWith("brybank")) {
+        let ussIndd = cashUserIds.indexOf(message.author.id);
+        let epoch = Math.floor((Date.now() - cashUserDeposit[ussIndd]) / 86400000);
+        let theoBal = Math.floor(cashUserBank[ussIndd] * Math.pow(1.05, epoch));
+        let ddarr = message.content.split(" ");
+        if ((theoBal - cashUserBank[ussIndd]) > 10000) {
+            theoBal = cashUserBank[ussIndd] + 10000;
         }
-    	if(ddarr[1] == "withdraw") {
-            if(cashUserBank[ussIndd] == 0) {
+        if (ddarr[1] == "withdraw") {
+            if (cashUserBank[ussIndd] == 0) {
                 message.channel.send("You have no bank balance!");
                 return;
             }
-    		cashUserBals[ussIndd] += theoBal;
-    		cashUserBank[ussIndd] = 0;
-    		message.channel.send("Withdrawal successful! New balance: "+cashUserBals[ussIndd]);
-    		return;
-    	}
-    	if(ddarr[1] == "deposit") {
-            if(cashUserBals[ussIndd] > 20000) {
-                message.channel.send("You have too many brycoins to use the bank! Try spending some coins or getting income another way!");
-                return; 
-            }
-    		if(cashUserBank[ussIndd] != 0) {
-    			message.channel.send("You cannot deposit until your brybank balance is 0! Withdraw first!");
+            cashUserBals[ussIndd] += theoBal;
+            cashUserBank[ussIndd] = 0;
+            message.channel.send("Withdrawal successful! New balance: " + cashUserBals[ussIndd]);
+            return;
+        }
+        if (ddarr[1] == "deposit") {
+            if (depNum > 10000) {
+                message.channel.send("You cannot deposit more than 10000 brycoins!");
                 return;
-    		}
-    		let depNum = parseInt(ddarr[2]);
-    		if(depNum > cashUserBals[ussIndd] || depNum < 1 || isNaN(depNum)) {
-    			message.channel.send("Deposit failed!");
-    			return;
-    		} else {
-    			cashUserBals[ussIndd] -= depNum;
-    			cashUserBank[ussIndd] += depNum;
-    			message.channel.send("Deposit successful! New bank balance: "+cashUserBank[ussIndd]);
-    			cashUserDeposit[ussIndd] = Date.now();
-    			return;
-    		}
-    	}
-    	message.channel.send("Bank operation failed!");
-    	return;
+            }
+            if (cashUserBals[ussIndd] > 20000) {
+                message.channel.send("You have too many brycoins to use the bank! Try spending some coins or getting income another way!");
+                return;
+            }
+            if (cashUserBank[ussIndd] != 0) {
+                message.channel.send("You cannot deposit until your brybank balance is 0! Withdraw first!");
+                return;
+            }
+            let depNum = parseInt(ddarr[2]);
+            if (depNum > cashUserBals[ussIndd] || depNum < 1 || isNaN(depNum)) {
+                message.channel.send("Deposit failed!");
+                return;
+            } else {
+                cashUserBals[ussIndd] -= depNum;
+                cashUserBank[ussIndd] += depNum;
+                message.channel.send("Deposit successful! New bank balance: " + cashUserBank[ussIndd]);
+                cashUserDeposit[ussIndd] = Date.now();
+                return;
+            }
+        }
+        message.channel.send("Bank operation failed!");
+        return;
     }
 
-    if (message.channel.type != "dm" && message.content.includes("buy")) {
+    if (message.channel.type != "dm" && message.content.startsWith("buy")) {
         let itemInd = parseInt(message.content.slice(4));
         let buyerInd = cashUserIds.indexOf(message.author.id);
         if (buyerInd == -1 || isNaN(itemInd) || itemInd < 0 || itemInd >= cashShopListings.length) {
@@ -439,7 +528,7 @@ client.on("message", async message => {
         return;
     }
 
-    if (message.channel.type != "dm" && message.content.includes("transfer")) {
+    if (message.channel.type != "dm" && message.content.startsWith("transfer")) {
         let recipient = message.content.slice(12, 30);
         let numb = parseInt(message.content.slice(32));
         let recipIndex = cashUserIds.indexOf(recipient);
@@ -459,9 +548,9 @@ client.on("message", async message => {
     }
 
     if (message.content.toLowerCase() == "bryshop") {
-    	let allListings = "";
+        let allListings = "";
         for (var i = 0; i < cashShopListings.length; i++) {
-        	allListings += cashShopListings[i] + "\n Cost: " + cashShopCosts[i] + " Brycoins - ID:" + i+"\n";
+            allListings += cashShopListings[i] + "\n Cost: " + cashShopCosts[i] + " Brycoins - ID:" + i + "\n";
         }
         message.channel.send(new Discord.RichEmbed()
             .setColor('#FFDF00')
@@ -471,7 +560,7 @@ client.on("message", async message => {
         return;
     }
 
-    if (message.content.toLowerCase().includes("gamble")) {
+    if (message.content.toLowerCase().startsWith("gamble")) {
         let wager = parseInt(message.content.slice(7));
         let userInd = cashUserIds.indexOf(message.author.id);
         if (wager > cashUserBals[userInd] || isNaN(wager) || wager < 0) {
@@ -500,7 +589,7 @@ client.on("message", async message => {
         return;
     }
 
-    if (message.content.toLowerCase().includes("inventory")) {
+    if (message.content.toLowerCase().startsWith("inventory")) {
         let targetUserId = message.author.id;
         let sluice = message.content.slice(13, 31);
         if (sluice.length > 2) {
@@ -530,7 +619,7 @@ client.on("message", async message => {
         return;
     }
 
-    if (message.content.toLowerCase().includes("balance")) {
+    if (message.content.toLowerCase().startsWith("balance")) {
 
         let targetUserId = message.author.id;
         let sluice = message.content.slice(11, 29);
@@ -542,10 +631,25 @@ client.on("message", async message => {
             message.channel.send("The specified user does not have a balance!");
             return;
         }
+        let targInv = cashUserInv[indd].split(",");
+
+        let rankId = 0;
+        if (targInv[0] == "inv") {
+            rankId = 0;
+        } else if (targInv[0].slice(0, 1) == "f") {
+            rankId = parseInt(targInv[0].slice(1));
+        } else {
+            rankId = parseInt(targInv[0].slice(1));
+        }
+        let rankCost = Math.round(Math.pow((rankId + 1), 1.9) * 200);
+        if (rankId == 0) {
+            rankCost = 0;
+        }
+
         message.channel.send(new Discord.RichEmbed()
             .setColor('#FFDF00')
             .setTitle('Balance')
-            .setDescription(addTitle(targetUserId)+'\n' + cashUserBals[indd] + ' Brycoins in Wallet\n'+cashUserBank[indd]+' Brycoins in Brybank')
+            .setDescription(addTitle(targetUserId) + '\n' + cashUserBals[indd] + ' Brycoins in Wallet\n' + cashUserBank[indd] + ' Brycoins in Brybank\nThis user is insured for ' + rankCost + ' Brycoins.')
         );
         return;
     }
@@ -559,7 +663,7 @@ client.on("message", async message => {
         for (i = 0; i < 20; i++) {
             var ussInd = cashUserBals.indexOf(b2s[i]);
             //const User = Client.fetchUser(cashUserIds[i]);
-            fulltxt += addTitle(cashUserIds[ussInd]) +" - " + b2s[i] + " Wallet Brycoins, "+cashUserBank[ussInd]+" Bank Brycoins\n";
+            fulltxt += addTitle(cashUserIds[ussInd]) + " - " + b2s[i] + " BC, " + cashUserBank[ussInd] + " Bank BC\n";
         }
         message.channel.send(new Discord.RichEmbed()
             .setColor('#FFDF00')
