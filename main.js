@@ -385,7 +385,7 @@ client.on("message", async message => {
             message.channel.send(new Discord.RichEmbed()
                 .setColor('#FFDF00')
                 .setTitle('Oh No!')
-                .setDescription("The police caught you before you could rob anyone! They took " + Math.floor(0.3 * cashUserBals[indexxxx]) + " - 30% of your balance - from your wallet.")
+                .setDescription("The police caught you before you could rob anyone! They took " + Math.floor(0.3 * cashUserBals[indexxxx]) + " Brycoins - 30% of your balance - from your wallet.")
                 .addField("Stats", "There is a 50% of a robbery failing due to police.")
             );
             cashUserBals[indexxxx] -= Math.floor(0.3 * cashUserBals[indexxxx]);
@@ -397,7 +397,7 @@ client.on("message", async message => {
             message.channel.send(new Discord.RichEmbed()
                 .setColor('#FFDF00')
                 .setTitle('Success!')
-                .setDescription("You successfully robbed " + addTitle(targetedUser) + " ! You stole " + Math.floor(stealAmt) + " - 25% of their balance - from their wallet.")
+                .setDescription("You successfully robbed " + addTitle(targetedUser) + " ! You stole " + Math.floor(stealAmt) + " Brycoins - 25% of their balance - from their wallet.")
                 .addField("Stats", "There is a 50% of a robbery failing due to police, and " + addTitle(targetedUser) + " had rank protection adding a " + ((rankId / allTitles.length) * 100) + "% chance of failure after you evaded the police.")
             );
             cashUserBals[targId] -= Math.floor(stealAmt);
@@ -408,7 +408,7 @@ client.on("message", async message => {
             message.channel.send(new Discord.RichEmbed()
                 .setColor('#FFDF00')
                 .setTitle('Failure!')
-                .setDescription(addTitle(targetedUser) + " managed to defend themselves and took " + Math.floor(0.3 * cashUserBals[indexxxx]) + " - 30% of your balance - from your wallet.")
+                .setDescription(addTitle(targetedUser) + " managed to defend themselves and took " + Math.floor(0.3 * cashUserBals[indexxxx]) + " Brycoins - 30% of your balance - from your wallet.")
                 .addField("Stats", "There is a 50% of a robbery failing due to police, and " + addTitle(targetedUser) + " had rank protection adding a " + ((rankId / allTitles.length) * 100) + "% chance of failure.")
             );
             cashUserBals[indexxxx] -= Math.floor(0.3 * cashUserBals[indexxxx]);
