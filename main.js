@@ -96,6 +96,8 @@ let allTitles = ["🗑️ Bum",
     "🧱 Commoner",
     "🎖️ Ensign",
     "⚓ Captain",
+    "🗺️ Journeyman",
+    "🎈 Yeoman",
     "💰 Governor/💰 Governess",
     "🛡️ Viceroy",
     "🔢 Count/🔢 Countess",
@@ -104,6 +106,7 @@ let allTitles = ["🗑️ Bum",
     "🐔 Chanticleer",
     "⚔️ Knight",
     "🥄 Aristocrat",
+    "📌 Kingpin",
     "🏰 His Excellency/🏰 Her Excellency",
     "👲 Duke/👲 Duchess",
     "🐴 Prince/🐴 Princess",
@@ -117,6 +120,36 @@ let allTitles = ["🗑️ Bum",
     "🌟 The Holy One",
     "✨ Bry Himself"
 ];
+let titlePerks = ["",
+    "Insurance equal to rank cost",
+    "",
+    "",
+    "Access to Bry Lounge",
+    "",
+    "+BC when someone ranks up",
+    "",
+    "",
+    "+BC when conf is sent",
+    "",
+    "Unlock factions",
+    "",
+    "+BC when robbery fails",
+    "",
+    "",
+    "+BC when money is lost in casino",
+    "",
+    "",
+    "+BC when a robbery or raid succeeds",
+    "",
+    "Bot reacts to your messages",
+    "",
+    "Access to bbb",
+    "",
+    "",
+    "",
+    "",
+    ""
+    ];
 
 function addReaction() {
 
@@ -227,11 +260,11 @@ function getRankCost(num) {
 	if(num <= 0) {
 		return 0;
 	}
-	return Math.round(Math.pow((num + 1), 1.9) * 200);
+	return Math.round(Math.pow((num + 1), 2.1) * 200);
 }
 
 function getBankBal(id) {
-	 let ussIndd = cashUserIds.indexOf(message.author.id);
+	 let ussIndd = cashUserIds.indexOf(id);
         if (cashUserBank[ussIndd] == 0) {
             return 0;
         }
@@ -279,8 +312,9 @@ client.on("message", async message => {
             rateUserRefresh.push(Date.now());
         } else {
             if ((Date.now() - rateUserRefresh[rateUserIndex]) > 3600000) {
-                message.channel.send("Hey " + addTitle(message.author.id) + " - Your hourly 65 Brycoin bonus has been deposited into your account!");
-                cashUserBals[moneyIndex] = cashUserBals[moneyIndex] + 65;
+            	let hourReward = parseInt(50+(rankId*30));
+                message.channel.send("Hey " + addTitle(message.author.id) + " - Your hourly "+hourReward+" Brycoin bonus has been deposited into your account!");
+                cashUserBals[moneyIndex] = cashUserBals[moneyIndex] + hourReward;
                 store.set('userIds', cashUserIds);
                 store.set('userBals', cashUserBals);
                 rateUserRefresh[rateUserIndex] = Date.now();
@@ -296,8 +330,8 @@ client.on("message", async message => {
                     return;
                 }
                 if (Math.random() < 0.01) {
-                    message.channel.send(addTitle(message.author.id) + " got a mini prize! This has a 1% chance of happening per message 😱\nYou gained 200 brycoins!");
-                    cashUserBals[moneyIndex] = cashUserBals[moneyIndex] + 200;
+                    message.channel.send(addTitle(message.author.id) + " got a mini prize! This has a 1% chance of happening per message 😱\nYou gained 300 brycoins!");
+                    cashUserBals[moneyIndex] = cashUserBals[moneyIndex] + 300;
                     store.set('userIds', cashUserIds);
                     store.set('userBals', cashUserBals);
                     return;
@@ -316,7 +350,8 @@ client.on("message", async message => {
             cashUserDeposit.push(0);
         } else {
             if (vv) {
-                cashUserBals[moneyIndex] += 2;
+            	let messageReward = parseInt(2+(rankId));
+                cashUserBals[moneyIndex] += messageReward;
             }
 
         }
@@ -328,9 +363,13 @@ client.on("message", async message => {
     if (message.channel.type != "dm" && message.content == "titles") {
         let fulll = "";
         for (var i = 0; i < allTitles.length; i++) {
-            fulll += allTitles[i] + " | Cost: " + Math.round(Math.pow((i + 1), 1.9) * 200) + " Brycoins\n";
+            fulll += allTitles[i] + " | Cost: " + Math.round(Math.pow((i + 1), 2.1) * 200) + " BC | Gain: "+parseInt(2+(i))+" BC/30s, "+parseInt(50+(i*30))+" BC/hr\n";
+            if(titlePerks[i].length > 2) {
+                fulll += titlePerks[i]+"\n";
+            }
         }
         fulll += "Want to buy a new title? Type \"rankup\"!\nTo switch between title genders type \"togglerank\"";
+        //console.log(fulll.length);
         message.channel.send(new Discord.RichEmbed()
             .setColor('#FFDF00')
             .setTitle('Title Shop')
@@ -342,7 +381,7 @@ client.on("message", async message => {
     if (message.content == "rankup") {
     	let rankId = getRankId(message.author.id);
         let full = "";
-        let nextCost = Math.round(Math.pow((rankId + 2), 1.9) * 200);
+        let nextCost = Math.round(Math.pow((rankId + 2), 2.1) * 200);
         if (nextCost > cashUserBals[indexxxx] || rankId > (allTitles.length - 2) || isNaN(rankId)) {
             message.channel.send("Error buying next rank!");
             return;
@@ -356,9 +395,7 @@ client.on("message", async message => {
             message.channel.send("Success! You are now " + addTitle(message.author.id) + "\nThis transaction cost you " + nextCost);
             return;
         }
-
     }
-
 
     if (message.channel.type != "dm" && message.content.slice(0, 3) == "rob") {
         let indexxxx = cashUserIds.indexOf(message.author.id);
@@ -377,6 +414,14 @@ client.on("message", async message => {
         let rankCost = getRankCost(rankId);
         if (rankId == 0) {
             rankCost = 0;
+        }
+        if(message.author.id == targetedUser) {
+            message.channel.send("You can't rob yourself...");
+            return;
+        }
+        if(cashUserBals[indexxxx] < getRankCost(rankId-2)) {
+            message.channel.send("You need at least "+getRankCost(rankId-2)+" Brycoins to rob that user!");
+            return;
         }
         if (cashUserBals[targId] < rankCost) {
             message.channel.send(new Discord.RichEmbed()
@@ -450,12 +495,15 @@ client.on("message", async message => {
         return;
     }
 
-    if (message.channel.type != "dm" && message.content == "brybank") {
-
-        let ussIndd = cashUserIds.indexOf(message.author.id);
-        let bankBal = getBankBal(message.author.id);
+    if (message.content.toLowerCase() == "brybank" || message.content.toLowerCase().startsWith("brybank <")) {
+        let profId = message.author.id;
+        if(message.content.slice(8,9) == "<") {
+            profId = message.content.slice(11,29);
+        }
+        let ussIndd = cashUserIds.indexOf(profId);
+        let bankBal = getBankBal(profId);
         if (bankBal == 0) {
-            message.channel.send("You have no bank balance! To deposit, type \"brybank deposit <number>\"");
+            message.channel.send(addTitle(profId)+" has no bank balance! To deposit, type \"brybank deposit <number>\"");
             return;
         }
         let epoch = Math.floor((Date.now() - cashUserDeposit[ussIndd]) / 86400000);
@@ -467,13 +515,13 @@ client.on("message", async message => {
         message.channel.send(new Discord.RichEmbed()
             .setColor('#FFDF00')
             .setTitle('Bry Bank')
-            .setDescription("Your current bank balance: " + bankBal)
-            .addField("Stats", "You have been earning 5% daily interest for " + epoch + " days.\nYou have earned " + (bankBal - cashUserBank[ussIndd]) + " Brycoins so far.\nTo withdraw, type \"brybank withdraw\"\nYou can earn a maximum of 10000 Brycoins from the bank.\nIf you wait "+readableDate(cashUserDeposit[ussIndd]+((epoch+1)*86400000))+" to withdraw you will get an additional "+tmrwGain+" Brycoins.")
+            .setDescription(addTitle(profId)+" has a bank balance of " + bankBal)
+            .addField("Stats", bankBal+" earning 5% daily interest for " + epoch + " days.\n" + (bankBal - cashUserBank[ussIndd]) + " Brycoins earned so far.\nTo withdraw, type \"brybank withdraw\"\nYou can earn a maximum of 10000 Brycoins from the bank.\nIf you wait "+readableDate(cashUserDeposit[ussIndd]+((epoch+1)*86400000))+" to withdraw you will get an additional "+tmrwGain+" Brycoins.")
         );
         return;
     }
 
-    if (message.channel.type != "dm" && message.content.startsWith("brybank")) {
+    if (message.channel.type != "dm" && message.content.toLowerCase().startsWith("brybank")) {
         let ussIndd = cashUserIds.indexOf(message.author.id);
         let epoch = Math.floor((Date.now() - cashUserDeposit[ussIndd]) / 86400000);
         let theoBal = getBankBal(message.author.id);
@@ -494,10 +542,6 @@ client.on("message", async message => {
                 message.channel.send("You cannot deposit more than 10000 brycoins!");
                 return;
             }
-            if (cashUserBals[ussIndd] > 20000) {
-                message.channel.send("You have too many brycoins to use the bank! Try spending some coins or getting income another way!");
-                return;
-            }
             if (theoBal != 0) {
                 message.channel.send("You cannot deposit until your brybank balance is 0! Withdraw first!");
                 return;
@@ -514,6 +558,7 @@ client.on("message", async message => {
                 return;
             }
         }
+        console.log(message.content);
         message.channel.send("Bank operation failed!");
         return;
     }
@@ -644,10 +689,8 @@ client.on("message", async message => {
         }
         //let targInv = cashUserInv[indd].split(",");
         let rankId = getRankId(targetUserId);
-        let rankCost = getRankCost(rankId);
+        let rankCost = parseInt(getRankCost(rankId));
         let balanceString = addTitle(targetUserId) + '\n' + cashUserBals[indd] + ' Brycoins in Wallet\n' + getBankBal(targetUserId) + ' Brycoins in Brybank\nThis user is insured for ' + rankCost + ' Brycoins.';
-        if ((cashUserBals[targetUserId]) > (rankCost * 2)) {
-        	balanceString += "\nThis user's current wallet balance is above the maximum their rank can safely keep, which is " + (rankCost * 2) + "!");
         message.channel.send(new Discord.RichEmbed()
             .setColor('#FFDF00')
             .setTitle('Balance')
