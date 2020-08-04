@@ -247,7 +247,9 @@ client.on("message", async message => {
             cashUserBals[moneyIndex] = 1;
         }
         if ((cashUserBals[moneyIndex]) > (rankCost * 2)) {
-            message.channel.send("Hey " + addTitle(message.author.id) + " - Your current balance is above the maximum your rank can safely keep, which is " + (rankCost * 2) + "! Rank up now to keep earning Brycoins and stay safe from robbers!");
+            if(Math.random() < 0.1) {
+                message.channel.send("Hey " + addTitle(message.author.id) + " - Your current wallet balance is above the maximum your rank can safely keep, which is " + (rankCost * 2) + "! Rank up now to keep earning Brycoins and stay safe from robbers!");
+            }
         }
         if (rateUserIndex == -1) {
             rateUserId.push(message.author.id);
@@ -454,11 +456,16 @@ client.on("message", async message => {
         if ((theoBal - cashUserBank[ussIndd]) > 10000) {
             theoBal = cashUserBank[ussIndd] + 10000;
         }
+        let tmrwBal = Math.floor(cashUserBank[ussIndd] * Math.pow(1.05, epoch+1));
+        let tmrwGain = (tmrwBal - theoBal);
+        if ((tmrwBal - cashUserBank[ussIndd]) > 10000) {
+            tmrwGain = 0;
+        }
         message.channel.send(new Discord.RichEmbed()
             .setColor('#FFDF00')
             .setTitle('Bry Bank')
             .setDescription("Your current bank balance: " + theoBal)
-            .addField("Stats", "You have been earning 5% daily interest for " + epoch + " days.\nYou have earned " + (theoBal - cashUserBank[ussIndd]) + " Brycoins so far.\nTo withdraw, type \"brybank withdraw\"\nYou can earn a maximum of 10000 Brycoins from the bank.")
+            .addField("Stats", "You have been earning 5% daily interest for " + epoch + " days.\nYou have earned " + (theoBal - cashUserBank[ussIndd]) + " Brycoins so far.\nTo withdraw, type \"brybank withdraw\"\nYou can earn a maximum of 10000 Brycoins from the bank.\nIf you wait "+readableDate(cashUserDeposit[ussIndd]+((epoch+1)*86400000))+" to withdraw you will get an additional "+tmrwGain+" Brycoins.")
         );
         return;
     }
@@ -495,7 +502,6 @@ client.on("message", async message => {
                 message.channel.send("You cannot deposit until your brybank balance is 0! Withdraw first!");
                 return;
             }
-            
             if (depNum > cashUserBals[ussIndd] || depNum < 1 || isNaN(depNum)) {
                 message.channel.send("Deposit failed!");
                 return;
@@ -504,6 +510,7 @@ client.on("message", async message => {
                 cashUserBank[ussIndd] += depNum;
                 message.channel.send("Deposit successful! New bank balance: " + cashUserBank[ussIndd]);
                 cashUserDeposit[ussIndd] = Date.now();
+                store.set('userDeposit', cashUserDeposit);
                 return;
             }
         }
