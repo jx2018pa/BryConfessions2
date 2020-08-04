@@ -209,49 +209,44 @@ function readableDate(ms) {
 function addTitle(id) {
 
     let indexxxx = cashUserIds.indexOf(id);
-    let userInv = cashUserInv[indexxxx].split(",");
+    //let userInv = cashUserInv[indexxxx].split(",");
     let full = "";
     let g = false;
     let rankId = 0;
 
-    if (userInv[0] == "inv") {
+    if (cashUserInv[indexxxx] == "inv") {
         return "🥔 Peasant <@" + id + ">";
     }
-    if (userInv[0].slice(0, 1) == "f") {
+    if (cashUserInv[indexxxx].slice(0, 1) == "f") {
         g = true;
-        rankId = parseInt(userInv[0].slice(1));
+        rankId = parseInt(cashUserInv[indexxxx].slice(1));
     } else {
         g = false;
-        rankId = parseInt(userInv[0].slice(1));
+        rankId = parseInt(cashUserInv[indexxxx].slice(1));
     }
 
     if (isNaN(rankId)) {
         return "<@" + id + ">";
     }
-
-    if (userInv[0] == "inv" || rankId == isNaN(rankId)) {
-        return "🗑️ Bum <@" + id + ">";
-    } else {
         let title = allTitles[rankId].split("/");
         if (g == false || title.length == 1) {
             return title[0] + " <@" + id + ">";
         } else {
             return title[1] + " <@" + id + ">";
         }
-    }
+    
     return "<@" + id + ">";
 }
 
 function getRankId(id) {
 	let indexxxx = cashUserIds.indexOf(id);
-        let userInv = cashUserInv[indexxxx].split(",");
         let rankId = 0;
-        if (userInv[0] == "inv") {
+        if (cashUserInv[indexxxx] == "inv") {
             rankId = 0;
-        } else if (userInv[0].slice(0, 1) == "f") {
-            rankId = parseInt(userInv[0].slice(1));
+        } else if (cashUserInv[indexxxx].slice(0, 1) == "f") {
+            rankId = parseInt(cashUserInv[indexxxx].slice(1));
         } else {
-            rankId = parseInt(userInv[0].slice(1));
+            rankId = parseInt(cashUserInv[indexxxx].slice(1));
         }
         return rankId;
 }
@@ -306,7 +301,7 @@ client.on("message", async message => {
 
     if (message.channel.type != "dm") {
         let moneyIndex = cashUserIds.indexOf(message.author.id);
-        let userInv = cashUserInv[moneyIndex].split(",");
+        //let userInv = cashUserInv[moneyIndex].split(",");
         let rankId = getRankId(message.author.id);
         let vv = true;
         let rateUserIndex = rateUserId.indexOf(message.author.id);
@@ -318,6 +313,7 @@ client.on("message", async message => {
             rateUserId.push(message.author.id);
             rateUserTime.push(Date.now());
             rateUserRefresh.push(Date.now());
+            return;
         } else {
             if ((Date.now() - rateUserRefresh[rateUserIndex]) > 3600000) {
             	//let hourReward = parseInt(50+(rankId*30));
@@ -390,9 +386,9 @@ client.on("message", async message => {
         let indexxxx = cashUserIds.indexOf(message.author.id);
     	let rankId = getRankId(message.author.id);
         let full = "";
-        let userInv = cashUserInv[indexxxx].split(",");
+        //let userInv = cashUserInv[indexxxx].split(",");
         let nextCost = Math.round(Math.pow((rankId + 2), 2.1) * 200);
-        if(userInv[0] == "inv") {
+        if(cashUserInv[indexxxx] == "inv") {
             rankId = -1;
             nextCost = 200;
         }
@@ -402,8 +398,8 @@ client.on("message", async message => {
         } else {
             cashUserBals[indexxxx] -= nextCost;
             rankId += 1;
-            userInv[0] = "n" + rankId;
-            cashUserInv[indexxxx] = userInv.toString();
+            cashUserInv[indexxxx] = "n" + rankId;
+            //cashUserInv[indexxxx] = userInv.toString();
             store.set('userInv', cashUserInv);
             store.set('userBals', cashUserBals);
             message.channel.send("Success! You are now " + addTitle(message.author.id) + "\nThis transaction cost you " + nextCost);
@@ -486,21 +482,21 @@ client.on("message", async message => {
 
     if (message.channel.type != "dm" && message.content == "togglerank") {
         let indexxxx = cashUserIds.indexOf(message.author.id);
-        let userInv = cashUserInv[indexxxx].split(",");
-        if (userInv[0] == "inv") {
+        //let userInv = cashUserInv[indexxxx].split(",");
+        if (cashUserInv[indexxxx] == "inv") {
             message.channel.send("Success! You are now " + addTitle(message.author.id));
             return;
         }
-        rankId = userInv[0].slice(1);
-        if (userInv[0].slice(0, 1) == "f") {
-            userInv[0] = "n" + rankId;
-            cashUserInv[indexxxx] = userInv.toString();
+        rankId = cashUserInv[indexxxx].slice(1);
+        if (cashUserInv[indexxxx].slice(0, 1) == "f") {
+            cashUserInv[indexxxx] = "n" + rankId;
+            //cashUserInv[indexxxx] = userInv.toString();
             store.set('userInv', cashUserInv);
             message.channel.send("Success! You are now " + addTitle(message.author.id));
             return;
         } else {
-            userInv[0] = "f" + rankId;
-            cashUserInv[indexxxx] = userInv.toString();
+            cashUserInv[indexxxx] = "f" + rankId;
+            //cashUserInv[indexxxx] = userInv.toString();
             store.set('userInv', cashUserInv);
             message.channel.send("Success! You are now " + addTitle(message.author.id));
             return;
@@ -666,6 +662,7 @@ client.on("message", async message => {
     }
 
     if (message.content.toLowerCase().startsWith("inventory")) {
+        /*
         let targetUserId = message.author.id;
         let sluice = message.content.slice(13, 31);
         if (sluice.length > 2) {
@@ -692,6 +689,8 @@ client.on("message", async message => {
             .setTitle('Inventory')
             .setDescription(addTitle(targetUserId) + dispInv)
         );
+        */
+        message.channel.send("Inventory disabled! Check your balance instead!");
         return;
     }
 
