@@ -479,6 +479,7 @@ client.on("message", async message => {
             return;
         }
         if (ddarr[1] == "deposit") {
+            let depNum = parseInt(ddarr[2]);
             if (depNum > 10000) {
                 message.channel.send("You cannot deposit more than 10000 brycoins!");
                 return;
@@ -491,7 +492,7 @@ client.on("message", async message => {
                 message.channel.send("You cannot deposit until your brybank balance is 0! Withdraw first!");
                 return;
             }
-            let depNum = parseInt(ddarr[2]);
+            
             if (depNum > cashUserBals[ussIndd] || depNum < 1 || isNaN(depNum)) {
                 message.channel.send("Deposit failed!");
                 return;
