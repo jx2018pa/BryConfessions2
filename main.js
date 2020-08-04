@@ -726,7 +726,7 @@ client.on("message", async message => {
     if (message.content.slice(0, 9) == "!roulette") {
         isRoulette = true;
     }
-    if (message.content.includes("!setemoji")) {
+    if (message.content.startsWith("!setemoji")) {
         if (starUsers.indexOf(message.author.id) == -1) {
             message.channel.send("You do not have a perk!");
         } else {
