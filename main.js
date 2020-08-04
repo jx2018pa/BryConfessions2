@@ -397,8 +397,6 @@ client.on("message", async message => {
             nextCost = 200;
         }
         if (nextCost > cashUserBals[indexxxx] || rankId > (allTitles.length - 2) || isNaN(rankId)) {
-            console.log(nextCost);
-            console.log(rankId);
             message.channel.send("Error buying next rank!");
             return;
         } else {
