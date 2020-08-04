@@ -126,10 +126,10 @@ let titlePerks = ["",
     "",
     "Access to Bry Lounge",
     "",
-    "+BC when someone ranks up",
+    "+2000 BC when someone ranks up",
     "",
     "",
-    "+BC when conf is sent",
+    "+600 BC when any conf is sent",
     "",
     "Unlock factions",
     "",
@@ -234,7 +234,6 @@ function addTitle(id) {
         } else {
             return title[1] + " <@" + id + ">";
         }
-    
     return "<@" + id + ">";
 }
 
@@ -402,7 +401,12 @@ client.on("message", async message => {
             //cashUserInv[indexxxx] = userInv.toString();
             store.set('userInv', cashUserInv);
             store.set('userBals', cashUserBals);
-            message.channel.send("Success! You are now " + addTitle(message.author.id) + "\nThis transaction cost you " + nextCost);
+            for(var i = 0; i < cashUserInv.length; i++) {
+                if(getRankId(cashUserIds[i]) >= 6) {
+                    cashUserBals[i] += 2000;
+                }
+            }
+            message.channel.send("Success! You are now " + addTitle(message.author.id) + "\nThis transaction cost you " + nextCost+" Brycoins.");
             return;
         }
     }
@@ -1530,6 +1534,11 @@ client.on("message", async message => {
         }
 
         cNum++;
+        for(var i = 0; i < cashUserInv.length; i++) {
+                if(getRankId(cashUserIds[i]) >= 9) {
+                    cashUserBals[i] += 600;
+                }
+        }
         store.set('cNum', cNum);
         return;
     }
