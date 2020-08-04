@@ -387,8 +387,10 @@ client.on("message", async message => {
     }
 
     if (message.content == "rankup") {
+        let indexxxx = cashUserIds.indexOf(message.author.id);
     	let rankId = getRankId(message.author.id);
         let full = "";
+        let userInv = cashUserInv[indexxxx].split(",");
         let nextCost = Math.round(Math.pow((rankId + 2), 2.1) * 200);
         if (nextCost > cashUserBals[indexxxx] || rankId > (allTitles.length - 2) || isNaN(rankId)) {
             message.channel.send("Error buying next rank!");
@@ -572,6 +574,7 @@ client.on("message", async message => {
     }
 
     if (message.channel.type != "dm" && message.content.startsWith("buy")) {
+        /*
         let itemInd = parseInt(message.content.slice(4));
         let buyerInd = cashUserIds.indexOf(message.author.id);
         if (buyerInd == -1 || isNaN(itemInd) || itemInd < 0 || itemInd >= cashShopListings.length) {
@@ -589,6 +592,8 @@ client.on("message", async message => {
             return;
 
         }
+        */
+        message.channel.send("Shop is closed temporarily! Check rank perks instead!");
         return;
     }
 
@@ -612,6 +617,7 @@ client.on("message", async message => {
     }
 
     if (message.content.toLowerCase() == "bryshop") {
+        /*
         let allListings = "";
         for (var i = 0; i < cashShopListings.length; i++) {
             allListings += cashShopListings[i] + "\n Cost: " + cashShopCosts[i] + " Brycoins - ID:" + i + "\n";
@@ -621,6 +627,8 @@ client.on("message", async message => {
             .setTitle('Bry Shop!')
             .setDescription(allListings)
         );
+        */
+        message.channel.send("Bryshop is closed temporarily!");
         return;
     }
 
