@@ -297,9 +297,16 @@ client.on("message", async message => {
     if (message.author.bot) {
         return;
     }
-
     if (message.channel.type != "dm") {
         let moneyIndex = cashUserIds.indexOf(message.author.id);
+        if (moneyIndex == -1) {
+            cashUserIds.push(message.author.id);
+            cashUserBals.push(1);
+            cashUserInv.push("inv");
+            cashUserBank.push(0);
+            cashUserDeposit.push(0);
+            return;
+        }
         //let userInv = cashUserInv[moneyIndex].split(",");
         let rankId = getRankId(message.author.id);
         let vv = true;
@@ -344,19 +351,9 @@ client.on("message", async message => {
             }
 
         }
-
-        if (moneyIndex == -1) {
-            cashUserIds.push(message.author.id);
-            cashUserBals.push(1);
-            cashUserInv.push("inv");
-            cashUserBank.push(0);
-            cashUserDeposit.push(0);
-        } else {
             if (vv) {
             	let messageReward = parseInt(2+(rankId));
                 cashUserBals[moneyIndex] += messageReward;
-            }
-
         }
         store.set('userIds', cashUserIds);
         store.set('userBals', cashUserBals);
