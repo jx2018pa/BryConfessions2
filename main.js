@@ -149,7 +149,7 @@ let titlePerks = ["",
     "",
     "",
     ""
-    ];
+];
 
 function addReaction() {
 
@@ -228,53 +228,53 @@ function addTitle(id) {
     if (isNaN(rankId)) {
         return "<@" + id + ">";
     }
-        let title = allTitles[rankId].split("/");
-        if (g == false || title.length == 1) {
-            return title[0] + " <@" + id + ">";
-        } else {
-            return title[1] + " <@" + id + ">";
-        }
+    let title = allTitles[rankId].split("/");
+    if (g == false || title.length == 1) {
+        return title[0] + " <@" + id + ">";
+    } else {
+        return title[1] + " <@" + id + ">";
+    }
     return "<@" + id + ">";
 }
 
 function getRankId(id) {
-	let indexxxx = cashUserIds.indexOf(id);
-        let rankId = 0;
-        if (cashUserInv[indexxxx] == "inv") {
-            rankId = 0;
-        } else if (cashUserInv[indexxxx].slice(0, 1) == "f") {
-            rankId = parseInt(cashUserInv[indexxxx].slice(1));
-        } else {
-            rankId = parseInt(cashUserInv[indexxxx].slice(1));
-        }
-        return rankId;
+    let indexxxx = cashUserIds.indexOf(id);
+    let rankId = 0;
+    if (cashUserInv[indexxxx] == "inv") {
+        rankId = 0;
+    } else if (cashUserInv[indexxxx].slice(0, 1) == "f") {
+        rankId = parseInt(cashUserInv[indexxxx].slice(1));
+    } else {
+        rankId = parseInt(cashUserInv[indexxxx].slice(1));
+    }
+    return rankId;
 }
 
 function getRankCost(num) {
-	if(num <= 0) {
-		return 0;
-	}
-	return Math.round(Math.pow((num + 1), 2.1) * 200);
+    if (num <= 0) {
+        return 0;
+    }
+    return Math.round(Math.pow((num + 1), 2.1) * 200);
 }
 
 function getBankBal(id) {
-	 let ussIndd = cashUserIds.indexOf(id);
-        if (cashUserBank[ussIndd] == 0) {
-            return 0;
-        }
-        let epoch = Math.floor((Date.now() - cashUserDeposit[ussIndd]) / 86400000);
-        let theoBal = Math.floor(cashUserBank[ussIndd] * Math.pow(1.05, epoch));
-        if ((theoBal - cashUserBank[ussIndd]) > 10000) {
-            theoBal = cashUserBank[ussIndd] + 10000;
-        }
-        return theoBal;
+    let ussIndd = cashUserIds.indexOf(id);
+    if (cashUserBank[ussIndd] == 0) {
+        return 0;
+    }
+    let epoch = Math.floor((Date.now() - cashUserDeposit[ussIndd]) / 86400000);
+    let theoBal = Math.floor(cashUserBank[ussIndd] * Math.pow(1.05, epoch));
+    if ((theoBal - cashUserBank[ussIndd]) > 10000) {
+        theoBal = cashUserBank[ussIndd] + 10000;
+    }
+    return theoBal;
 }
 
 function getHourlyReward(rankId) {
-    if(rankId <= 0) {
+    if (rankId <= 0) {
         return 50;
     }
-    return parseInt(50+(rankId*30));
+    return parseInt(50 + (rankId * 30));
 }
 
 
@@ -322,7 +322,7 @@ client.on("message", async message => {
             return;
         } else {
             if ((Date.now() - rateUserRefresh[rateUserIndex]) > 3600000) {
-            	//let hourReward = parseInt(50+(rankId*30));
+                //let hourReward = parseInt(50+(rankId*30));
                 //message.channel.send("Hey " + addTitle(message.author.id) + " - Your hourly "+hourReward+" Brycoin bonus has been deposited into your account!");
                 cashUserBals[moneyIndex] = cashUserBals[moneyIndex] + getHourlyReward(rankId);
                 store.set('userIds', cashUserIds);
@@ -351,9 +351,9 @@ client.on("message", async message => {
             }
 
         }
-            if (vv) {
-            	let messageReward = parseInt(2+(rankId));
-                cashUserBals[moneyIndex] += messageReward;
+        if (vv) {
+            let messageReward = parseInt(2 + (rankId));
+            cashUserBals[moneyIndex] += messageReward;
         }
         store.set('userIds', cashUserIds);
         store.set('userBals', cashUserBals);
@@ -363,9 +363,9 @@ client.on("message", async message => {
     if (message.channel.type != "dm" && message.content == "titles") {
         let fulll = "";
         for (var i = 0; i < allTitles.length; i++) {
-            fulll += allTitles[i] + " | Cost: " + Math.round(Math.pow((i + 1), 2.1) * 200) + " BC | Gain: "+parseInt(2+(i))+" BC/30s, "+getHourlyReward(i)+" BC/hr\n";
-            if(titlePerks[i].length > 2) {
-                fulll += titlePerks[i]+"\n";
+            fulll += allTitles[i] + " | Cost: " + Math.round(Math.pow((i + 1), 2.1) * 200) + " BC | Gain: " + parseInt(2 + (i)) + " BC/30s, " + getHourlyReward(i) + " BC/hr\n";
+            if (titlePerks[i].length > 2) {
+                fulll += titlePerks[i] + "\n";
             }
         }
         fulll += "Want to buy a new title? Type \"rankup\"!\nTo switch between title genders type \"togglerank\"";
@@ -380,11 +380,11 @@ client.on("message", async message => {
 
     if (message.content == "rankup") {
         let indexxxx = cashUserIds.indexOf(message.author.id);
-    	let rankId = getRankId(message.author.id);
+        let rankId = getRankId(message.author.id);
         let full = "";
         //let userInv = cashUserInv[indexxxx].split(",");
         let nextCost = Math.round(Math.pow((rankId + 2), 2.1) * 200);
-        if(cashUserInv[indexxxx] == "inv") {
+        if (cashUserInv[indexxxx] == "inv") {
             rankId = -1;
             nextCost = 200;
         }
@@ -398,19 +398,19 @@ client.on("message", async message => {
             //cashUserInv[indexxxx] = userInv.toString();
             store.set('userInv', cashUserInv);
             store.set('userBals', cashUserBals);
-            for(var i = 0; i < cashUserInv.length; i++) {
-                if(getRankId(cashUserIds[i]) >= 6) {
+            for (var i = 0; i < cashUserInv.length; i++) {
+                if (getRankId(cashUserIds[i]) >= 6) {
                     cashUserBals[i] += 2000;
                 }
             }
-            message.channel.send("Success! You are now " + addTitle(message.author.id) + "\nThis transaction cost you " + nextCost+" Brycoins.");
+            message.channel.send("Success! You are now " + addTitle(message.author.id) + "\nThis transaction cost you " + nextCost + " Brycoins.");
             return;
         }
     }
 
     if (message.channel.type != "dm" && message.content.slice(0, 3) == "rob") {
         let indexxxx = cashUserIds.indexOf(message.author.id);
-        if(cashUserBals[indexxxx] < 20) {
+        if (cashUserBals[indexxxx] < 20) {
             message.channel.send("You need at least 20 Brycoins to rob someone!")
             return;
         }
@@ -426,12 +426,12 @@ client.on("message", async message => {
         if (rankId == 0) {
             rankCost = 0;
         }
-        if(message.author.id == targetedUser) {
+        if (message.author.id == targetedUser) {
             message.channel.send("You can't rob yourself...");
             return;
         }
-        if(cashUserBals[indexxxx] < getRankCost(rankId-2)) {
-            message.channel.send("You need at least "+getRankCost(rankId-2)+" Brycoins to rob that user!");
+        if (cashUserBals[indexxxx] < getRankCost(rankId - 2)) {
+            message.channel.send("You need at least " + getRankCost(rankId - 2) + " Brycoins to rob that user!");
             return;
         }
         if (cashUserBals[targId] < rankCost) {
@@ -508,17 +508,17 @@ client.on("message", async message => {
 
     if (message.content.toLowerCase() == "brybank" || message.content.toLowerCase().startsWith("brybank <")) {
         let profId = message.author.id;
-        if(message.content.slice(8,9) == "<") {
-            profId = message.content.slice(11,29);
+        if (message.content.slice(8, 9) == "<") {
+            profId = message.content.slice(11, 29);
         }
         let ussIndd = cashUserIds.indexOf(profId);
         let bankBal = getBankBal(profId);
         if (bankBal == 0) {
-            message.channel.send(addTitle(profId)+" has no bank balance! To deposit, type \"brybank deposit <number>\"");
+            message.channel.send(addTitle(profId) + " has no bank balance! To deposit, type \"brybank deposit <number>\"");
             return;
         }
         let epoch = Math.floor((Date.now() - cashUserDeposit[ussIndd]) / 86400000);
-        let tmrwBal = Math.floor(cashUserBank[ussIndd] * Math.pow(1.05, epoch+1));
+        let tmrwBal = Math.floor(cashUserBank[ussIndd] * Math.pow(1.05, epoch + 1));
         let tmrwGain = (tmrwBal - bankBal);
         if ((tmrwBal - cashUserBank[ussIndd]) > 10000) {
             tmrwGain = 0;
@@ -526,8 +526,8 @@ client.on("message", async message => {
         message.channel.send(new Discord.RichEmbed()
             .setColor('#FFDF00')
             .setTitle('Bry Bank')
-            .setDescription(addTitle(profId)+" has a bank balance of " + bankBal)
-            .addField("Stats", bankBal+" earning 5% daily interest for " + epoch + " days.\n" + (bankBal - cashUserBank[ussIndd]) + " Brycoins earned so far.\nTo withdraw, type \"brybank withdraw\"\nYou can earn a maximum of 10000 Brycoins from the bank.\nIf you wait "+readableDate(cashUserDeposit[ussIndd]+((epoch+1)*86400000))+" to withdraw you will get an additional "+tmrwGain+" Brycoins.")
+            .setDescription(addTitle(profId) + " has a bank balance of " + bankBal)
+            .addField("Stats", bankBal + " earning 5% daily interest for " + epoch + " days.\n" + (bankBal - cashUserBank[ussIndd]) + " Brycoins earned so far.\nTo withdraw, type \"brybank withdraw\"\nYou can earn a maximum of 10000 Brycoins from the bank.\nIf you wait " + readableDate(cashUserDeposit[ussIndd] + ((epoch + 1) * 86400000)) + " to withdraw you will get an additional " + tmrwGain + " Brycoins.")
         );
         return;
     }
@@ -708,7 +708,7 @@ client.on("message", async message => {
         }
         let rankId = getRankId(targetUserId);
         let rankCost = parseInt(getRankCost(rankId));
-        let balanceString = addTitle(targetUserId) + '\n' + cashUserBals[indd] + ' Brycoins in Wallet\n' + getBankBal(targetUserId) + ' Brycoins in Brybank\nThis user is insured for ' + rankCost + ' Brycoins.\nNext hourly '+getHourlyReward(rankId)+' BC reward in '+readableDate(rateUserRefresh[indd]+3600000);
+        let balanceString = addTitle(targetUserId) + '\n' + cashUserBals[indd] + ' Brycoins in Wallet\n' + getBankBal(targetUserId) + ' Brycoins in Brybank\nThis user is insured for ' + rankCost + ' Brycoins.\nNext hourly ' + getHourlyReward(rankId) + ' BC reward in ' + readableDate(rateUserRefresh[indd] + 3600000);
         message.channel.send(new Discord.RichEmbed()
             .setColor('#FFDF00')
             .setTitle('Balance')
@@ -1531,10 +1531,10 @@ client.on("message", async message => {
         }
 
         cNum++;
-        for(var i = 0; i < cashUserInv.length; i++) {
-                if(getRankId(cashUserIds[i]) >= 9) {
-                    cashUserBals[i] += 600;
-                }
+        for (var i = 0; i < cashUserInv.length; i++) {
+            if (getRankId(cashUserIds[i]) >= 9) {
+                cashUserBals[i] += 600;
+            }
         }
         store.set('cNum', cNum);
         return;
