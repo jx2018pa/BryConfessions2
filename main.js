@@ -1533,7 +1533,7 @@ client.on("message", async message => {
         cNum++;
         for (var i = 0; i < cashUserInv.length; i++) {
             if (getRankId(cashUserIds[i]) >= 9) {
-                cashUserBals[i] += 600;
+                cashUserBals[i] += 400;
             }
         }
         store.set('cNum', cNum);
