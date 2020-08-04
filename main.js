@@ -346,8 +346,11 @@ client.on("message", async message => {
 
 
     if (message.channel.type != "dm" && message.content.slice(0, 3) == "rob") {
-        console.log(message.content);
         let indexxxx = cashUserIds.indexOf(message.author.id);
+        if(cashUserBals[indexxxx] < 20) {
+            message.channel.send("You need at least 20 Brycoins to rob someone!")
+            return;
+        }
         let targetedUser = message.content.slice(7, 25);
         let targId = cashUserIds.indexOf(targetedUser);
         let targInv = cashUserInv[targId].split(",");
@@ -380,7 +383,7 @@ client.on("message", async message => {
             message.channel.send(new Discord.RichEmbed()
                 .setColor('#FFDF00')
                 .setTitle('Oh No!')
-                .setDescription("The police caught you before you could rob anyone! They took " + Math.floor(0.3 * cashUserBals[indexxxx]) + " from your wallet.")
+                .setDescription("The police caught you before you could rob anyone! They took " + Math.floor(0.3 * cashUserBals[indexxxx]) + " - 30% of your balance - from your wallet.")
                 .addField("Stats", "There is a 50% of a robbery failing due to police.")
             );
             cashUserBals[indexxxx] -= Math.floor(0.3 * cashUserBals[indexxxx]);
@@ -392,7 +395,7 @@ client.on("message", async message => {
             message.channel.send(new Discord.RichEmbed()
                 .setColor('#FFDF00')
                 .setTitle('Success!')
-                .setDescription("You successfully robbed " + addTitle(targetedUser) + " ! You stole " + Math.floor(stealAmt) + " from their wallet.")
+                .setDescription("You successfully robbed " + addTitle(targetedUser) + " ! You stole " + Math.floor(stealAmt) + " - 25% of their balance - from their wallet.")
                 .addField("Stats", "There is a 50% of a robbery failing due to police, and " + addTitle(targetedUser) + " had rank protection adding a " + ((rankId / allTitles.length) * 100) + "% chance of failure after you evaded the police.")
             );
             cashUserBals[targId] -= Math.floor(stealAmt);
@@ -403,7 +406,7 @@ client.on("message", async message => {
             message.channel.send(new Discord.RichEmbed()
                 .setColor('#FFDF00')
                 .setTitle('Failure!')
-                .setDescription(addTitle(targetedUser) + " managed to defend themselves and took " + Math.floor(0.3 * cashUserBals[indexxxx]) + " from your wallet.")
+                .setDescription(addTitle(targetedUser) + " managed to defend themselves and took " + Math.floor(0.3 * cashUserBals[indexxxx]) + " - 30% of your balance - from your wallet.")
                 .addField("Stats", "There is a 50% of a robbery failing due to police, and " + addTitle(targetedUser) + " had rank protection adding a " + ((rankId / allTitles.length) * 100) + "% chance of failure.")
             );
             cashUserBals[indexxxx] -= Math.floor(0.3 * cashUserBals[indexxxx]);
