@@ -276,6 +276,14 @@ function getBankBal(id) {
         return theoBal;
 }
 
+function getHourlyReward(rankId) {
+    if(rankId <= 0) {
+        return 50;
+    }
+    return parseInt(50+(rankId*30));
+}
+
+
 client.on("ready", () => {
     console.log(`Bot has started, with ${client.users.size} users, in ${client.channels.size} channels of ${client.guilds.size} guilds.`);
     client.user.setActivity("Type \"bryhelp\" or \"bryrules\" for more info");
@@ -312,9 +320,9 @@ client.on("message", async message => {
             rateUserRefresh.push(Date.now());
         } else {
             if ((Date.now() - rateUserRefresh[rateUserIndex]) > 3600000) {
-            	let hourReward = parseInt(50+(rankId*30));
-                message.channel.send("Hey " + addTitle(message.author.id) + " - Your hourly "+hourReward+" Brycoin bonus has been deposited into your account!");
-                cashUserBals[moneyIndex] = cashUserBals[moneyIndex] + hourReward;
+            	//let hourReward = parseInt(50+(rankId*30));
+                //message.channel.send("Hey " + addTitle(message.author.id) + " - Your hourly "+hourReward+" Brycoin bonus has been deposited into your account!");
+                cashUserBals[moneyIndex] = cashUserBals[moneyIndex] + getHourlyReward(rankId);
                 store.set('userIds', cashUserIds);
                 store.set('userBals', cashUserBals);
                 rateUserRefresh[rateUserIndex] = Date.now();
@@ -363,7 +371,7 @@ client.on("message", async message => {
     if (message.channel.type != "dm" && message.content == "titles") {
         let fulll = "";
         for (var i = 0; i < allTitles.length; i++) {
-            fulll += allTitles[i] + " | Cost: " + Math.round(Math.pow((i + 1), 2.1) * 200) + " BC | Gain: "+parseInt(2+(i))+" BC/30s, "+parseInt(50+(i*30))+" BC/hr\n";
+            fulll += allTitles[i] + " | Cost: " + Math.round(Math.pow((i + 1), 2.1) * 200) + " BC | Gain: "+parseInt(2+(i))+" BC/30s, "+getHourlyReward(i)+" BC/hr\n";
             if(titlePerks[i].length > 2) {
                 fulll += titlePerks[i]+"\n";
             }
@@ -676,7 +684,6 @@ client.on("message", async message => {
     }
 
     if (message.content.toLowerCase().startsWith("balance")) {
-
         let targetUserId = message.author.id;
         let sluice = message.content.slice(11, 29);
         if (sluice.length > 2) {
@@ -687,10 +694,9 @@ client.on("message", async message => {
             message.channel.send("The specified user does not have a balance!");
             return;
         }
-        //let targInv = cashUserInv[indd].split(",");
         let rankId = getRankId(targetUserId);
         let rankCost = parseInt(getRankCost(rankId));
-        let balanceString = addTitle(targetUserId) + '\n' + cashUserBals[indd] + ' Brycoins in Wallet\n' + getBankBal(targetUserId) + ' Brycoins in Brybank\nThis user is insured for ' + rankCost + ' Brycoins.';
+        let balanceString = addTitle(targetUserId) + '\n' + cashUserBals[indd] + ' Brycoins in Wallet\n' + getBankBal(targetUserId) + ' Brycoins in Brybank\nThis user is insured for ' + rankCost + ' Brycoins.\nNext hourly '+getHourlyReward(rankId)+' BC reward in '+readableDate(rateUserRefresh[indd]+3600000);
         message.channel.send(new Discord.RichEmbed()
             .setColor('#FFDF00')
             .setTitle('Balance')
