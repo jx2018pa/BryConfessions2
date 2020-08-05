@@ -113,10 +113,10 @@ let titlePerks = ["",
     "Insurance equal to rank cost",
     "",
     "",
-    "Access to Bry Lounge",
+    "",
     "",
     "+2000 BC when someone ranks up",
-    "",
+    "Access to Bry Lounge",
     "",
     "+300 BC when any conf is sent",
     "",
@@ -408,7 +408,11 @@ client.on("message", async message => {
             return;
         }
         if (cashUserBals[indexxxx] < getRankCost(rankId - 2)) {
-            message.channel.send("You need at least " + getRankCost(rankId - 2) + " Brycoins to rob that user!");
+            message.channel.send("You need at least " + getRankCost(rankId - 3) + " Brycoins to rob that user!");
+            return;
+        }
+        if(cashUserBals[indexxxx] < getRankCost(getRankId(message.author.id))) {
+            message.channel.send("You need more than your insurance - "+getRankCost(getRankId(message.author.id))+" Brycoins - to rob anyone!");
             return;
         }
         if (cashUserBals[targId] < rankCost) {
