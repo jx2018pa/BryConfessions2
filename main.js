@@ -524,6 +524,9 @@ client.on("message", async message => {
         }
         if (ddarr[1] == "deposit") {
             let depNum = parseInt(ddarr[2]);
+            if(ddarr[2]=="all") {
+                depNum = parseInt(cashUserBals[ussIndd]);
+            }
             if (depNum > 10000) {
                 message.channel.send("You cannot deposit more than 10000 brycoins!");
                 return;
