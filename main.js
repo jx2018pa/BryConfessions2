@@ -118,7 +118,7 @@ let titlePerks = ["",
     "+2000 BC when someone ranks up",
     "",
     "",
-    "+600 BC when any conf is sent",
+    "+300 BC when any conf is sent",
     "",
     "Unlock factions",
     "",
@@ -1508,7 +1508,7 @@ client.on("message", async message => {
         cNum++;
         for (var i = 0; i < cashUserInv.length; i++) {
             if (getRankId(cashUserIds[i]) >= 9) {
-                cashUserBals[i] += 400;
+                cashUserBals[i] += 300;
             }
         }
         store.set('cNum', cNum);
