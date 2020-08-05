@@ -122,7 +122,7 @@ let titlePerks = ["",
     "+2000 BC when someone ranks up",
     "Access to Bry Lounge",
     "",
-    "+300 BC when any conf is sent",
+    "+100 BC when any conf is sent",
     "",
     "Unlock factions",
     "",
@@ -1599,7 +1599,7 @@ client.on("message", async message => {
         cNum++;
         for (var i = 0; i < cashUserInv.length; i++) {
             if (getRankId(cashUserIds[i]) >= 9) {
-                cashUserBals[i] += 300;
+                cashUserBals[i] += 100;
             }
         }
         store.set('cNum', cNum);
