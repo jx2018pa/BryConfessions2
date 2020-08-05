@@ -28,8 +28,6 @@ const md5 = require('md5');
 //write to file
 const fs = require('fs');
 const client = new Discord.Client();
-//let cNum = parseInt(fs.readFileSync("confnum.txt", "utf8"));
-
 let cNum = store.get('cNum');
 let starUsers = store.get('starUsers');
 let userEmojis = store.get('userEmojis');
@@ -42,23 +40,14 @@ const cashShopListings = store.get('shopListings');
 const cashShopCosts = store.get('shopCosts');
 const secret = store.get('secretKey');
 const auth = require("./auth.json");
-
 let bannedIds = store.get('banUserIds');
 let bannedExpiry = store.get('banUserExpiry');
 let bannedNum = store.get('bannedNum');
 let bannedAppealed = store.get('bannedAppealed');
-//const banList = require("./banlist.json"); //this should never be uploaded publicly
 const config = require("./config.json");
-
-
-//const logChannel = "675193177656918039";
 let instantChannel = store.get('instChan');
-//const slowChannels = ["675201659558690875", "675350296142282752", "675381993642393641"];
-
 let postIds = [];
 let postTimes = [];
-//let postWarn = [];
-
 let repPostNum = [];
 let repPostUser = [];
 let repPostVol = [];
@@ -152,12 +141,10 @@ let titlePerks = ["",
 ];
 
 function addReaction() {
-
     var ret = config.reactions[Math.floor(Math.random() * config.reactions.length)];
     while (ret.includes("[NAME]")) {
         ret = ret.replace("[NAME]", config.names[Math.floor(Math.random() * config.names.length)]);
     }
-
     return ret;
 }
 
@@ -207,13 +194,10 @@ function readableDate(ms) {
 }
 
 function addTitle(id) {
-
     let indexxxx = cashUserIds.indexOf(id);
-    //let userInv = cashUserInv[indexxxx].split(",");
     let full = "";
     let g = false;
     let rankId = 0;
-
     if (cashUserInv[indexxxx] == "inv") {
         return "🥔 Peasant <@" + id + ">";
     }
@@ -307,7 +291,6 @@ client.on("message", async message => {
             cashUserDeposit.push(0);
             return;
         }
-        //let userInv = cashUserInv[moneyIndex].split(",");
         let rankId = getRankId(message.author.id);
         let vv = true;
         let rateUserIndex = rateUserId.indexOf(message.author.id);
@@ -322,8 +305,6 @@ client.on("message", async message => {
             return;
         } else {
             if ((Date.now() - rateUserRefresh[rateUserIndex]) > 3600000) {
-                //let hourReward = parseInt(50+(rankId*30));
-                //message.channel.send("Hey " + addTitle(message.author.id) + " - Your hourly "+hourReward+" Brycoin bonus has been deposited into your account!");
                 cashUserBals[moneyIndex] = cashUserBals[moneyIndex] + getHourlyReward(rankId);
                 store.set('userIds', cashUserIds);
                 store.set('userBals', cashUserBals);
@@ -369,7 +350,6 @@ client.on("message", async message => {
             }
         }
         fulll += "Want to buy a new title? Type \"rankup\"!\nTo switch between title genders type \"togglerank\"";
-        //console.log(fulll.length);
         message.channel.send(new Discord.RichEmbed()
             .setColor('#FFDF00')
             .setTitle('Title Shop')
@@ -382,7 +362,6 @@ client.on("message", async message => {
         let indexxxx = cashUserIds.indexOf(message.author.id);
         let rankId = getRankId(message.author.id);
         let full = "";
-        //let userInv = cashUserInv[indexxxx].split(",");
         let nextCost = Math.round(Math.pow((rankId + 2), 2.1) * 200);
         if (cashUserInv[indexxxx] == "inv") {
             rankId = -1;
@@ -395,7 +374,6 @@ client.on("message", async message => {
             cashUserBals[indexxxx] -= nextCost;
             rankId += 1;
             cashUserInv[indexxxx] = "n" + rankId;
-            //cashUserInv[indexxxx] = userInv.toString();
             store.set('userInv', cashUserInv);
             store.set('userBals', cashUserBals);
             for (var i = 0; i < cashUserInv.length; i++) {
@@ -483,7 +461,6 @@ client.on("message", async message => {
 
     if (message.channel.type != "dm" && message.content == "togglerank") {
         let indexxxx = cashUserIds.indexOf(message.author.id);
-        //let userInv = cashUserInv[indexxxx].split(",");
         if (cashUserInv[indexxxx] == "inv") {
             message.channel.send("Success! You are now " + addTitle(message.author.id));
             return;
@@ -491,13 +468,11 @@ client.on("message", async message => {
         rankId = cashUserInv[indexxxx].slice(1);
         if (cashUserInv[indexxxx].slice(0, 1) == "f") {
             cashUserInv[indexxxx] = "n" + rankId;
-            //cashUserInv[indexxxx] = userInv.toString();
             store.set('userInv', cashUserInv);
             message.channel.send("Success! You are now " + addTitle(message.author.id));
             return;
         } else {
             cashUserInv[indexxxx] = "f" + rankId;
-            //cashUserInv[indexxxx] = userInv.toString();
             store.set('userInv', cashUserInv);
             message.channel.send("Success! You are now " + addTitle(message.author.id));
             return;
