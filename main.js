@@ -344,6 +344,104 @@ client.on("message", async message => {
         store.set('userInv', cashUserInv);
     }
 
+    if (message.content.toLowerCase().startsWith("balance")) {
+        let targetUserId = message.author.id;
+        let sluice = message.content.slice(11, 29);
+        if (sluice.length > 2) {
+            targetUserId = sluice;
+        }
+        let indd = cashUserIds.indexOf(targetUserId);
+        let rateUserIndex = rateUserId.indexOf(targetUserId);
+        if (indd == -1) {
+            message.channel.send("The specified user does not have a balance!");
+            return;
+        }
+        let rankId = getRankId(targetUserId);
+        let rankCost = parseInt(getRankCost(rankId));
+        let balanceString = addTitle(targetUserId) + '\n' + cashUserBals[indd] + ' Brycoins in Wallet\n' + getBankBal(targetUserId) + ' Brycoins in Brybank\nThis user is insured for ' + rankCost + ' Brycoins.\nNext hourly ' + getHourlyReward(rankId) + ' BC reward in ' + Math.round((3600000 - (Date.now() - rateUserRefresh[rateUserIndex])) / 60000) + ' minutes.';
+        message.channel.send(new Discord.RichEmbed()
+            .setColor('#FFDF00')
+            .setTitle('Balance')
+            .setDescription(balanceString)
+        );
+        return;
+    }
+
+    if(cashUserBals[cashUserIds.indexOf(message.author.id)] < 0) {
+    	return;
+    }
+
+    if (message.content.toLowerCase() == "brybank" || message.content.toLowerCase().startsWith("brybank <")) {
+        let profId = message.author.id;
+        if (message.content.slice(8, 9) == "<") {
+            profId = message.content.slice(11, 29);
+        }
+        let ussIndd = cashUserIds.indexOf(profId);
+        let bankBal = getBankBal(profId);
+        if (bankBal == 0) {
+            message.channel.send(addTitle(profId) + " has no bank balance! To deposit, type \"brybank deposit <number>\"");
+            return;
+        }
+        let epoch = Math.floor((Date.now() - cashUserDeposit[ussIndd]) / 86400000);
+        let tmrwBal = Math.floor(cashUserBank[ussIndd] * Math.pow(1.05, epoch + 1));
+        let tmrwGain = (tmrwBal - bankBal);
+        if ((tmrwBal - cashUserBank[ussIndd]) > 10000) {
+            tmrwGain = 0;
+        }
+        message.channel.send(new Discord.RichEmbed()
+            .setColor('#FFDF00')
+            .setTitle('Bry Bank')
+            .setDescription(addTitle(profId) + " has a bank balance of " + bankBal)
+            .addField("Stats", bankBal + " earning 5% daily interest for " + epoch + " days.\n" + (bankBal - cashUserBank[ussIndd]) + " Brycoins earned so far.\nTo withdraw, type \"brybank withdraw\"\nYou can earn a maximum of 10000 Brycoins from the bank.\nIf you wait " + readableDate(cashUserDeposit[ussIndd] + ((epoch + 1) * 86400000)) + " to withdraw you will get an additional " + tmrwGain + " Brycoins.")
+        );
+        return;
+    }
+
+    if (message.channel.type != "dm" && message.content.toLowerCase().startsWith("brybank")) {
+        let ussIndd = cashUserIds.indexOf(message.author.id);
+        let epoch = Math.floor((Date.now() - cashUserDeposit[ussIndd]) / 86400000);
+        let theoBal = getBankBal(message.author.id);
+        let ddarr = message.content.split(" ");
+        if (ddarr[1] == "withdraw") {
+            if (theoBal == 0) {
+                message.channel.send("You have no bank balance!");
+                return;
+            }
+            cashUserBals[ussIndd] += theoBal;
+            cashUserBank[ussIndd] = 0;
+            message.channel.send("Withdrawal successful! New balance: " + cashUserBals[ussIndd]);
+            return;
+        }
+        if (ddarr[1] == "deposit") {
+            let depNum = parseInt(ddarr[2]);
+            if (ddarr[2] == "all") {
+                depNum = parseInt(cashUserBals[ussIndd]);
+            }
+            if (depNum > 10000) {
+                message.channel.send("You cannot deposit more than 10000 brycoins!");
+                return;
+            }
+            if (theoBal != 0) {
+                message.channel.send("You cannot deposit until your brybank balance is 0! Withdraw first!");
+                return;
+            }
+            if (depNum > cashUserBals[ussIndd] || depNum < 1 || isNaN(depNum)) {
+                message.channel.send("Deposit failed!");
+                return;
+            } else {
+                cashUserBals[ussIndd] -= depNum;
+                cashUserBank[ussIndd] += depNum;
+                message.channel.send("Deposit successful! New bank balance: " + cashUserBank[ussIndd]);
+                cashUserDeposit[ussIndd] = Date.now();
+                store.set('userDeposit', cashUserDeposit);
+                return;
+            }
+        }
+        console.log(message.content);
+        message.channel.send("Bank operation failed!");
+        return;
+    }
+    
     if (message.channel.type != "dm" && message.content == "titles") {
         let fulll = "";
         for (var i = 0; i < allTitles.length; i++) {
@@ -488,76 +586,7 @@ client.on("message", async message => {
         return;
     }
 
-    if (message.content.toLowerCase() == "brybank" || message.content.toLowerCase().startsWith("brybank <")) {
-        let profId = message.author.id;
-        if (message.content.slice(8, 9) == "<") {
-            profId = message.content.slice(11, 29);
-        }
-        let ussIndd = cashUserIds.indexOf(profId);
-        let bankBal = getBankBal(profId);
-        if (bankBal == 0) {
-            message.channel.send(addTitle(profId) + " has no bank balance! To deposit, type \"brybank deposit <number>\"");
-            return;
-        }
-        let epoch = Math.floor((Date.now() - cashUserDeposit[ussIndd]) / 86400000);
-        let tmrwBal = Math.floor(cashUserBank[ussIndd] * Math.pow(1.05, epoch + 1));
-        let tmrwGain = (tmrwBal - bankBal);
-        if ((tmrwBal - cashUserBank[ussIndd]) > 10000) {
-            tmrwGain = 0;
-        }
-        message.channel.send(new Discord.RichEmbed()
-            .setColor('#FFDF00')
-            .setTitle('Bry Bank')
-            .setDescription(addTitle(profId) + " has a bank balance of " + bankBal)
-            .addField("Stats", bankBal + " earning 5% daily interest for " + epoch + " days.\n" + (bankBal - cashUserBank[ussIndd]) + " Brycoins earned so far.\nTo withdraw, type \"brybank withdraw\"\nYou can earn a maximum of 10000 Brycoins from the bank.\nIf you wait " + readableDate(cashUserDeposit[ussIndd] + ((epoch + 1) * 86400000)) + " to withdraw you will get an additional " + tmrwGain + " Brycoins.")
-        );
-        return;
-    }
-
-    if (message.channel.type != "dm" && message.content.toLowerCase().startsWith("brybank")) {
-        let ussIndd = cashUserIds.indexOf(message.author.id);
-        let epoch = Math.floor((Date.now() - cashUserDeposit[ussIndd]) / 86400000);
-        let theoBal = getBankBal(message.author.id);
-        let ddarr = message.content.split(" ");
-        if (ddarr[1] == "withdraw") {
-            if (theoBal == 0) {
-                message.channel.send("You have no bank balance!");
-                return;
-            }
-            cashUserBals[ussIndd] += theoBal;
-            cashUserBank[ussIndd] = 0;
-            message.channel.send("Withdrawal successful! New balance: " + cashUserBals[ussIndd]);
-            return;
-        }
-        if (ddarr[1] == "deposit") {
-            let depNum = parseInt(ddarr[2]);
-            if (ddarr[2] == "all") {
-                depNum = parseInt(cashUserBals[ussIndd]);
-            }
-            if (depNum > 10000) {
-                message.channel.send("You cannot deposit more than 10000 brycoins!");
-                return;
-            }
-            if (theoBal != 0) {
-                message.channel.send("You cannot deposit until your brybank balance is 0! Withdraw first!");
-                return;
-            }
-            if (depNum > cashUserBals[ussIndd] || depNum < 1 || isNaN(depNum)) {
-                message.channel.send("Deposit failed!");
-                return;
-            } else {
-                cashUserBals[ussIndd] -= depNum;
-                cashUserBank[ussIndd] += depNum;
-                message.channel.send("Deposit successful! New bank balance: " + cashUserBank[ussIndd]);
-                cashUserDeposit[ussIndd] = Date.now();
-                store.set('userDeposit', cashUserDeposit);
-                return;
-            }
-        }
-        console.log(message.content);
-        message.channel.send("Bank operation failed!");
-        return;
-    }
+    
 
     if (message.channel.type != "dm" && message.content.startsWith("buy")) {
         /*
@@ -680,28 +709,7 @@ client.on("message", async message => {
         return;
     }
 
-    if (message.content.toLowerCase().startsWith("balance")) {
-        let targetUserId = message.author.id;
-        let sluice = message.content.slice(11, 29);
-        if (sluice.length > 2) {
-            targetUserId = sluice;
-        }
-        let indd = cashUserIds.indexOf(targetUserId);
-        let rateUserIndex = rateUserId.indexOf(targetUserId);
-        if (indd == -1) {
-            message.channel.send("The specified user does not have a balance!");
-            return;
-        }
-        let rankId = getRankId(targetUserId);
-        let rankCost = parseInt(getRankCost(rankId));
-        let balanceString = addTitle(targetUserId) + '\n' + cashUserBals[indd] + ' Brycoins in Wallet\n' + getBankBal(targetUserId) + ' Brycoins in Brybank\nThis user is insured for ' + rankCost + ' Brycoins.\nNext hourly ' + getHourlyReward(rankId) + ' BC reward in ' + Math.round((3600000 - (Date.now() - rateUserRefresh[rateUserIndex])) / 60000) + ' minutes.';
-        message.channel.send(new Discord.RichEmbed()
-            .setColor('#FFDF00')
-            .setTitle('Balance')
-            .setDescription(balanceString)
-        );
-        return;
-    }
+    
     var b2s = Array.from(cashUserBals);
     if (message.content.toLowerCase() == "leaderboard") {
         //var b2s = cashUserBals;
