@@ -79,6 +79,10 @@ var options;
 var s, v;
 var anonyPoll = false;
 var startTime = 0;
+var rpsInit = 0;
+var rpsMoney = 0;
+var rpsTime = 0;
+var rpsInitId = "";
 let rouletteHit = store.get('rouletteHits');
 let rouletteSave = store.get('rouletteSaves');
 let allTitles = ["🗑️ Bum",
@@ -718,8 +722,76 @@ client.on("message", async message => {
         return;
     }
 
+    if(message.channel.type == "dm" && message.content.toLowerCase().startsWith("rps")) {
+        console.log(rpsInit);
+        console.log(rpsReturn);
+        let rpsContents = message.content.split(" ");
+        let rpsReturn = 0;
+        let rpsReturnVictory = false;
+        if(rpsInit != 0) {
+            if(rpsContents[1] == "rock") {
+            rpsReturn = 1;
+        } else if (rpsContents[1] = "paper") {
+            rpsReturn = 2;
+        } else if (rpsContents[1] = "scissors") {
+            rpsReturn = 3;
+        } else {
+            message.channel.send("Invalid choice! Type \"rps <rock/paper/scissors> <amount>\"");
+            return;
+        }
+        if(rpsReturn == rpsInit) {
+            client.channels.get("739250815700828292").send("Tie! "+addTitle(message.author.id)+" picked "+rpsContents[1]+", so nothing happens to the original wager of "+rpsMoney+" Brycoins.");
+            rpsMoney = 0;
+            rpsInit = 0;
+            rpsTime = 0;
+            return;
+        } else if(rpsInit == 1) {
+            if(rpsReturn == 2) {
+                rpsReturnVictory = true;
+            }
+        } else if(rpsInit == 2) {
+            if(rpsReturn == 3) {
+                rpsReturnVictory = true;
+            }
+        } else if(rpsInit == 3) {
+            if(rpsReturn == 1) {
+                rpsReturnVictory = true;
+            }
+        }
+        }
+        if(rpsInit == 0) {
+            if(rpsContents.length != 3) {
+                message.channel.send("Invalid choice! Type \"rps <rock/paper/scissors> <amount>\"");
+                return;
+            }
+            rpsMoney = parseInt(rpsContents[2]);
+            if(isNaN(rpsMoney)) {
+                message.channel.send("Invalid choice! Type \"rps <rock/paper/scissors> <amount>\"");
+            }
+            
+            if(rpsContents[1] == "rock") {
+            rpsInit = 1;
+        } else if (rpsContents[1] = "paper") {
+            rpsInit = 2;
+        } else if (rpsContents[1] = "scissors") {
+            rpsInit = 3;
+        } else {
+            message.channel.send("Invalid choice! Type \"rps <rock/paper/scissors> <amount>\"");
+            return;
+        }
+        client.channels.get("739250815700828292").send(addTitle(message.author.id)+" wants to play Rock Paper Scissors!");
+        rpsInitId = message.author.id;
+        rpsTime = Date.now();
+        return;
 
-
+        }
+        
+        if(rpsReturnVictory) {
+            client.channels.get("739250815700828292").send("Second user won");
+        } else {
+            client.channels.get("739250815700828292").send("First user won");
+        }
+    }
 
     if (starUsers.indexOf(message.author.id) > -1 && message.channel.type != "dm") {
         try {
