@@ -680,13 +680,14 @@ client.on("message", async message => {
             targetUserId = sluice;
         }
         let indd = cashUserIds.indexOf(targetUserId);
+        let rateUserIndex = rateUserId.indexOf(targetUserId);
         if (indd == -1) {
             message.channel.send("The specified user does not have a balance!");
             return;
         }
         let rankId = getRankId(targetUserId);
         let rankCost = parseInt(getRankCost(rankId));
-        let balanceString = addTitle(targetUserId) + '\n' + cashUserBals[indd] + ' Brycoins in Wallet\n' + getBankBal(targetUserId) + ' Brycoins in Brybank\nThis user is insured for ' + rankCost + ' Brycoins.\nNext hourly ' + getHourlyReward(rankId) + ' BC reward in ' + readableDate(rateUserRefresh[indd] + 3600000);
+        let balanceString = addTitle(targetUserId) + '\n' + cashUserBals[indd] + ' Brycoins in Wallet\n' + getBankBal(targetUserId) + ' Brycoins in Brybank\nThis user is insured for ' + rankCost + ' Brycoins.\nNext hourly ' + getHourlyReward(rankId) + ' BC reward in ' +Math.round((3600000-(Date.now() - rateUserRefresh[rateUserIndex]))/60000)+' minutes.';
         message.channel.send(new Discord.RichEmbed()
             .setColor('#FFDF00')
             .setTitle('Balance')
