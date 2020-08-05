@@ -195,7 +195,6 @@ function readableDate(ms) {
 
 function addTitle(id) {
     let indexxxx = cashUserIds.indexOf(id);
-    let full = "";
     let g = false;
     let rankId = 0;
     if (cashUserInv[indexxxx] == "inv") {
@@ -321,8 +320,8 @@ client.on("message", async message => {
                     return;
                 }
                 if (Math.random() < 0.01) {
-                    message.channel.send(addTitle(message.author.id) + " got a mini prize! This has a 1% chance of happening per message 😱\nYou gained 300 brycoins!");
-                    cashUserBals[moneyIndex] = cashUserBals[moneyIndex] + 300;
+                    message.channel.send(addTitle(message.author.id) + " got a mini prize! This has a 1% chance of happening per message 😱\nYou gained 500 brycoins!");
+                    cashUserBals[moneyIndex] = cashUserBals[moneyIndex] + 500;
                     store.set('userIds', cashUserIds);
                     store.set('userBals', cashUserBals);
                     return;
@@ -386,7 +385,7 @@ client.on("message", async message => {
         }
     }
 
-    if (message.channel.type != "dm" && message.content.slice(0, 3) == "rob") {
+    if (message.channel.type != "dm" && message.content.toLowerCase().slice(0, 3) == "rob") {
         let indexxxx = cashUserIds.indexOf(message.author.id);
         if (cashUserBals[indexxxx] < 20) {
             message.channel.send("You need at least 20 Brycoins to rob someone!")
