@@ -411,12 +411,12 @@ client.on("message", async message => {
             message.channel.send("You can't rob yourself...");
             return;
         }
-        if (cashUserBals[indexxxx] < getRankCost(rankId - 2)) {
+        if (cashUserBals[indexxxx] < getRankCost(rankId - 3)) {
             message.channel.send("You need at least " + getRankCost(rankId - 3) + " Brycoins to rob that user!");
             return;
         }
-        if (cashUserBals[indexxxx] < getRankCost(getRankId(message.author.id))) {
-            message.channel.send("You need more than your insurance - " + getRankCost(getRankId(message.author.id)) + " Brycoins - to rob anyone!");
+        if (cashUserBals[indexxxx] < getRankCost(getRankId(message.author.id)-1)) {
+            message.channel.send("You need at least " + getRankCost(getRankId(message.author.id)-1) + " Brycoins to rob anyone!");
             return;
         }
         if (cashUserBals[targId] < rankCost) {
@@ -784,7 +784,7 @@ client.on("message", async message => {
                 }
             }
             if (rpsReturnVictory) {
-                client.channels.get(instantChannel).send(addTitle(message.author.id) + " defeated " + addTitle(rpsInitId) + " and took their " + rpsMoney + " Brycoins as a reward!");
+                client.channels.get(instantChannel).send(addTitle(message.author.id) + " picked "+rpsReturn+" and defeated " + addTitle(rpsInitId) + " who picked "+rpsInit+" and took their " + rpsMoney + " Brycoins as a reward!");
                 cashUserBals[cashUserIds.indexOf(message.author.id)] += rpsMoney;
                 cashUserBals[cashUserIds.indexOf(rpsInitId)] -= rpsMoney;
                 rpsMoney = 0;
@@ -793,7 +793,7 @@ client.on("message", async message => {
                 rpsInitId = "";
                 return;
             } else if (rpsReturnVictory == false) {
-                client.channels.get(instantChannel).send(addTitle(message.author.id) + " was defeated by " + addTitle(rpsInitId) + " and lost " + rpsMoney + " Brycoins to them!");
+                client.channels.get(instantChannel).send(addTitle(message.author.id) + " picked "+rpsReturn+" and was defeated by " + addTitle(rpsInitId) + " who picked "+rpsInit+" and lost " + rpsMoney + " Brycoins to them!");
                 cashUserBals[cashUserIds.indexOf(rpsInitId)] += rpsMoney;
                 cashUserBals[cashUserIds.indexOf(message.author.id)] -= rpsMoney;
                 rpsIsWaiting = false;
