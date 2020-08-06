@@ -674,7 +674,7 @@ client.on("message", async message => {
         let wager = parseInt(message.content.slice(7));
         let userInd = cashUserIds.indexOf(message.author.id);
         if (wager > cashUserBals[userInd] || isNaN(wager) || wager < 10) {
-            message.channel.send("Bet failed!");
+            message.channel.send("Bet failed! You need to gamble more than 10 Brycoins!");
             return;
         }
         if (Math.random() < 0.48) {
