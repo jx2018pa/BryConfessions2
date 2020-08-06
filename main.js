@@ -127,7 +127,7 @@ let titlePerks = ["",
     "+BC when robbery fails",
     "",
     "",
-    "+BC when money is lost in casino",
+    "",
     "",
     "",
     "+BC when a robbery or raid succeeds",
@@ -673,7 +673,7 @@ client.on("message", async message => {
     if (message.content.toLowerCase().startsWith("gamble")) {
         let wager = parseInt(message.content.slice(7));
         let userInd = cashUserIds.indexOf(message.author.id);
-        if (wager > cashUserBals[userInd] || isNaN(wager) || wager < 0) {
+        if (wager > cashUserBals[userInd] || isNaN(wager) || wager < 10) {
             message.channel.send("Bet failed!");
             return;
         }
@@ -1234,6 +1234,19 @@ client.on("message", async message => {
         */
         return;
     }
+
+    if(cNum%500 == 0) {
+    	client.channels.get(instantChannel).send(new Discord.RichEmbed()
+            .setColor('#ffa500')
+            .setTitle('CONFESSION #' + cNum)
+            .setDescription('Congratulations to ' + addTitle(message.author.id) + ' for sending confession #' + cNum + '!!!! They have received a 5000 BC award!')
+        );
+        cashUserBals[cashUserIds.indexOf(message.author.id)] += 5000;
+        cNum++;
+        return;
+
+    }
+
     if (message.channel.type == "dm" && message.author.bot != true) {
         if (message.content.toLowerCase().slice(0, 11).includes("createpoll|")) {
             pollTime = 300000;
