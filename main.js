@@ -81,6 +81,7 @@ var anonyPoll = false;
 var startTime = 0;
 let rouletteHit = store.get('rouletteHits');
 let rouletteSave = store.get('rouletteSaves');
+let brycoinWhitelist = ["739221630596808744", "739247750020989029","514170284027150385"];
 let allTitles = ["🗑️ Bum",
     "🧱 Commoner",
     "🎖️ Ensign",
@@ -280,6 +281,14 @@ client.on("message", async message => {
     if (message.author.bot) {
         return;
     }
+    if (starUsers.indexOf(message.author.id) > -1 && message.channel.type != "dm") {
+        try {
+            message.react(userEmojis[starUsers.indexOf(message.author.id)]);
+        } catch (err) {
+            console.log("User react failed");
+        }
+
+    }
     if (message.channel.type != "dm") {
         let moneyIndex = cashUserIds.indexOf(message.author.id);
         if (moneyIndex == -1) {
@@ -338,6 +347,20 @@ client.on("message", async message => {
         store.set('userIds', cashUserIds);
         store.set('userBals', cashUserBals);
         store.set('userInv', cashUserInv);
+    }
+
+    if(brycoinWhitelist.indexOf(message.channel.id) != -1 && message.channel.type = "dm") {
+    	const bannedCmds = ["balance", "brybank", "gamble", "titles", "rankup", "rob", "transfer", "leaderboard", "togglerank", "buy", "inventory"];
+        for(var i = 0; i < bannedCmds.length; i++) {
+        	if(message.content.startsWith(bannedCmds[i])) {
+        		let fineAmt = 40;
+        		if(cashUserBals[cashUserIds.indexOf(message.author.id)] < fineAmt) {
+        			fineAmt = cashUserBals[cashUserIds.indexOf(message.author.id)];
+        		}
+        		message.channel.send(addTitle(message.author.id)+" just got fined "+fineAmt+" using a Brycoin command in the wrong channel!");
+        		return;
+        	}
+        }
     }
 
     if (message.content.toLowerCase().startsWith("balance")) {
@@ -726,14 +749,7 @@ client.on("message", async message => {
         return;
     }
 
-    if (starUsers.indexOf(message.author.id) > -1 && message.channel.type != "dm") {
-        try {
-            message.react(userEmojis[starUsers.indexOf(message.author.id)]);
-        } catch (err) {
-            console.log("User react failed");
-        }
-
-    }
+    
     instantChannel = "675350296142282752";
     serious = false;
     verifyNum = -1;
