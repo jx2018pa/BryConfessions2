@@ -79,10 +79,6 @@ var options;
 var s, v;
 var anonyPoll = false;
 var startTime = 0;
-var rpsInit = "empty";
-var rpsMoney = 0;
-var rpsIsWaiting = false;
-var rpsInitId = "";
 let rouletteHit = store.get('rouletteHits');
 let rouletteSave = store.get('rouletteSaves');
 let allTitles = ["🗑️ Bum",
@@ -728,89 +724,6 @@ client.on("message", async message => {
             .setDescription(fulltxt)
         );
         return;
-    }
-
-    if (message.channel.type == "dm" && message.content.toLowerCase().startsWith("rps")) {
-        if (rpsMoney > cashUserBals[cashUserIds.indexOf(message.author.id)]) {
-            message.channel.send("You don't have that many Brycoins!");
-            return;
-        }
-        let rpsContents = message.content.split(" ");
-        let rpsReturnVictory = false;
-        if(rpsContents[1] == "cancel" && message.author.id == rpsInitId) {
-            client.channels.get(instantChannel).send("RPS game cancelled!");
-            rpsMoney = 0;
-            rpsInit = "empty";
-            rpsInitId = "";
-            rpsIsWaiting = false;
-            return;
-        }
-        if (rpsContents[1] == "rock" || rpsContents[1] == "paper" || rpsContents[1] == "scissors") {
-            //do nothing
-        } else {
-            message.channel.send("Invalid choice! Type \"rps <rock/paper/scissors>\"");
-            return;
-        }
-        if (rpsIsWaiting == false) {
-            rpsMoney = parseInt(rpsContents[2]);
-            if (isNaN(rpsMoney) || rpsMoney < 0) {
-                message.channel.send("You need to specify an amount of Brycoins! Type \"rps <rock/paper/scissors> <amount>\"");
-                return;
-            } else if (rpsMoney > cashUserBals[cashUserIds.indexOf(message.author.id)]) {
-                message.channel.send("You don't have that many Brycoins!");
-                return;
-            }
-            rpsIsWaiting = true;
-            client.channels.get(instantChannel).send(addTitle(message.author.id) + " wants to play Rock Paper Scissors! They are betting " + rpsMoney + " of their own Brycoins! To challenge them, DM the bot \"rps <rock/paper/scissors>\"");
-            rpsInitId = message.author.id;
-            rpsInit = rpsContents[1];
-            return;
-        } else {
-            let rpsReturn = rpsContents[1];
-            if (message.author.id == rpsInitId) {
-                message.channel.send("You cannot challenge yourself!");
-                return;
-            }
-            if (rpsReturn == rpsInit) {
-                client.channels.get(instantChannel).send("Tie! " + addTitle(message.author.id) + " picked " + rpsContents[1] + ", so nothing happens to the original wager of " + rpsMoney + " Brycoins.");
-                rpsIsWaiting = false;
-                rpsMoney = 0;
-                rpsInit = "empty";
-                rpsInitId = "";
-                return;
-            } else if (rpsInit == "scissors") {
-                if (rpsReturn == "rock") {
-                    rpsReturnVictory = true;
-                }
-            } else if (rpsInit == "paper") {
-                if (rpsReturn == "scissors") {
-                    rpsReturnVictory = true;
-                }
-            } else if (rpsInit == "rock") {
-                if (rpsReturn == "paper") {
-                    rpsReturnVictory = true;
-                }
-            }
-            if (rpsReturnVictory) {
-                client.channels.get(instantChannel).send(addTitle(message.author.id) + " picked "+rpsReturn+" and defeated " + addTitle(rpsInitId) + " who picked "+rpsInit+" and took their " + rpsMoney + " Brycoins as a reward!");
-                cashUserBals[cashUserIds.indexOf(message.author.id)] += rpsMoney;
-                cashUserBals[cashUserIds.indexOf(rpsInitId)] -= rpsMoney;
-                rpsMoney = 0;
-                rpsIsWaiting = false;
-                rpsInit = "empty";
-                rpsInitId = "";
-                return;
-            } else if (rpsReturnVictory == false) {
-                client.channels.get(instantChannel).send(addTitle(message.author.id) + " picked "+rpsReturn+" and was defeated by " + addTitle(rpsInitId) + " who picked "+rpsInit+" and lost " + rpsMoney + " Brycoins to them!");
-                cashUserBals[cashUserIds.indexOf(rpsInitId)] += rpsMoney;
-                cashUserBals[cashUserIds.indexOf(message.author.id)] -= rpsMoney;
-                rpsIsWaiting = false;
-                rpsMoney = 0;
-                rpsInit = "empty";
-                rpsInitId = "";
-                return;
-            }
-        }
     }
 
     if (starUsers.indexOf(message.author.id) > -1 && message.channel.type != "dm") {
