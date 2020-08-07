@@ -318,7 +318,7 @@ client.on("message", async message => {
                 store.set('userIds', cashUserIds);
                 store.set('userBals', cashUserBals);
                 rateUserRefresh[rateUserIndex] = Date.now();
-                if(brycoinWhitelist.indexOf(message.channel.id) == -1 && message.channel.type != "dm") {
+                if(brycoinWhitelist.indexOf(message.channel.id) != -1) {
                     message.channel.send(addTitle(message.author.id)+" just claimed their hourly "+getHourlyReward(rankId)+" Brycoin reward!");
                 }
                 return;
