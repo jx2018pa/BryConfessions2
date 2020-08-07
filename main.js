@@ -81,7 +81,7 @@ var anonyPoll = false;
 var startTime = 0;
 let rouletteHit = store.get('rouletteHits');
 let rouletteSave = store.get('rouletteSaves');
-const brycoinWhitelist = ["739221630596808744", "739247750020989029","514170284027150385","740275815622639656","493553508251861012","651622265666142248","508822430123425794","739253509576327268"];
+const brycoinWhitelist = ["739221630596808744", "739247750020989029","514170284027150385","740275815622639656","493553508251861012","651622265666142248","508822430123425794","739253509576327268","741360591368618034","496796970929618945"];
 const bannedCmds = ["balance", "brybank", "gamble", "titles", "rankup", "rob", "transfer", "leaderboard", "togglerank", "buy", "inventory"];
 const allTitles = ["🗑️ Bum",
     "🧱 Commoner",
@@ -120,7 +120,7 @@ let titlePerks = ["",
     "+2000 BC when someone ranks up",
     "Access to Bry Lounge",
     "",
-    "+100 BC when any conf is sent",
+    "+25 BC when any conf is sent",
     "",
     "Unlock factions",
     "",
@@ -318,6 +318,9 @@ client.on("message", async message => {
                 store.set('userIds', cashUserIds);
                 store.set('userBals', cashUserBals);
                 rateUserRefresh[rateUserIndex] = Date.now();
+                if(brycoinWhitelist.indexOf(message.channel.id) == -1 && message.channel.type != "dm") {
+                    message.channel.send(addTitle(message.author.id)+" just claimed their hourly "+getHourlyReward(rankId)+" Brycoin reward!");
+                }
                 return;
             } else if ((Date.now() - rateUserTime[rateUserIndex]) < 30000) {
                 vv = false;
@@ -353,6 +356,7 @@ client.on("message", async message => {
     if(brycoinWhitelist.indexOf(message.channel.id) == -1 && message.channel.type != "dm") {
         for(var i = 0; i < bannedCmds.length; i++) {
         	if(message.content.startsWith(bannedCmds[i])) {
+                /*
         		let fineAmt = 50;
         		if(cashUserBals[cashUserIds.indexOf(message.author.id)] < fineAmt) {
         			fineAmt = cashUserBals[cashUserIds.indexOf(message.author.id)];
@@ -362,6 +366,7 @@ client.on("message", async message => {
         		}
         		message.channel.send(addTitle(message.author.id)+" just got fined "+fineAmt+" using a Brycoin command in the wrong channel!");
         		cashUserBals[cashUserIds.indexOf(message.author.id)] -= fineAmt
+                */
         		return;
         	}
         }
@@ -1553,7 +1558,7 @@ client.on("message", async message => {
         cNum++;
         for (var i = 0; i < cashUserInv.length; i++) {
             if (getRankId(cashUserIds[i]) >= 9) {
-                cashUserBals[i] += 100;
+                cashUserBals[i] += 25;
             }
         }
         store.set('cNum', cNum);
