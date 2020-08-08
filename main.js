@@ -81,7 +81,7 @@ var anonyPoll = false;
 var startTime = 0;
 let rouletteHit = store.get('rouletteHits');
 let rouletteSave = store.get('rouletteSaves');
-const brycoinWhitelist = ["739221630596808744", "739247750020989029","514170284027150385","740275815622639656","493553508251861012","651622265666142248","508822430123425794","739253509576327268","741360591368618034","496796970929618945"];
+const brycoinWhitelist = ["739221630596808744", "739247750020989029", "514170284027150385", "740275815622639656", "493553508251861012", "651622265666142248", "508822430123425794", "739253509576327268", "741360591368618034", "496796970929618945"];
 const bannedCmds = ["balance", "brybank", "gamble", "titles", "rankup", "rob", "transfer", "leaderboard", "togglerank", "buy", "inventory"];
 const allTitles = ["🗑️ Bum",
     "🧱 Commoner",
@@ -318,8 +318,14 @@ client.on("message", async message => {
                 store.set('userIds', cashUserIds);
                 store.set('userBals', cashUserBals);
                 rateUserRefresh[rateUserIndex] = Date.now();
-                if(brycoinWhitelist.indexOf(message.channel.id) != -1) {
-                    message.channel.send(addTitle(message.author.id)+" just claimed their hourly "+getHourlyReward(rankId)+" Brycoin reward!");
+                if (brycoinWhitelist.indexOf(message.channel.id) != -1) {
+                    message.channel.send(addTitle(message.author.id) + " just claimed their hourly " + getHourlyReward(rankId) + " Brycoin reward!");
+                } else {
+                    try {
+                        message.react("💸");
+                    } catch (err) {
+                        console.log("User react failed");
+                    }
                 }
                 return;
             } else if ((Date.now() - rateUserTime[rateUserIndex]) < 30000) {
@@ -353,9 +359,9 @@ client.on("message", async message => {
         store.set('userInv', cashUserInv);
     }
 
-    if(brycoinWhitelist.indexOf(message.channel.id) == -1 && message.channel.type != "dm") {
-        for(var i = 0; i < bannedCmds.length; i++) {
-        	if(message.content.startsWith(bannedCmds[i])) {
+    if (brycoinWhitelist.indexOf(message.channel.id) == -1 && message.channel.type != "dm") {
+        for (var i = 0; i < bannedCmds.length; i++) {
+            if (message.content.startsWith(bannedCmds[i])) {
                 /*
         		let fineAmt = 50;
         		if(cashUserBals[cashUserIds.indexOf(message.author.id)] < fineAmt) {
@@ -367,8 +373,8 @@ client.on("message", async message => {
         		message.channel.send(addTitle(message.author.id)+" just got fined "+fineAmt+" using a Brycoin command in the wrong channel!");
         		cashUserBals[cashUserIds.indexOf(message.author.id)] -= fineAmt
                 */
-        		return;
-        	}
+                return;
+            }
         }
     }
 
@@ -395,8 +401,8 @@ client.on("message", async message => {
         return;
     }
 
-    if(cashUserBals[cashUserIds.indexOf(message.author.id)] < 0) {
-    	return;
+    if (cashUserBals[cashUserIds.indexOf(message.author.id)] < 0) {
+        return;
     }
 
     if (message.content.toLowerCase() == "brybank" || message.content.toLowerCase().startsWith("brybank <")) {
@@ -469,7 +475,7 @@ client.on("message", async message => {
         message.channel.send("Bank operation failed!");
         return;
     }
-    
+
     if (message.channel.type != "dm" && message.content == "titles") {
         let fulll = "";
         for (var i = 0; i < allTitles.length; i++) {
@@ -541,8 +547,8 @@ client.on("message", async message => {
             message.channel.send("You need at least " + getRankCost(rankId - 3) + " Brycoins to rob that user!");
             return;
         }
-        if (cashUserBals[indexxxx] < getRankCost(getRankId(message.author.id)-1)) {
-            message.channel.send("You need at least " + getRankCost(getRankId(message.author.id)-1) + " Brycoins to rob anyone!");
+        if (cashUserBals[indexxxx] < getRankCost(getRankId(message.author.id) - 1)) {
+            message.channel.send("You need at least " + getRankCost(getRankId(message.author.id) - 1) + " Brycoins to rob anyone!");
             return;
         }
         if (cashUserBals[targId] < rankCost) {
@@ -614,7 +620,7 @@ client.on("message", async message => {
         return;
     }
 
-    
+
 
     if (message.channel.type != "dm" && message.content.startsWith("buy")) {
         /*
@@ -737,7 +743,7 @@ client.on("message", async message => {
         return;
     }
 
-    
+
     var b2s = Array.from(cashUserBals);
     if (message.content.toLowerCase() == "leaderboard") {
         //var b2s = cashUserBals;
@@ -758,7 +764,7 @@ client.on("message", async message => {
         return;
     }
 
-    
+
     instantChannel = "675350296142282752";
     serious = false;
     verifyNum = -1;
@@ -923,7 +929,7 @@ client.on("message", async message => {
         message.channel.send(retArr(config.willy));
         return;
     }
-    if (message.content.includes("angela")) {
+    if (message.content == "angela") {
         message.channel.send(retArr(config.angela));
         return;
     }
@@ -1240,13 +1246,25 @@ client.on("message", async message => {
         return;
     }
 
-    if(cNum%500 == 0) {
-    	client.channels.get(instantChannel).send(new Discord.RichEmbed()
+    if (cNum % 500 == 0) {
+        client.channels.get(instantChannel).send(new Discord.RichEmbed()
             .setColor('#ffa500')
             .setTitle('CONFESSION #' + cNum)
             .setDescription('Congratulations to ' + addTitle(message.author.id) + ' for sending confession #' + cNum + '!!!! They have received a 5000 BC award!')
         );
         cashUserBals[cashUserIds.indexOf(message.author.id)] += 5000;
+        cNum++;
+        return;
+
+    }
+
+    if (cNum % 100 == 0) {
+        client.channels.get(instantChannel).send(new Discord.RichEmbed()
+            .setColor('#ffa500')
+            .setTitle('CONFESSION #' + cNum)
+            .setDescription('Congratulations to ' + addTitle(message.author.id) + ' for sending confession #' + cNum + '!!!! They have received a 1000 BC award!')
+        );
+        cashUserBals[cashUserIds.indexOf(message.author.id)] += 1000;
         cNum++;
         return;
 
@@ -1505,8 +1523,8 @@ client.on("message", async message => {
             }
         } else if (verifyNum > -1) {
             client.channels.get(instantChannel).send(new Discord.RichEmbed()
-                .setColor('#13fc03')
-                .setTitle('Confession #' + cNum)
+                .setColor('#87ceeb')
+                .setTitle('Verified Confession #' + cNum)
                 .setDescription(message.content.slice(spliceArea))
                 .addField('Verified!', "✅ This user also wrote confession #" + verifyNum)
             );
