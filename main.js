@@ -642,7 +642,7 @@ client.on("message", async message => {
         } else {
             revealMoney = 12000;
         }
-        if(confMoney < 100) {
+        if(confsEarned < 100) {
             //n
         } else {
             confMoney = 10000;
