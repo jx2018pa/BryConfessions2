@@ -79,6 +79,10 @@ var options;
 var s, v;
 var anonyPoll = false;
 var startTime = 0;
+let dayToday = 0;
+let ranksEarned = 0;
+let confsEarned = 0;
+let revealsEarned = 0;
 let rouletteHit = store.get('rouletteHits');
 let rouletteSave = store.get('rouletteSaves');
 const brycoinWhitelist = ["739221630596808744", "739247750020989029", "514170284027150385", "740275815622639656", "493553508251861012", "651622265666142248", "508822430123425794", "739253509576327268", "741360591368618034", "496796970929618945"];
@@ -112,19 +116,19 @@ const allTitles = ["🗑️ Bum",
     "✨ Bry Himself"
 ];
 let titlePerks = ["",
-    "Insurance equal to rank cost",
+    "+Insurance",
     "",
     "",
     "",
     "",
-    "+2000 BC when someone ranks up",
+    "+2k BC when someone ranks up",
     "Access to Bry Lounge",
     "",
-    "+25 BC when any conf is sent",
+    "+100 BC when any conf is sent",
     "",
-    "Unlock factions",
     "",
-    "+BC when robbery fails",
+    "",
+    "+500 BC when roulette revealed",
     "",
     "",
     "",
@@ -132,12 +136,12 @@ let titlePerks = ["",
     "",
     "+BC when a robbery or raid succeeds",
     "",
-    "Bot reacts to your messages",
+    "Double the size of your bank account",
     "",
     "Access to bbb",
     "",
     "",
-    "",
+    "Unlock rebirth",
     "",
     ""
 ];
@@ -493,7 +497,7 @@ client.on("message", async message => {
         return;
     }
 
-    if (message.content == "rankup") {
+    if (message.content.toLowerCase() == "rankup") {
         let indexxxx = cashUserIds.indexOf(message.author.id);
         let rankId = getRankId(message.author.id);
         let full = "";
@@ -511,11 +515,19 @@ client.on("message", async message => {
             cashUserInv[indexxxx] = "n" + rankId;
             store.set('userInv', cashUserInv);
             store.set('userBals', cashUserBals);
+            var d = new Date();
+            if (d.getDay() != dayToday) {
+                dayToday = d.getDay();
+                confsEarned = 0;
+                revealsEarned = 0;
+                ranksEarned = 0;
+            }
             for (var i = 0; i < cashUserInv.length; i++) {
-                if (getRankId(cashUserIds[i]) >= 6) {
+                if (getRankId(cashUserIds[i]) >= 6 && ranksEarned < 5) {
                     cashUserBals[i] += 2000;
                 }
             }
+            ranksEarned++;
             message.channel.send("Success! You are now " + addTitle(message.author.id) + "\nThis transaction cost you " + nextCost + " Brycoins.");
             return;
         }
@@ -595,6 +607,22 @@ client.on("message", async message => {
             store.set('userBals', cashUserBals);
             return;
         }
+    }
+
+    if (message.channel.type != "dm" && message.content == "earnstats") {
+        var d = new Date();
+        if (d.getDay() != dayToday) {
+            dayToday = d.getDay();
+            confsEarned = 0;
+            revealsEarned = 0;
+            ranksEarned = 0;
+        }
+        message.channel.send(new Discord.RichEmbed()
+            .setColor('#FFDF00')
+            .setTitle('Earn Stats')
+            .setDescription(ranksEarned + " users ranked up today, granting those with rank Governor/Governess+ " + (ranksEarned * 2000) + "/10000 BC.\n" + confsEarned + " confessions were sent today, granting those with rank Earl+ " + (confsEarned * 100) + "/10000 BC.\n" + revealsEarned + " roulette confessions were revealed today, granting those with rank Kingpin+ " + (revealsEarned * 500) + "/12000 BC.")
+        );
+        return;
     }
 
 
@@ -1509,6 +1537,22 @@ client.on("message", async message => {
                     .setDescription(message.content.slice(10))
                     .addField('ROULETTE', '😱 The author of this confession was ' + addTitle(message.author.id) + '!!!\n20% chance')
                 );
+                for (var i = 0; i < cashUserInv.length; i++) {
+                    if (getRankId(cashUserIds[i]) >= 13) {
+                        var d = new Date();
+                        if (d.getDay() != dayToday) {
+                            dayToday = d.getDay();
+                            confsEarned = 0;
+                            revealsEarned = 0;
+                            ranksEarned = 0;
+                        }
+                        if (revealsEarned < 24) {
+                            cashUserBals[i] += 500;
+                        }
+
+                    }
+                }
+                revealsEarned++;
                 rouletteHit++;
                 store.set('rouletteHits', rouletteHit);
             } else {
@@ -1576,9 +1620,20 @@ client.on("message", async message => {
         cNum++;
         for (var i = 0; i < cashUserInv.length; i++) {
             if (getRankId(cashUserIds[i]) >= 9) {
-                cashUserBals[i] += 25;
+                var d = new Date();
+                if (d.getDay() != dayToday) {
+                    dayToday = d.getDay();
+                    confsEarned = 0;
+                    revealsEarned = 0;
+                    ranksEarned = 0;
+                }
+                if (confsEarned < 100) {
+                    cashUserBals[i] += 100;
+                }
+
             }
         }
+        confsEarned++;
         store.set('cNum', cNum);
         return;
     }
