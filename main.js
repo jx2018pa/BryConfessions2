@@ -203,6 +203,14 @@ function addTitle(id) {
     let indexxxx = cashUserIds.indexOf(id);
     let g = false;
     let rankId = 0;
+    if(starUsers.indexOf(id) != -1) {
+    	if(userEmojis[starUsers.indexOf(id)] == "disable" || userEmojis[starUsers.indexOf(id)].length < 3) {
+    		//do nothing
+    	} else {
+    		return userEmojis[starUsers.indexOf(id)]+" <@"+id+">";
+    	}
+    }
+
     if (cashUserInv[indexxxx] == "inv") {
         return "🥔 Peasant <@" + id + ">";
     }
@@ -343,8 +351,9 @@ client.on("message", async message => {
                     return;
                 }
                 if (Math.random() < 0.01) {
-                    message.channel.send(addTitle(message.author.id) + " got a mini prize! This has a 1% chance of happening per message 😱\nYou gained 500 brycoins!");
-                    cashUserBals[moneyIndex] = cashUserBals[moneyIndex] + 500;
+                	let miniPrize = parseInt(getHourlyReward(getRankId(message.author.id))*5+100);
+                    message.channel.send(addTitle(message.author.id) + " got a mini prize! This has a 1% chance of happening per message 😱\nYou gained "+miniPrize+" brycoins!");
+                    cashUserBals[moneyIndex] = cashUserBals[moneyIndex] + miniPrize;
                     store.set('userIds', cashUserIds);
                     store.set('userBals', cashUserBals);
                     return;
