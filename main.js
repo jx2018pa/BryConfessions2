@@ -352,6 +352,9 @@ client.on("message", async message => {
                 }
                 if (Math.random() < 0.01) {
                 	let miniPrize = parseInt(getHourlyReward(getRankId(message.author.id))*5+100);
+                    if(isNaN(miniPrize)) {
+                        miniPrize = 500;
+                    }
                     message.channel.send(addTitle(message.author.id) + " got a mini prize! This has a 1% chance of happening per message 😱\nYou gained "+miniPrize+" brycoins!");
                     cashUserBals[moneyIndex] = cashUserBals[moneyIndex] + miniPrize;
                     store.set('userIds', cashUserIds);
