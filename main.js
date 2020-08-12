@@ -401,7 +401,8 @@ client.on("message", async message => {
         }
         let rankId = getRankId(targetUserId);
         let rankCost = parseInt(getRankCost(rankId));
-        let balanceString = addTitle(targetUserId) + '\n' + cashUserBals[indd] + ' Brycoins in Wallet\n' + getBankBal(targetUserId) + ' Brycoins in Brybank\nThis user is insured for ' + rankCost + ' Brycoins.\nNext hourly ' + getHourlyReward(rankId) + ' BC reward in ' + Math.round((3600000 - (Date.now() - rateUserRefresh[rateUserIndex])) / 60000) + ' minutes.';
+        let insuranceCost = Math.floor(rankCost * 0.8);
+        let balanceString = addTitle(targetUserId) + '\n' + cashUserBals[indd] + ' Brycoins in Wallet\n' + getBankBal(targetUserId) + ' Brycoins in Brybank\nThis user is insured for ' + insuranceCost + ' Brycoins.\nNext hourly ' + getHourlyReward(rankId) + ' BC reward in ' + Math.round((3600000 - (Date.now() - rateUserRefresh[rateUserIndex])) / 60000) + ' minutes.';
         message.channel.send(new Discord.RichEmbed()
             .setColor('#FFDF00')
             .setTitle('Balance')
@@ -553,6 +554,7 @@ client.on("message", async message => {
         }
         let rankId = getRankId(targetedUser);
         let rankCost = getRankCost(rankId);
+        let insuranceCost = Math.floor(rankCost * 0.8);
         if (rankId == 0) {
             rankCost = 0;
         }
@@ -568,7 +570,7 @@ client.on("message", async message => {
             message.channel.send("You need at least " + getRankCost(getRankId(message.author.id) - 1) + " Brycoins to rob anyone!");
             return;
         }
-        if (cashUserBals[targId] < rankCost) {
+        if (cashUserBals[targId] < insuranceCost) {
             message.channel.send(new Discord.RichEmbed()
                 .setColor('#FFDF00')
                 .setTitle('Failure!')
