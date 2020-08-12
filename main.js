@@ -203,13 +203,6 @@ function addTitle(id) {
     let indexxxx = cashUserIds.indexOf(id);
     let g = false;
     let rankId = 0;
-    if(starUsers.indexOf(id) != -1) {
-    	if(userEmojis[starUsers.indexOf(id)] == "disable" || userEmojis[starUsers.indexOf(id)].length < 3) {
-    		//do nothing
-    	} else {
-    		return userEmojis[starUsers.indexOf(id)]+" <@"+id+">";
-    	}
-    }
 
     if (cashUserInv[indexxxx] == "inv") {
         return "🥔 Peasant <@" + id + ">";
