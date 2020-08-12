@@ -405,7 +405,7 @@ client.on("message", async message => {
         }
         let rankId = getRankId(targetUserId);
         let rankCost = parseInt(getRankCost(rankId));
-        let insuranceCost = Math.floor(rankCost * 0.8);
+        let insuranceCost = Math.floor(rankCost * 0.78);
         let balanceString = addTitle(targetUserId) + '\n' + cashUserBals[indd] + ' Brycoins in Wallet\n' + getBankBal(targetUserId) + ' Brycoins in Brybank\nThis user is insured for ' + insuranceCost + ' Brycoins.\nNext hourly ' + getHourlyReward(rankId) + ' BC reward in ' + Math.round((3600000 - (Date.now() - rateUserRefresh[rateUserIndex])) / 60000) + ' minutes.';
         message.channel.send(new Discord.RichEmbed()
             .setColor('#FFDF00')
@@ -558,7 +558,7 @@ client.on("message", async message => {
         }
         let rankId = getRankId(targetedUser);
         let rankCost = getRankCost(rankId);
-        let insuranceCost = Math.floor(rankCost * 0.8);
+        let insuranceCost = Math.floor(rankCost * 0.78);
         if (rankId == 0) {
             rankCost = 0;
         }
@@ -634,17 +634,17 @@ client.on("message", async message => {
         if(ranksEarned < 4) {
             //n
         } else {
-            rankMoney = 10000;
+            rankMoney = 8000;
         }
         if(revealsEarned < 24) {
             //n
         } else {
-            revealMoney = 12000;
+            revealMoney = 3600;
         }
         if(confsEarned < 150) {
             //n
         } else {
-            confMoney = 10000;
+            confMoney = 4800;
         }
         message.channel.send(new Discord.RichEmbed()
             .setColor('#FFDF00')
@@ -913,7 +913,7 @@ client.on("message", async message => {
         message.channel.send(new Discord.RichEmbed()
             .setColor('#ffff00')
             .setTitle('Bry Confessions Rules')
-            .setDescription('Any content that can be perceived as hateful, harmful, dangerous or otherwise highly distasteful can result in a temporary or permanent ban.\nRepetitive spam may result in a 24hour cooldown or possibly a ban if behavior continues.')
+            .setDescription('Any content that can be perceived as hateful, harmful, dangerous or otherwise highly distasteful can result in a temporary or permanent ban.\nRepetitive spam may result in a 24hour cooldown or possibly a ban if behavior continues.\nUsing alt accounts to farm or gain an unfair advantage in Brycoin may lead to a ban.')
         );
         return;
     }
