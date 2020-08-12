@@ -124,7 +124,7 @@ let titlePerks = ["",
     "+2k BC when someone ranks up",
     "Access to Bry Lounge",
     "",
-    "+100 BC when any conf is sent",
+    "+32 BC when any conf is sent",
     "",
     "",
     "",
@@ -623,7 +623,7 @@ client.on("message", async message => {
             ranksEarned = 0;
         }
         let rankMoney = (ranksEarned * 2000);
-        let confMoney = (confsEarned * 100);
+        let confMoney = (confsEarned * 32);
         let revealMoney = (revealsEarned * 500);
         if(ranksEarned < 4) {
             //n
@@ -635,7 +635,7 @@ client.on("message", async message => {
         } else {
             revealMoney = 12000;
         }
-        if(confsEarned < 100) {
+        if(confsEarned < 150) {
             //n
         } else {
             confMoney = 10000;
@@ -643,7 +643,7 @@ client.on("message", async message => {
         message.channel.send(new Discord.RichEmbed()
             .setColor('#FFDF00')
             .setTitle('Earn Stats')
-            .setDescription(ranksEarned + " users ranked up today, granting those with rank Governor/Governess+ " + rankMoney + "/8000 BC.\n" + confsEarned + " confessions were sent today, granting those with rank Earl+ " + confMoney + "/10000 BC.\n" + revealsEarned + " roulette confessions were revealed today, granting those with rank Kingpin+ " + revealMoney + "/12000 BC.")
+            .setDescription(ranksEarned + " users ranked up today, granting those with rank Governor/Governess+ " + rankMoney + "/8000 BC.\n" + confsEarned + " confessions were sent today, granting those with rank Earl+ " + confMoney + "/4800 BC.\n" + revealsEarned + " roulette confessions were revealed today, granting those with rank Kingpin+ " + revealMoney + "/12000 BC.")
         );
         return;
     }
@@ -1650,8 +1650,8 @@ client.on("message", async message => {
                     revealsEarned = 0;
                     ranksEarned = 0;
                 }
-                if (confsEarned < 100) {
-                    cashUserBals[i] += 100;
+                if (confsEarned < 150) {
+                    cashUserBals[i] += 32;
                 }
 
             }
