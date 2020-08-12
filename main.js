@@ -99,9 +99,11 @@ const allTitles = ["🗑️ Bum",
     "🥪 Earl",
     "🔮 Magistrate",
     "🐔 Chanticleer",
+    "🖖 Colonel",
     "⚔️ Knight",
     "🥄 Aristocrat",
     "📌 Kingpin",
+    "🕵️ Agent",
     "🏰 His Excellency/🏰 Her Excellency",
     "👲 Duke/👲 Duchess",
     "🐴 Prince/🐴 Princess",
@@ -122,26 +124,28 @@ let titlePerks = ["",
     "",
     "",
     "+2k BC when someone ranks up",
-    "Access to Bry Lounge",
+    "Access to Lounge",
     "",
     "+32 BC when any conf is sent",
     "",
     "",
     "",
-    "+100 BC when roulette revealed",
+    "+100 BC on roulette reveal",
     "",
     "",
     "",
     "",
     "",
-    "+BC when a robbery or raid succeeds",
     "",
-    "Double the size of your bank account",
+    "",
+    "",
+    "",
+    "Double bank account",
     "",
     "Access to bbb",
     "",
     "",
-    "Unlock rebirth",
+    "",
     "",
     ""
 ];
@@ -566,8 +570,8 @@ client.on("message", async message => {
             message.channel.send("You need at least " + getRankCost(rankId - 3) + " Brycoins to rob that user!");
             return;
         }
-        if (cashUserBals[indexxxx] < getRankCost(getRankId(message.author.id) - 1)) {
-            message.channel.send("You need at least " + getRankCost(getRankId(message.author.id) - 1) + " Brycoins to rob anyone!");
+        if (cashUserBals[indexxxx] < getRankCost(getRankId(message.author.id) - 3)) {
+            message.channel.send("You need at least " + getRankCost(getRankId(message.author.id) - 3) + " Brycoins to rob anyone!");
             return;
         }
         if (cashUserBals[targId] < insuranceCost) {
@@ -645,7 +649,7 @@ client.on("message", async message => {
         message.channel.send(new Discord.RichEmbed()
             .setColor('#FFDF00')
             .setTitle('Earn Stats')
-            .setDescription(ranksEarned + " users ranked up today, granting those with rank Governor/Governess+ " + rankMoney + "/8000 BC.\n" + confsEarned + " confessions were sent today, granting those with rank Earl+ " + confMoney + "/4800 BC.\n" + revealsEarned + " roulette confessions were revealed today, granting those with rank Kingpin+ " + revealMoney + "/3600 BC.")
+            .setDescription(ranksEarned + " users ranked up today, granting those with rank Governor/Governess+ " + rankMoney + "/8000 BC.\n" + confsEarned + " confessions were sent today, granting those with rank Earl+ " + confMoney + "/4800 BC.\n" + revealsEarned + " roulette confessions were revealed today, granting those with rank Knight+ " + revealMoney + "/3600 BC.")
         );
         return;
     }
