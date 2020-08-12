@@ -128,7 +128,7 @@ let titlePerks = ["",
     "",
     "",
     "",
-    "+500 BC when roulette revealed",
+    "+100 BC when roulette revealed",
     "",
     "",
     "",
@@ -624,7 +624,7 @@ client.on("message", async message => {
         }
         let rankMoney = (ranksEarned * 2000);
         let confMoney = (confsEarned * 32);
-        let revealMoney = (revealsEarned * 500);
+        let revealMoney = (revealsEarned * 150);
         if(ranksEarned < 4) {
             //n
         } else {
@@ -643,7 +643,7 @@ client.on("message", async message => {
         message.channel.send(new Discord.RichEmbed()
             .setColor('#FFDF00')
             .setTitle('Earn Stats')
-            .setDescription(ranksEarned + " users ranked up today, granting those with rank Governor/Governess+ " + rankMoney + "/8000 BC.\n" + confsEarned + " confessions were sent today, granting those with rank Earl+ " + confMoney + "/4800 BC.\n" + revealsEarned + " roulette confessions were revealed today, granting those with rank Kingpin+ " + revealMoney + "/12000 BC.")
+            .setDescription(ranksEarned + " users ranked up today, granting those with rank Governor/Governess+ " + rankMoney + "/8000 BC.\n" + confsEarned + " confessions were sent today, granting those with rank Earl+ " + confMoney + "/4800 BC.\n" + revealsEarned + " roulette confessions were revealed today, granting those with rank Kingpin+ " + revealMoney + "/3600 BC.")
         );
         return;
     }
@@ -1570,7 +1570,7 @@ client.on("message", async message => {
                             ranksEarned = 0;
                         }
                         if (revealsEarned < 24) {
-                            cashUserBals[i] += 500;
+                            cashUserBals[i] += 150;
                         }
 
                     }
