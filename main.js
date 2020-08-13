@@ -566,12 +566,12 @@ client.on("message", async message => {
             message.channel.send("You can't rob yourself...");
             return;
         }
-        if (cashUserBals[indexxxx] < getRankCost(rankId - 3)) {
-            message.channel.send("You need at least " + getRankCost(rankId - 3) + " Brycoins to rob that user!");
+        if (cashUserBals[indexxxx] < getRankCost(rankId - 4)) {
+            message.channel.send("You need at least " + getRankCost(rankId - 4) + " Brycoins to rob that user!");
             return;
         }
-        if (cashUserBals[indexxxx] < getRankCost(getRankId(message.author.id) - 3)) {
-            message.channel.send("You need at least " + getRankCost(getRankId(message.author.id) - 3) + " Brycoins to rob anyone!");
+        if (cashUserBals[indexxxx] < getRankCost(getRankId(message.author.id) - 4)) {
+            message.channel.send("You need at least " + getRankCost(getRankId(message.author.id) - 4) + " Brycoins to rob anyone!");
             return;
         }
         if (cashUserBals[targId] < insuranceCost) {
