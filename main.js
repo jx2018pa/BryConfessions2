@@ -86,7 +86,7 @@ let revealsEarned = 0;
 let rouletteHit = store.get('rouletteHits');
 let rouletteSave = store.get('rouletteSaves');
 const brycoinWhitelist = ["739250815700828292", "739221630596808744", "739247750020989029", "514170284027150385", "740275815622639656", "493553508251861012", "651622265666142248", "508822430123425794", "739253509576327268", "741360591368618034", "496796970929618945"];
-const bannedCmds = ["balance", "brybank", "gamble", "titles", "rankup", "rob", "transfer", "leaderboard", "togglerank", "buy", "inventory"];
+const bannedCmds = ["balance", "brybank", "gamble", "titles", "rankup", "rob", "transfer", "leaderboard", "togglerank", "buy", "inventory", "makeitrain"];
 const allTitles = ["🗑️ Bum",
     "🧱 Commoner",
     "🎖️ Ensign",
@@ -413,6 +413,38 @@ client.on("message", async message => {
             .setDescription(balanceString)
         );
         return;
+    }
+
+    if(message.content.toLowerCase().startsWith("makeitrain")) {
+    	let number = parseInt(message.content.slice(11));
+    	let senderInd = cashUserIds.indexOf(message.author.id);
+    	if(isNaN(number) || senderInd == -1 || number > cashUserBals[senderInd] || number < 0) {
+    		message.channel.send("Failed to make it rain!");
+    		return;
+    	}
+    	if((rateUserId.length-2) < 2) {
+    		message.channel.send("Not enough users were recently online!");
+    		return;
+    	}
+    	cashUserBals[senderInd] -= number;
+    	let perUserBal = Math.floor(number / (rateUserId.length-2));
+    	for (var i = 1; i < rateUserId.length; i++) {
+    		if(rateUserId[i] == message.author.id) {
+    			//skip sender
+    		} else {
+    			let recipInd = cashUserIds.indexOf(rateUserId[i]);
+    			cashUserBals[recipInd] += perUserBal;
+    		}
+    	}
+    	let remainder = (number-(perUserBal*(rateUserId.length-2)));
+    	if(remainder < 0) {
+    		message.channel.send("Critical error, please contact bot operator");
+    		return;
+    	}
+    	cashUserBals[senderInd] += remainder;
+    	message.channel.send(addTitle(message.author.id)+" made it rain! 🤑 "+number+" BC was distributed across "+(rateUserId.length-2)+" recently online users, each receiving "+perUserBal+" BC!\nA remainder of "+remainder+" BC was returned to the sender.");
+    	return;
+
     }
 
     if (cashUserBals[cashUserIds.indexOf(message.author.id)] < 0) {
