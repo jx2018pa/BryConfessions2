@@ -29,8 +29,6 @@ const md5 = require('md5');
 const fs = require('fs');
 const client = new Discord.Client();
 let cNum = store.get('cNum');
-store.set('lastTaxed', Date.now()); //delete me
-let lastTaxed = store.get('lastTaxed');
 let starUsers = store.get('starUsers');
 let userEmojis = store.get('userEmojis');
 let cashUserIds = store.get('userIds');
@@ -87,6 +85,7 @@ let confsEarned = 0;
 let revealsEarned = 0;
 let rouletteHit = store.get('rouletteHits');
 let rouletteSave = store.get('rouletteSaves');
+let lastTaxed = 0;
 const brycoinWhitelist = ["739250815700828292", "739221630596808744", "739247750020989029", "514170284027150385", "740275815622639656", "493553508251861012", "651622265666142248", "508822430123425794", "739253509576327268", "741360591368618034", "496796970929618945"];
 const bannedCmds = ["balance", "brybank", "gamble", "titles", "rankup", "rob", "transfer", "leaderboard", "togglerank", "buy", "inventory", "makeitrain", "tax"];
 const allTitles = ["🗑️ Bum",
@@ -866,7 +865,6 @@ client.on("message", async message => {
             cashUserBals[i] += taxEachRec;
         }
         lastTaxed = Date.now();
-        store.set('lastTaxed', lastTaxed);
         fulltxt += "A total of " + totalTax + " BC was collected, and split amongst " + (cashUserBals.length - 1) + " users, each receiving " + taxEachRec + " BC."
         client.channels.get(instantChannel).send(new Discord.RichEmbed()
             .setColor('#FFDF00')
