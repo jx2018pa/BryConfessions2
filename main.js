@@ -86,7 +86,7 @@ let revealsEarned = 0;
 let rouletteHit = store.get('rouletteHits');
 let rouletteSave = store.get('rouletteSaves');
 let lastTaxed = 0;
-const brycoinWhitelist = ["739250815700828292", "739221630596808744", "739247750020989029", "514170284027150385", "740275815622639656", "493553508251861012", "651622265666142248", "508822430123425794", "739253509576327268", "741360591368618034", "496796970929618945"];
+const brycoinWhitelist = ["743902996567425089","739250815700828292", "739221630596808744", "739247750020989029", "514170284027150385", "740275815622639656", "493553508251861012", "651622265666142248", "508822430123425794", "739253509576327268", "741360591368618034", "496796970929618945"];
 const bannedCmds = ["balance", "brybank", "gamble", "titles", "rankup", "rob", "transfer", "leaderboard", "togglerank", "buy", "inventory", "makeitrain","tax"];
 const allTitles = ["🗑️ Bum",
     "🧱 Commoner",
@@ -845,12 +845,16 @@ client.on("message", async message => {
         b2s.sort(function(a, b) {
             return b - a
         });
-        let fulltxt = "Tax rate: 5% of top 10 user wallets\n";
+        let fulltxt = "Tax rate: 10% of top 5 user wallets, 5% of remaining top 5 user wallets\n";
         let countss = 0;
         let totalTax = 0;
         while(countss<10) {
+            let taxRate = 0.10;
+            if(countss > 4) {
+                taxRate = 0.05
+            }
             var ussInd = cashUserBals.indexOf(b2s[countss]);
-            let taxAmt = Math.floor(0.05*cashUserBals[ussInd]);
+            let taxAmt = Math.floor(taxRate*cashUserBals[ussInd]);
             cashUserBals[ussInd] -= taxAmt;
             totalTax += taxAmt;
             countss++;
