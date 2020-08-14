@@ -86,8 +86,8 @@ let revealsEarned = 0;
 let rouletteHit = store.get('rouletteHits');
 let rouletteSave = store.get('rouletteSaves');
 let lastTaxed = 0;
-const brycoinWhitelist = ["743902996567425089","739250815700828292", "739221630596808744", "739247750020989029", "514170284027150385", "740275815622639656", "493553508251861012", "651622265666142248", "508822430123425794", "739253509576327268", "741360591368618034", "496796970929618945"];
-const bannedCmds = ["balance", "brybank", "gamble", "titles", "rankup", "rob", "transfer", "leaderboard", "togglerank", "buy", "inventory", "makeitrain","tax"];
+const brycoinWhitelist = ["743902996567425089", "739250815700828292", "739221630596808744", "739247750020989029", "514170284027150385", "740275815622639656", "493553508251861012", "651622265666142248", "508822430123425794", "739253509576327268", "741360591368618034", "496796970929618945"];
+const bannedCmds = ["balance", "brybank", "gamble", "titles", "rankup", "rob", "transfer", "leaderboard", "togglerank", "buy", "inventory", "makeitrain", "tax"];
 const allTitles = ["🗑️ Bum",
     "🧱 Commoner",
     "🎖️ Ensign",
@@ -349,11 +349,11 @@ client.on("message", async message => {
                     return;
                 }
                 if (Math.random() < 0.01) {
-                	let miniPrize = parseInt(getHourlyReward(getRankId(message.author.id))*5+100);
-                    if(isNaN(miniPrize)) {
+                    let miniPrize = parseInt(getHourlyReward(getRankId(message.author.id)) * 5 + 100);
+                    if (isNaN(miniPrize)) {
                         miniPrize = 500;
                     }
-                    message.channel.send(addTitle(message.author.id) + " got a mini prize! This has a 1% chance of happening per message 😱\nYou gained "+miniPrize+" brycoins!");
+                    message.channel.send(addTitle(message.author.id) + " got a mini prize! This has a 1% chance of happening per message 😱\nYou gained " + miniPrize + " brycoins!");
                     cashUserBals[moneyIndex] = cashUserBals[moneyIndex] + miniPrize;
                     store.set('userIds', cashUserIds);
                     store.set('userBals', cashUserBals);
@@ -377,15 +377,15 @@ client.on("message", async message => {
         for (var i = 0; i < bannedCmds.length; i++) {
             if (message.content.startsWith(bannedCmds[i])) {
                 /*
-        		let fineAmt = 50;
-        		if(cashUserBals[cashUserIds.indexOf(message.author.id)] < fineAmt) {
-        			fineAmt = cashUserBals[cashUserIds.indexOf(message.author.id)];
-        		}
-        		if(fineAmt == 0) {
-        			return;
-        		}
-        		message.channel.send(addTitle(message.author.id)+" just got fined "+fineAmt+" using a Brycoin command in the wrong channel!");
-        		cashUserBals[cashUserIds.indexOf(message.author.id)] -= fineAmt
+                let fineAmt = 50;
+                if(cashUserBals[cashUserIds.indexOf(message.author.id)] < fineAmt) {
+                    fineAmt = cashUserBals[cashUserIds.indexOf(message.author.id)];
+                }
+                if(fineAmt == 0) {
+                    return;
+                }
+                message.channel.send(addTitle(message.author.id)+" just got fined "+fineAmt+" using a Brycoin command in the wrong channel!");
+                cashUserBals[cashUserIds.indexOf(message.author.id)] -= fineAmt
                 */
                 return;
             }
@@ -418,35 +418,35 @@ client.on("message", async message => {
 
 
 
-    if(message.content.toLowerCase().startsWith("makeitrain")) {
-    	let number = parseInt(message.content.slice(11));
-    	let senderInd = cashUserIds.indexOf(message.author.id);
-    	if(isNaN(number) || senderInd == -1 || number > cashUserBals[senderInd] || number < 0) {
-    		message.channel.send("Failed to make it rain!");
-    		return;
-    	}
-    	if((rateUserId.length-2) < 2) {
-    		message.channel.send("Not enough users were recently online!");
-    		return;
-    	}
-    	cashUserBals[senderInd] -= number;
-    	let perUserBal = Math.floor(number / (rateUserId.length-2));
-    	for (var i = 1; i < rateUserId.length; i++) {
-    		if(rateUserId[i] == message.author.id) {
-    			//skip sender
-    		} else {
-    			let recipInd = cashUserIds.indexOf(rateUserId[i]);
-    			cashUserBals[recipInd] += perUserBal;
-    		}
-    	}
-    	let remainder = (number-(perUserBal*(rateUserId.length-2)));
-    	if(remainder < 0) {
-    		message.channel.send("Critical error, please contact bot operator");
-    		return;
-    	}
-    	cashUserBals[senderInd] += remainder;
-    	message.channel.send(addTitle(message.author.id)+" made it rain! 🤑 "+number+" BC was distributed across "+(rateUserId.length-2)+" recently online users, each receiving "+perUserBal+" BC!\nA remainder of "+remainder+" BC was returned to the sender.");
-    	return;
+    if (message.content.toLowerCase().startsWith("makeitrain")) {
+        let number = parseInt(message.content.slice(11));
+        let senderInd = cashUserIds.indexOf(message.author.id);
+        if (isNaN(number) || senderInd == -1 || number > cashUserBals[senderInd] || number < 0) {
+            message.channel.send("Failed to make it rain!");
+            return;
+        }
+        if ((rateUserId.length - 2) < 2) {
+            message.channel.send("Not enough users were recently online!");
+            return;
+        }
+        cashUserBals[senderInd] -= number;
+        let perUserBal = Math.floor(number / (rateUserId.length - 2));
+        for (var i = 1; i < rateUserId.length; i++) {
+            if (rateUserId[i] == message.author.id) {
+                //skip sender
+            } else {
+                let recipInd = cashUserIds.indexOf(rateUserId[i]);
+                cashUserBals[recipInd] += perUserBal;
+            }
+        }
+        let remainder = (number - (perUserBal * (rateUserId.length - 2)));
+        if (remainder < 0) {
+            message.channel.send("Critical error, please contact bot operator");
+            return;
+        }
+        cashUserBals[senderInd] += remainder;
+        message.channel.send(addTitle(message.author.id) + " made it rain! 🤑 " + number + " BC was distributed across " + (rateUserId.length - 2) + " recently online users, each receiving " + perUserBal + " BC!\nA remainder of " + remainder + " BC was returned to the sender.");
+        return;
 
     }
 
@@ -666,17 +666,17 @@ client.on("message", async message => {
         let rankMoney = (ranksEarned * 2000);
         let confMoney = (confsEarned * 32);
         let revealMoney = (revealsEarned * 150);
-        if(ranksEarned < 4) {
+        if (ranksEarned < 4) {
             //n
         } else {
             rankMoney = 8000;
         }
-        if(revealsEarned < 24) {
+        if (revealsEarned < 24) {
             //n
         } else {
             revealMoney = 3600;
         }
-        if(confsEarned < 150) {
+        if (confsEarned < 150) {
             //n
         } else {
             confMoney = 4800;
@@ -837,9 +837,9 @@ client.on("message", async message => {
 
 
     var b2s = Array.from(cashUserBals);
-    if(message.content.toLowerCase() == "tax") {
-        if(lastTaxed != 0 && (Date.now() - lastTaxed) <= 86400000) {
-            message.channel.send("Error! You cannot collect taxes for another "+readableDate(86400000 + lastTaxed));
+    if (message.content.toLowerCase() == "tax") {
+        if (lastTaxed != 0 && (Date.now() - lastTaxed) <= 86400000) {
+            message.channel.send("Error! You cannot collect taxes for another " + readableDate(86400000 + lastTaxed));
             return;
         }
         b2s.sort(function(a, b) {
@@ -848,24 +848,24 @@ client.on("message", async message => {
         let fulltxt = "Tax rate: 10% of top 5 user wallets, 5% of remaining top 5 user wallets\n";
         let countss = 0;
         let totalTax = 0;
-        while(countss<10) {
+        while (countss < 10) {
             let taxRate = 0.10;
-            if(countss > 4) {
+            if (countss > 4) {
                 taxRate = 0.05
             }
             var ussInd = cashUserBals.indexOf(b2s[countss]);
-            let taxAmt = Math.floor(taxRate*cashUserBals[ussInd]);
+            let taxAmt = Math.floor(taxRate * cashUserBals[ussInd]);
             cashUserBals[ussInd] -= taxAmt;
             totalTax += taxAmt;
             countss++;
-            fulltxt += (addTitle(cashUserIds[ussInd])+" was taxed "+taxAmt+" BC!\n")
+            fulltxt += (addTitle(cashUserIds[ussInd]) + " was taxed " + taxAmt + " BC!\n")
         }
-        let taxEachRec = Math.floor(totalTax/(cashUserBals.length-1));
+        let taxEachRec = Math.floor(totalTax / (cashUserBals.length - 1));
         for (var i = 1; i < cashUserBals.length; i++) {
-                cashUserBals[i] += taxEachRec;
+            cashUserBals[i] += taxEachRec;
         }
         lastTaxed = Date.now();
-        fulltxt += "A total of "+totalTax+" BC was collected, and split amongst "+(cashUserBals.length-1)+" users, each receiving "+taxEachRec+" BC."
+        fulltxt += "A total of " + totalTax + " BC was collected, and split amongst " + (cashUserBals.length - 1) + " users, each receiving " + taxEachRec + " BC."
         message.channel.send(new Discord.RichEmbed()
             .setColor('#FFDF00')
             .setTitle('Taxes')
