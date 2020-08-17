@@ -85,9 +85,11 @@ let confsEarned = 0;
 let revealsEarned = 0;
 let rouletteHit = store.get('rouletteHits');
 let rouletteSave = store.get('rouletteSaves');
+let topGamblesWager = store.get('gambWager');
+let topGamblesInfo = store.get('gambInfo');
 let lastTaxed = Date.now();
 const brycoinWhitelist = ["743902996567425089", "739250815700828292", "739221630596808744", "739247750020989029", "514170284027150385", "740275815622639656", "493553508251861012", "651622265666142248", "508822430123425794", "739253509576327268", "741360591368618034", "496796970929618945"];
-const bannedCmds = ["balance", "brybank", "gamble", "titles", "rankup", "rob", "transfer", "leaderboard", "togglerank", "buy", "inventory", "makeitrain","ranks"];
+const bannedCmds = ["balance", "brybank", "gamble", "titles", "rankup", "rob", "transfer", "leaderboard", "togglerank", "buy", "inventory", "makeitrain","ranks","topgambles"];
 const allTitles = ["🗑️ Bum",
     "🧱 Commoner",
     "🎖️ Ensign",
@@ -801,6 +803,14 @@ client.on("message", async message => {
                 .addField('Odds', 'You had a 48% chance of winning your initial bet')
             );
             store.set('userBals', cashUserBals);
+            if(wager >= topGamblesWager[0]) {
+            	topGamblesWager.unshift(wager);
+            	topGamblesInfo.unshift(addTitle(message.author.id)+" - Won");
+            	topGamblesWager.pop();
+            	topGamblesInfo.pop();
+            	store.set('gambInfo', topGamblesInfo);
+            	store.set('gambWager', topGamblesWager);
+            }
         } else {
             cashUserBals[userInd] -= wager;
             message.channel.send(new Discord.RichEmbed()
@@ -810,6 +820,14 @@ client.on("message", async message => {
                 .addField('Odds', 'You had a 48% chance of winning your initial bet')
             );
             store.set('userBals', cashUserBals);
+            if(wager >= topGamblesWager[0]) {
+            	topGamblesWager.unshift(wager);
+            	topGamblesInfo.unshift(addTitle(message.author.id)+" - Lost");
+            	topGamblesWager.pop();
+            	topGamblesInfo.pop();
+            	store.set('gambInfo', topGamblesInfo);
+            	store.set('gambWager', topGamblesWager);
+            }
         }
         return;
     }
@@ -893,6 +911,7 @@ client.on("message", async message => {
             //const User = Client.fetchUser(cashUserIds[i]);
             fulltxt += addTitle(cashUserIds[ussInd]) + " - " + b2s[i] + " BC, " + getBankBal(cashUserIds[ussInd]) + " Bank BC\n";
         }
+        fulltxt += "Want to see the gambling leaderboard? Type \"topgambles\"";
         message.channel.send(new Discord.RichEmbed()
             .setColor('#FFDF00')
             .setTitle('Leaderboard')
@@ -901,6 +920,18 @@ client.on("message", async message => {
         return;
     }
 
+    if(message.content.toLowerCase() == "topgambles") {
+    	fulltext = "";
+    	for(var i = 0; i < topGamblesWager.length; i++) {
+    		fulltext += topGamblesWager[i]+" BC - "+topGamblesInfo[i]+"\n";
+    	}
+    	message.channel.send(new Discord.RichEmbed()
+            .setColor('#FFDF00')
+            .setTitle('Gambling Leaderboard')
+            .setDescription(fulltext)
+        );
+        return;
+    }
 
     instantChannel = "675350296142282752";
     serious = false;
