@@ -22,7 +22,7 @@
 
 // Load up the discord.js library
 const Discord = require("discord.js");
-const store = require('data-store')('persistent');
+const store = require('data-store')({ path: process.cwd() + '/persistent.json' });
 //md5
 const md5 = require('md5');
 //write to file
