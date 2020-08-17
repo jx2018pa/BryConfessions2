@@ -601,12 +601,12 @@ client.on("message", async message => {
             message.channel.send("You can't rob yourself...");
             return;
         }
-        if (cashUserBals[indexxxx] < getRankCost(rankId - 4)) {
-            message.channel.send("You need at least " + getRankCost(rankId - 4) + " Brycoins to rob that user!");
+        if (cashUserBals[indexxxx] < getRankCost(rankId - 5)) {
+            message.channel.send("You need at least " + getRankCost(rankId - 5) + " Brycoins to rob that user!");
             return;
         }
-        if (cashUserBals[indexxxx] < getRankCost(getRankId(message.author.id) - 4)) {
-            message.channel.send("You need at least " + getRankCost(getRankId(message.author.id) - 4) + " Brycoins to rob anyone!");
+        if (cashUserBals[indexxxx] < getRankCost(getRankId(message.author.id) - 5)) {
+            message.channel.send("You need at least " + getRankCost(getRankId(message.author.id) - 5) + " Brycoins to rob anyone!");
             return;
         }
         if (cashUserBals[targId] < insuranceCost) {
@@ -1431,11 +1431,12 @@ client.on("message", async message => {
                         message.react("✅");
 
 
-
+/*
                         fs.appendFile('messagelogs.txt', '\n' + hashedId + '-' + message.content, function(err) {
                             if (err) throw err;
                             console.log('Poll logged');
                         });
+                        */
                         client.channels.get(instantChannel).send(new Discord.RichEmbed()
                             .setColor('#800080')
                             .setTitle('Anonymous Poll')
@@ -1473,11 +1474,11 @@ client.on("message", async message => {
                         message.react("✅");
 
                         currentPollTitle = optionsArray[2];
-
+/*
                         fs.appendFile('messagelogs.txt', '\n' + hashedId + '-' + message.content, function(err) {
                             if (err) throw err;
                             console.log('Poll logged');
-                        });
+                        });*/
                         client.channels.get(instantChannel).send(new Discord.RichEmbed()
                             .setColor('#800080')
                             .setTitle('Anonymous Poll - ' + optionsArray[2])
@@ -1515,11 +1516,11 @@ client.on("message", async message => {
                     currentPollTitle = optionsArray[2];
 
                     message.react("✅");
-
+/*
                     fs.appendFile('messagelogs.txt', '\n' + hashedId + '-' + message.content, function(err) {
                         if (err) throw err;
                         console.log('Poll logged');
-                    });
+                    });*/
                     client.channels.get(instantChannel).send(new Discord.RichEmbed()
                         .setColor('#FFA500')
                         .setTitle('Poll - ' + optionsArray[2])
@@ -1550,11 +1551,11 @@ client.on("message", async message => {
                     pollVoters = "111111111111111111";
                     currentPoll = true;
                     message.react("✅");
-
+/*
                     fs.appendFile('messagelogs.txt', '\n' + hashedId + '-' + message.content, function(err) {
                         if (err) throw err;
                         console.log('Poll logged');
-                    });
+                    });*/
                     client.channels.get(instantChannel).send(new Discord.RichEmbed()
                         .setColor('#FFA500')
                         .setTitle('Poll')
@@ -1618,12 +1619,12 @@ client.on("message", async message => {
                     );
                 }, 45000)
             });
-
+/*
             fs.appendFile('messagelogs.txt', '\n' + cNum + '-' + hashedId + '-' + message.content, function(err) {
                 if (err) throw err;
                 console.log('Exploding message logged');
             });
-
+*/
             return;
         } else if (isRoulette) {
             var rand = Math.random();
@@ -1698,7 +1699,7 @@ client.on("message", async message => {
         //repPostReporters.push(cNum);
 
         message.react("✅");
-
+/*
         if (message.attachments.size > 0) {
             fs.appendFile('messagelogs.txt', '\n' + cNum + '-' + hashedId + '-' + attach[0].url, function(err) {
                 if (err) throw err;
@@ -1713,6 +1714,7 @@ client.on("message", async message => {
             });
 
         }
+        */
 
         cNum++;
         for (var i = 0; i < cashUserInv.length; i++) {
