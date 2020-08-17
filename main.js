@@ -87,7 +87,7 @@ let rouletteHit = store.get('rouletteHits');
 let rouletteSave = store.get('rouletteSaves');
 let lastTaxed = Date.now();
 const brycoinWhitelist = ["743902996567425089", "739250815700828292", "739221630596808744", "739247750020989029", "514170284027150385", "740275815622639656", "493553508251861012", "651622265666142248", "508822430123425794", "739253509576327268", "741360591368618034", "496796970929618945"];
-const bannedCmds = ["balance", "brybank", "gamble", "titles", "rankup", "rob", "transfer", "leaderboard", "togglerank", "buy", "inventory", "makeitrain"];
+const bannedCmds = ["balance", "brybank", "gamble", "titles", "rankup", "rob", "transfer", "leaderboard", "togglerank", "buy", "inventory", "makeitrain","ranks"];
 const allTitles = ["🗑️ Bum",
     "🧱 Commoner",
     "🎖️ Ensign",
@@ -275,7 +275,7 @@ function getHourlyReward(rankId) {
 
 client.on("ready", () => {
     console.log(`Bot has started, with ${client.users.size} users, in ${client.channels.size} channels of ${client.guilds.size} guilds.`);
-    client.user.setActivity("Type \"bryhelp\" or \"bryrules\" for more info");
+    client.user.setActivity("Type \"bryhelp\", \"bryrules\" or \"brycoinhelp\" for more info");
     startTime = Date.now();
 });
 
@@ -371,6 +371,19 @@ client.on("message", async message => {
         store.set('userIds', cashUserIds);
         store.set('userBals', cashUserBals);
         store.set('userInv', cashUserInv);
+    }
+
+    if(message.content == "brycoinhelp") {
+    	let fulltxt = "";
+    	for (var i = 0; i < bannedCmds.length; i++) {
+    		fulltxt += bannedCmds[i]+"\n";
+    	}
+    	message.channel.send(new Discord.RichEmbed()
+            .setColor('#FFDF00')
+            .setTitle('Brycoin Commands')
+            .setDescription(fulltxt)
+        );
+
     }
 
     if (brycoinWhitelist.indexOf(message.channel.id) == -1 && message.channel.type != "dm") {
@@ -520,12 +533,11 @@ client.on("message", async message => {
                 return;
             }
         }
-        console.log(message.content);
         message.channel.send("Bank operation failed!");
         return;
     }
 
-    if (message.channel.type != "dm" && message.content == "titles") {
+    if (message.content == "titles" || message.content == "ranks") {
         let fulll = "";
         for (var i = 0; i < allTitles.length; i++) {
             fulll += allTitles[i] + " | Cost: " + Math.round(Math.pow((i + 1), 2.1) * 200) + " BC | Gain: " + parseInt(2 + (i)) + " BC/30s, " + getHourlyReward(i) + " BC/hr\n";
@@ -655,7 +667,7 @@ client.on("message", async message => {
         }
     }
 
-    if (message.channel.type != "dm" && message.content == "earnstats") {
+    if (message.content == "earnstats") {
         var d = new Date();
         if (d.getDay() != dayToday) {
             dayToday = d.getDay();
@@ -690,7 +702,7 @@ client.on("message", async message => {
     }
 
 
-    if (message.channel.type != "dm" && message.content == "togglerank") {
+    if (message.content == "togglerank") {
         let indexxxx = cashUserIds.indexOf(message.author.id);
         if (cashUserInv[indexxxx] == "inv") {
             message.channel.send("Success! You are now " + addTitle(message.author.id));
