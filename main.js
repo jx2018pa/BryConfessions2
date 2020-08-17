@@ -136,7 +136,7 @@ let titlePerks = ["",
     "+150 BC on roulette reveal",
     "",
     "",
-    "",
+    "Additional 50 BC when conf sent",
     "",
     "",
     "Double bank account",
@@ -615,8 +615,8 @@ client.on("message", async message => {
             message.channel.send("You can't rob yourself...");
             return;
         }
-        if (cashUserBals[indexxxx] < getRankCost(rankId - 5)) {
-            message.channel.send("You need at least " + getRankCost(rankId - 5) + " Brycoins to rob that user!");
+        if (cashUserBals[indexxxx] < getRankCost(rankId - 6)) {
+            message.channel.send("You need at least " + getRankCost(rankId - 6) + " Brycoins to rob that user!");
             return;
         }
         if (cashUserBals[indexxxx] < getRankCost(getRankId(message.author.id) - 5)) {
@@ -644,11 +644,11 @@ client.on("message", async message => {
             return;
         }
         if (Math.random() < (1 - (rankId / allTitles.length))) {
-            var stealAmt = Math.floor(cashUserBals[targId] * 0.25);
+            var stealAmt = Math.floor(cashUserBals[targId] * 0.3);
             message.channel.send(new Discord.RichEmbed()
                 .setColor('#FFDF00')
                 .setTitle('Success!')
-                .setDescription("You successfully robbed " + addTitle(targetedUser) + " ! You stole " + Math.floor(stealAmt) + " Brycoins - 25% of their balance - from their wallet.")
+                .setDescription("You successfully robbed " + addTitle(targetedUser) + " ! You stole " + Math.floor(stealAmt) + " Brycoins - 30% of their balance - from their wallet.")
                 .addField("Stats", "There is a 50% of a robbery failing due to police, and " + addTitle(targetedUser) + " had rank protection adding a " + ((rankId / allTitles.length) * 100) + "% chance of failure after you evaded the police.")
             );
             cashUserBals[targId] -= Math.floor(stealAmt);
@@ -909,9 +909,14 @@ client.on("message", async message => {
         for (i = 0; i < 20; i++) {
             var ussInd = cashUserBals.indexOf(b2s[i]);
             //const User = Client.fetchUser(cashUserIds[i]);
-            fulltxt += addTitle(cashUserIds[ussInd]) + " - " + b2s[i] + " BC, " + getBankBal(cashUserIds[ussInd]) + " Bank BC\n";
+            fulltxt += addTitle(cashUserIds[ussInd]) + " - " + b2s[i] + " BC, " + getBankBal(cashUserIds[ussInd]) + " Bank BC ";
+            if(b2s[i] > Math.floor(getRankCost(getRankId(cashUserIds[ussInd]))*0.75)) {
+            	fulltxt += "⚠️\n";
+            } else {
+            	fulltxt += "\n";
+            }
         }
-        fulltxt += "Want to see the gambling leaderboard? Type \"topgambles\"";
+        fulltxt += "Want to see the gambling leaderboard? Type \"topgambles\"\n⚠️ indicates that the user is above their insured amount";
         message.channel.send(new Discord.RichEmbed()
             .setColor('#FFDF00')
             .setTitle('Leaderboard')
