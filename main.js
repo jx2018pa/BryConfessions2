@@ -1096,7 +1096,7 @@ client.on("message", async message => {
             return;
         }
         userFaction[targInd] = -1;
-        message.channel.send(addTitle(sluice) + " has left the faction!");
+        message.channel.send(addTitle(message.author.id) + " has left the faction!");
         store.set('userFaction', userFaction);
         store.set('factionNames', factionNames);
         store.set('factionVault', factionVault);
@@ -1105,13 +1105,24 @@ client.on("message", async message => {
         return;
     }
 
+    if (message.content.toLowerCase().startsWith("changefactionname")) {
+        if (message.content.slice(18).length < 4 || factionNames.indexOf(message.content.slice(18)) != -1) {
+            message.channel.send("Invalid faction name! Must be greater than 4 characters and not yet exist");
+            return;
+        }
+        factionNames[userFaction[cashUserIds.indexOf(message.author.id)]] = message.content.slice(18);
+        message.channel.send("Congrats! Your faction is now called "+factionNames[userFaction[cashUserIds.indexOf(message.author.id)]]);
+        return;
+    }
+
+
     if (message.content.toLowerCase() == "listfactions") {
         let fulltext = "";
         for (var i = 0; i < factionNames.length; i++) {
             if (factionNames[i] == "deleted") {
 
             } else {
-                fulltext += factionNames[i] + " - Level " + factionLevel[i] + " - ID " + i + "\n";
+                fulltext += factionNames[i] + " - Level " + factionLevel[i] + " - ID " + i + " - "+factionVault[i]+" BC\n";
             }
 
         }
