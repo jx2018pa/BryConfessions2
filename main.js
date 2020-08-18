@@ -85,6 +85,7 @@ let dayToday = 0;
 let ranksEarned = 0;
 let confsEarned = 0;
 let revealsEarned = 0;
+let randomDisplay = 0;
 let rouletteHit = store.get('rouletteHits');
 let rouletteSave = store.get('rouletteSaves');
 let topGamblesWager = store.get('gambWager');
@@ -809,13 +810,14 @@ client.on("message", async message => {
             message.channel.send("Bet failed! You need to gamble more than 10 Brycoins!");
             return;
         }
-        if (Math.random() < 0.48) {
+        randomDisplay = Math.random();
+        if (randomDisplay < 0.48) {
             cashUserBals[userInd] += wager;
             message.channel.send(new Discord.RichEmbed()
                 .setColor('#00FF00')
                 .setTitle('You Win!')
                 .setDescription(addTitle(message.author.id) + ' - You won!\n' + wager + ' Brycoins were credited to your account')
-                .addField('Odds', 'You had a 48% chance of winning your initial bet')
+                .addField('Odds', 'You had a 48% chance of winning your initial bet and rolled '+randomDisplay.toString().slice(0,7))
             );
             store.set('userBals', cashUserBals);
             if (wager >= topGamblesWager[0]) {
@@ -841,7 +843,7 @@ client.on("message", async message => {
                 .setColor('#ff0000')
                 .setTitle('You Lose!')
                 .setDescription(addTitle(message.author.id) + ' - You lost!\n' + wager + ' Brycoins were removed from your account')
-                .addField('Odds', 'You had a 48% chance of winning your initial bet')
+                .addField('Odds', 'You had a 48% chance of winning your initial bet and rolled '+randomDisplay.toString().slice(0,7))
             );
             store.set('userBals', cashUserBals);
             if (wager >= topGamblesWager[0]) {
