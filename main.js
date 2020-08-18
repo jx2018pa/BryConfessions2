@@ -22,7 +22,9 @@
 
 // Load up the discord.js library
 const Discord = require("discord.js");
-const store = require('data-store')({ path: process.cwd() + '/persistent.json' });
+const store = require('data-store')({
+    path: process.cwd() + '/persistent.json'
+});
 //md5
 const md5 = require('md5');
 //write to file
@@ -94,7 +96,7 @@ let factionLevel = store.get('factionLevel');
 let userFaction = store.get('userFaction');
 let lastTaxed = Date.now();
 const brycoinWhitelist = ["743902996567425089", "739250815700828292", "739221630596808744", "739247750020989029", "514170284027150385", "740275815622639656", "493553508251861012", "651622265666142248", "508822430123425794", "739253509576327268", "741360591368618034", "496796970929618945"];
-const bannedCmds = ["balance", "brybank", "gamble", "titles", "rankup", "rob", "transfer", "leaderboard", "togglerank", "buy", "inventory", "makeitrain","ranks","topgambles","createfaction","disbandfaction","invite","kick","listfactions","factioninfo","vaultdeposit","vaultwithdraw"];
+const bannedCmds = ["balance", "brybank", "gamble", "titles", "rankup", "rob", "transfer", "leaderboard", "togglerank", "buy", "inventory", "makeitrain", "ranks", "topgambles", "createfaction", "disbandfaction", "invite", "kick", "listfactions", "factioninfo", "vaultdeposit", "vaultwithdraw"];
 const allTitles = ["🗑️ Bum",
     "🧱 Commoner",
     "🎖️ Ensign",
@@ -381,12 +383,12 @@ client.on("message", async message => {
         store.set('userInv', cashUserInv);
     }
 
-    if(message.content == "brycoinhelp") {
-    	let fulltxt = "";
-    	for (var i = 0; i < bannedCmds.length; i++) {
-    		fulltxt += bannedCmds[i]+"\n";
-    	}
-    	message.channel.send(new Discord.RichEmbed()
+    if (message.content == "brycoinhelp") {
+        let fulltxt = "";
+        for (var i = 0; i < bannedCmds.length; i++) {
+            fulltxt += bannedCmds[i] + "\n";
+        }
+        message.channel.send(new Discord.RichEmbed()
             .setColor('#FFDF00')
             .setTitle('Brycoin Commands')
             .setDescription(fulltxt)
@@ -429,8 +431,8 @@ client.on("message", async message => {
         let rankCost = parseInt(getRankCost(rankId));
         let insuranceCost = Math.floor(rankCost * 0.75);
         let balanceString = addTitle(targetUserId) + '\n' + cashUserBals[indd] + ' Brycoins in Wallet\n' + getBankBal(targetUserId) + ' Brycoins in Brybank\nThis user is insured for ' + insuranceCost + ' Brycoins.\nNext hourly ' + getHourlyReward(rankId) + ' BC reward in ' + Math.round((3600000 - (Date.now() - rateUserRefresh[rateUserIndex])) / 60000) + ' minutes.';
-        if(userFaction[indd] > -1) {
-        	balanceString += "\nMember of "+factionNames[userFaction[indd]];
+        if (userFaction[indd] > -1) {
+            balanceString += "\nMember of " + factionNames[userFaction[indd]];
         }
         message.channel.send(new Discord.RichEmbed()
             .setColor('#FFDF00')
@@ -624,8 +626,8 @@ client.on("message", async message => {
             message.channel.send("You can't rob yourself...");
             return;
         }
-        if(userFaction[targId] == userFaction[indexxxx]) {
-        	message.channel.send("You can't rob a faction member!");
+        if (userFaction[targId] == userFaction[indexxxx]) {
+            message.channel.send("You can't rob a faction member!");
             return;
         }
         if (cashUserBals[indexxxx] < getRankCost(rankId - 6)) {
@@ -816,13 +818,22 @@ client.on("message", async message => {
                 .addField('Odds', 'You had a 48% chance of winning your initial bet')
             );
             store.set('userBals', cashUserBals);
-            if(wager >= topGamblesWager[0]) {
-            	topGamblesWager.unshift(wager);
-            	topGamblesInfo.unshift(addTitle(message.author.id)+" - Won");
-            	topGamblesWager.pop();
-            	topGamblesInfo.pop();
-            	store.set('gambInfo', topGamblesInfo);
-            	store.set('gambWager', topGamblesWager);
+            if (wager >= topGamblesWager[0]) {
+                topGamblesWager.unshift(wager);
+                topGamblesInfo.unshift(addTitle(message.author.id) + " - Won");
+                topGamblesWager.pop();
+                topGamblesInfo.pop();
+                store.set('gambInfo', topGamblesInfo);
+                store.set('gambWager', topGamblesWager);
+            } else if (wager > topGamblesWager[topGamblesWager.length - 1]) {
+                for (var i = 1; i < topGamblesWager.length; i++) {
+                    if (wager < topGamblesWager[i - 1] && wager >= topGamblesWager[i]) {
+                        topGamblesWager.splice(i, 0, wager);
+                        topGamblesInfo.splice(i, 0, addTitle(message.author.id) + " - Won");
+                        topGamblesWager.pop();
+                        topGamblesInfo.pop();
+                    }
+                }
             }
         } else {
             cashUserBals[userInd] -= wager;
@@ -833,13 +844,22 @@ client.on("message", async message => {
                 .addField('Odds', 'You had a 48% chance of winning your initial bet')
             );
             store.set('userBals', cashUserBals);
-            if(wager >= topGamblesWager[0]) {
-            	topGamblesWager.unshift(wager);
-            	topGamblesInfo.unshift(addTitle(message.author.id)+" - Lost");
-            	topGamblesWager.pop();
-            	topGamblesInfo.pop();
-            	store.set('gambInfo', topGamblesInfo);
-            	store.set('gambWager', topGamblesWager);
+            if (wager >= topGamblesWager[0]) {
+                topGamblesWager.unshift(wager);
+                topGamblesInfo.unshift(addTitle(message.author.id) + " - Lost");
+                topGamblesWager.pop();
+                topGamblesInfo.pop();
+                store.set('gambInfo', topGamblesInfo);
+                store.set('gambWager', topGamblesWager);
+            } else if (wager > topGamblesWager[topGamblesWager.length - 1]) {
+                for (var i = 1; i < topGamblesWager.length; i++) {
+                    if (wager < topGamblesWager[i - 1] && wager >= topGamblesWager[i]) {
+                        topGamblesWager.splice(i, 0, wager);
+                        topGamblesInfo.splice(i, 0, addTitle(message.author.id) + " - Lost");
+                        topGamblesWager.pop();
+                        topGamblesInfo.pop();
+                    }
+                }
             }
         }
         return;
@@ -923,10 +943,10 @@ client.on("message", async message => {
             var ussInd = cashUserBals.indexOf(b2s[i]);
             //const User = Client.fetchUser(cashUserIds[i]);
             fulltxt += addTitle(cashUserIds[ussInd]) + " - " + b2s[i] + " BC, " + getBankBal(cashUserIds[ussInd]) + " Bank BC ";
-            if(b2s[i] > Math.floor(getRankCost(getRankId(cashUserIds[ussInd]))*0.75)) {
-            	fulltxt += "⚠️\n";
+            if (b2s[i] > Math.floor(getRankCost(getRankId(cashUserIds[ussInd])) * 0.75)) {
+                fulltxt += "⚠️\n";
             } else {
-            	fulltxt += "\n";
+                fulltxt += "\n";
             }
         }
         fulltxt += "Want to see the gambling leaderboard? Type \"topgambles\"\n⚠️ indicates that the user is above their insured amount";
@@ -938,12 +958,12 @@ client.on("message", async message => {
         return;
     }
 
-    if(message.content.toLowerCase() == "topgambles") {
-    	fulltext = "";
-    	for(var i = 0; i < topGamblesWager.length; i++) {
-    		fulltext += topGamblesWager[i]+" BC - "+topGamblesInfo[i]+"\n";
-    	}
-    	message.channel.send(new Discord.RichEmbed()
+    if (message.content.toLowerCase() == "topgambles") {
+        fulltext = "";
+        for (var i = 0; i < topGamblesWager.length; i++) {
+            fulltext += topGamblesWager[i] + " BC - " + topGamblesInfo[i] + "\n";
+        }
+        message.channel.send(new Discord.RichEmbed()
             .setColor('#FFDF00')
             .setTitle('Gambling Leaderboard')
             .setDescription(fulltext)
@@ -951,254 +971,254 @@ client.on("message", async message => {
         return;
     }
 
-    if(message.content.toLowerCase().startsWith("createfaction")) {
-    	if(userFaction[cashUserIds.indexOf(message.author.id)] > -1) {
-    		message.channel.send("You are already in a faction!");
-    		return;
-    	}
-    	if(message.content.slice(14).length < 4 || factionNames.indexOf(message.content.slice(14)) != -1) {
-    		message.channel.send("Invalid faction name! Must be greater than 4 characters and not yet exist");
-    		return;
-    	}
-    	let userInd = cashUserIds.indexOf(message.author.id);
-    	if(cashUserBals[userInd] < 5000) {
-    		message.channel.send("You need 5000 BC to create a faction!");
-    		return;
-    	}
-    	cashUserBals[userInd] -= 5000;
-    	factionNames.push(message.content.slice(14));
-    	factionVault.push(0);
-    	factionLevel.push(1);
-    	factionOwner.push(message.author.id);
-    	userFaction[cashUserIds.indexOf(message.author.id)] = factionVault.length-1;
-    	message.channel.send("Congrats "+addTitle(message.author.id)+" - you are now the leader of "+message.content.slice(14)+"!\nThis transaction cost you 5000 BC.");
-    	store.set('userFaction', userFaction);
-    	store.set('factionNames', factionNames);
-    	store.set('factionVault', factionVault);
-    	store.set('factionLevel', factionLevel);
-    	store.set('factionOwner', factionOwner);
-    	return;
+    if (message.content.toLowerCase().startsWith("createfaction")) {
+        if (userFaction[cashUserIds.indexOf(message.author.id)] > -1) {
+            message.channel.send("You are already in a faction!");
+            return;
+        }
+        if (message.content.slice(14).length < 4 || factionNames.indexOf(message.content.slice(14)) != -1) {
+            message.channel.send("Invalid faction name! Must be greater than 4 characters and not yet exist");
+            return;
+        }
+        let userInd = cashUserIds.indexOf(message.author.id);
+        if (cashUserBals[userInd] < 5000) {
+            message.channel.send("You need 5000 BC to create a faction!");
+            return;
+        }
+        cashUserBals[userInd] -= 5000;
+        factionNames.push(message.content.slice(14));
+        factionVault.push(0);
+        factionLevel.push(1);
+        factionOwner.push(message.author.id);
+        userFaction[cashUserIds.indexOf(message.author.id)] = factionVault.length - 1;
+        message.channel.send("Congrats " + addTitle(message.author.id) + " - you are now the leader of " + message.content.slice(14) + "!\nThis transaction cost you 5000 BC.");
+        store.set('userFaction', userFaction);
+        store.set('factionNames', factionNames);
+        store.set('factionVault', factionVault);
+        store.set('factionLevel', factionLevel);
+        store.set('factionOwner', factionOwner);
+        return;
     }
 
-    if(message.content.toLowerCase().startsWith("disbandfaction")) {
-    	let id = userFaction[cashUserIds.indexOf(message.author.id)];
-    	if(id <= -1) {
-    		message.channel.send("You are not in a faction!");
-    		return;
-    	}
-    	if(factionOwner[id] != message.author.id) {
-    		message.channel.send("You are not the owner of this faction!");
-    		return;
-    	}
-    	if(factionVault[id] != 0) {
-    		message.channel.send("You must empty your faction's vault before disbanding!");
-    		return;
-    	}
-    	let facMem = 0;
-    	for(var i = 0; i < userFaction.length; i++) {
-    		if(userFaction[i] == userFaction[cashUserIds.indexOf(message.author.id)]) {
-    			facMem++;
-    		}
-    	}
-    	if(facMem > 1) {
-    		message.channel.send("You must kick all other members before disbanding!");
-    		return;
-    	}
-    	for(var i = 0; i < userFaction.length; i++) {
-    		if(userFaction[i] == id) {
-    			userFaction[i] == -1;
-    		}
-    	}
-    	message.channel.send("Your faction has been disbanded.");
-    	factionNames[id] = "deleted";
-    	userFaction[cashUserIds.indexOf(message.author.id)] = -1;
-    	store.set('userFaction', userFaction);
-    	store.set('factionNames', factionNames);
-    	store.set('factionVault', factionVault);
-    	store.set('factionLevel', factionLevel);
-    	store.set('factionOwner', factionOwner);
-    	return;
+    if (message.content.toLowerCase().startsWith("disbandfaction")) {
+        let id = userFaction[cashUserIds.indexOf(message.author.id)];
+        if (id <= -1) {
+            message.channel.send("You are not in a faction!");
+            return;
+        }
+        if (factionOwner[id] != message.author.id) {
+            message.channel.send("You are not the owner of this faction!");
+            return;
+        }
+        if (factionVault[id] != 0) {
+            message.channel.send("You must empty your faction's vault before disbanding!");
+            return;
+        }
+        let facMem = 0;
+        for (var i = 0; i < userFaction.length; i++) {
+            if (userFaction[i] == userFaction[cashUserIds.indexOf(message.author.id)]) {
+                facMem++;
+            }
+        }
+        if (facMem > 1) {
+            message.channel.send("You must kick all other members before disbanding!");
+            return;
+        }
+        for (var i = 0; i < userFaction.length; i++) {
+            if (userFaction[i] == id) {
+                userFaction[i] == -1;
+            }
+        }
+        message.channel.send("Your faction has been disbanded.");
+        factionNames[id] = "deleted";
+        userFaction[cashUserIds.indexOf(message.author.id)] = -1;
+        store.set('userFaction', userFaction);
+        store.set('factionNames', factionNames);
+        store.set('factionVault', factionVault);
+        store.set('factionLevel', factionLevel);
+        store.set('factionOwner', factionOwner);
+        return;
     }
 
-    if(message.content.toLowerCase().startsWith("invite")) {
-    	let sluice = message.content.slice(10, 28);
-    	let targInd = cashUserIds.indexOf(sluice);
-    	if(targInd == -1 || userFaction[targInd] != -1 || userFaction[cashUserIds.indexOf(message.author.id)] <= -1) {
-    		message.channel.send("This user could not be invited!");
-    		return;
-    	}
-    	let facMem = 0;
-    	for(var i = 0; i < userFaction.length; i++) {
-    		if(userFaction[i] == userFaction[cashUserIds.indexOf(message.author.id)]) {
-    			facMem++;
-    		}
-    	}
-    	if(facMem >= 5) {
-    		message.channel.send("Your faction is at its maximum capacity!");
-    		return;
-    	}
-    	userFaction[targInd] = userFaction[cashUserIds.indexOf(message.author.id)];
-    	message.channel.send("Success! "+addTitle(sluice)+" is now a member of "+factionNames[userFaction[targInd]]);
-    	store.set('userFaction', userFaction);
-    	store.set('factionNames', factionNames);
-    	store.set('factionVault', factionVault);
-    	store.set('factionLevel', factionLevel);
-    	store.set('factionOwner', factionOwner);
-    	return;
+    if (message.content.toLowerCase().startsWith("invite")) {
+        let sluice = message.content.slice(10, 28);
+        let targInd = cashUserIds.indexOf(sluice);
+        if (targInd == -1 || userFaction[targInd] != -1 || userFaction[cashUserIds.indexOf(message.author.id)] <= -1) {
+            message.channel.send("This user could not be invited!");
+            return;
+        }
+        let facMem = 0;
+        for (var i = 0; i < userFaction.length; i++) {
+            if (userFaction[i] == userFaction[cashUserIds.indexOf(message.author.id)]) {
+                facMem++;
+            }
+        }
+        if (facMem >= 5) {
+            message.channel.send("Your faction is at its maximum capacity!");
+            return;
+        }
+        userFaction[targInd] = userFaction[cashUserIds.indexOf(message.author.id)];
+        message.channel.send("Success! " + addTitle(sluice) + " is now a member of " + factionNames[userFaction[targInd]]);
+        store.set('userFaction', userFaction);
+        store.set('factionNames', factionNames);
+        store.set('factionVault', factionVault);
+        store.set('factionLevel', factionLevel);
+        store.set('factionOwner', factionOwner);
+        return;
 
     }
 
-    if(message.content.toLowerCase().startsWith("kick")) {
-    	let sluice = message.content.slice(8, 26);
-    	let targInd = cashUserIds.indexOf(sluice);
-    	if(targInd == -1 || userFaction[targInd] <= -1 || userFaction[cashUserIds.indexOf(message.author.id)] <= -1) {
-    		message.channel.send("This user could not be kicked!");
-    		return;
-    	}
-    	userFaction[targInd] = -1;
-    	message.channel.send(addTitle(sluice)+" has been kicked!");
-    	store.set('userFaction', userFaction);
-    	store.set('factionNames', factionNames);
-    	store.set('factionVault', factionVault);
-    	store.set('factionLevel', factionLevel);
-    	store.set('factionOwner', factionOwner);
-    	return;
+    if (message.content.toLowerCase().startsWith("kick")) {
+        let sluice = message.content.slice(8, 26);
+        let targInd = cashUserIds.indexOf(sluice);
+        if (targInd == -1 || userFaction[targInd] <= -1 || userFaction[cashUserIds.indexOf(message.author.id)] <= -1) {
+            message.channel.send("This user could not be kicked!");
+            return;
+        }
+        userFaction[targInd] = -1;
+        message.channel.send(addTitle(sluice) + " has been kicked!");
+        store.set('userFaction', userFaction);
+        store.set('factionNames', factionNames);
+        store.set('factionVault', factionVault);
+        store.set('factionLevel', factionLevel);
+        store.set('factionOwner', factionOwner);
+        return;
     }
 
-    if(message.content.toLowerCase() == "leavefaction") {
-    	let targInd = cashUserIds.indexOf(message.author.id);
-    	if(factionOwner[userFaction[targInd]] == message.author.id) {
-    		message.channel.send("You can't leave as a leader! Disband your faction instead!");
-    		return;
-    	}
-    	if(targInd == -1 || userFaction[targInd] <= -1) {
-    		message.channel.send("Error leaving faction!");
-    		return;
-    	}
-    	userFaction[targInd] = -1;
-    	message.channel.send(addTitle(sluice)+" has left the faction!");
-    	store.set('userFaction', userFaction);
-    	store.set('factionNames', factionNames);
-    	store.set('factionVault', factionVault);
-    	store.set('factionLevel', factionLevel);
-    	store.set('factionOwner', factionOwner);
-    	return;
+    if (message.content.toLowerCase() == "leavefaction") {
+        let targInd = cashUserIds.indexOf(message.author.id);
+        if (factionOwner[userFaction[targInd]] == message.author.id) {
+            message.channel.send("You can't leave as a leader! Disband your faction instead!");
+            return;
+        }
+        if (targInd == -1 || userFaction[targInd] <= -1) {
+            message.channel.send("Error leaving faction!");
+            return;
+        }
+        userFaction[targInd] = -1;
+        message.channel.send(addTitle(sluice) + " has left the faction!");
+        store.set('userFaction', userFaction);
+        store.set('factionNames', factionNames);
+        store.set('factionVault', factionVault);
+        store.set('factionLevel', factionLevel);
+        store.set('factionOwner', factionOwner);
+        return;
     }
 
-    if(message.content.toLowerCase() == "listfactions") {
-    	let fulltext = "";
-    	for(var i = 0; i < factionNames.length; i++) {
-    		if(factionNames[i] == "deleted") {
+    if (message.content.toLowerCase() == "listfactions") {
+        let fulltext = "";
+        for (var i = 0; i < factionNames.length; i++) {
+            if (factionNames[i] == "deleted") {
 
-    		} else {
-    			fulltext += factionNames[i]+" - Level "+factionLevel[i]+" - ID "+i+"\n";
-    		}
-    		
-    	}
-    	fulltext += "For specific faction info type \"factioninfo ID\"";
-    	message.channel.send(new Discord.RichEmbed()
+            } else {
+                fulltext += factionNames[i] + " - Level " + factionLevel[i] + " - ID " + i + "\n";
+            }
+
+        }
+        fulltext += "For specific faction info type \"factioninfo ID\"";
+        message.channel.send(new Discord.RichEmbed()
             .setColor('#FFDF00')
             .setTitle('Active Factions')
             .setDescription(fulltext)
         );
         store.set('userFaction', userFaction);
-    	store.set('factionNames', factionNames);
-    	store.set('factionVault', factionVault);
-    	store.set('factionLevel', factionLevel);
-    	store.set('factionOwner', factionOwner);
+        store.set('factionNames', factionNames);
+        store.set('factionVault', factionVault);
+        store.set('factionLevel', factionLevel);
+        store.set('factionOwner', factionOwner);
         return;
     }
 
-    if(message.content.toLowerCase().startsWith("factioninfo")) {
-    	var id = parseInt(message.content.slice(12));
-    	let self = false;
-    	if(message.content.toLowerCase() == "factioninfo") {
-    		self = true;
-    	}
-    	if(id > (factionNames.length-1) || isNaN(id)) {
-    		if(self == false) {
-    			message.channel.send("Faction does not exist!");
-    			return;
-    		}
-    	}
-    	if(self == true && userFaction[cashUserIds.indexOf(message.author.id)] <= -1) {
-    		message.channel.send("You are not in a faction!");
-    		return;
-    	}
-    	if(self == true) {
-    		id = userFaction[cashUserIds.indexOf(message.author.id)];
-    	}
-    	let memberListText = "\n";
-    	for(var i = 0; i < userFaction.length; i++) {
-    		if(id == userFaction[i]) {
-    			if(cashUserIds[i] == factionOwner[id]) {
+    if (message.content.toLowerCase().startsWith("factioninfo")) {
+        var id = parseInt(message.content.slice(12));
+        let self = false;
+        if (message.content.toLowerCase() == "factioninfo") {
+            self = true;
+        }
+        if (id > (factionNames.length - 1) || isNaN(id)) {
+            if (self == false) {
+                message.channel.send("Faction does not exist!");
+                return;
+            }
+        }
+        if (self == true && userFaction[cashUserIds.indexOf(message.author.id)] <= -1) {
+            message.channel.send("You are not in a faction!");
+            return;
+        }
+        if (self == true) {
+            id = userFaction[cashUserIds.indexOf(message.author.id)];
+        }
+        let memberListText = "\n";
+        for (var i = 0; i < userFaction.length; i++) {
+            if (id == userFaction[i]) {
+                if (cashUserIds[i] == factionOwner[id]) {
 
-    			} else {
-    				memberListText += addTitle(cashUserIds[i])+"\n";
-    			}
-    			
-    		}
-    	}
-    	message.channel.send(new Discord.RichEmbed()
+                } else {
+                    memberListText += addTitle(cashUserIds[i]) + "\n";
+                }
+
+            }
+        }
+        message.channel.send(new Discord.RichEmbed()
             .setColor('#FFDF00')
             .setTitle(factionNames[id])
-            .setDescription('Vault: '+factionVault[id]+" BC\nLevel "+factionLevel[id]+"\nMembers:\n"+addTitle(factionOwner[id])+" \(Owner\)"+memberListText)
+            .setDescription('Vault: ' + factionVault[id] + " BC\nLevel " + factionLevel[id] + "\nMembers:\n" + addTitle(factionOwner[id]) + " \(Owner\)" + memberListText)
         );
         store.set('userFaction', userFaction);
-    	store.set('factionNames', factionNames);
-    	store.set('factionVault', factionVault);
-    	store.set('factionLevel', factionLevel);
-    	store.set('factionOwner', factionOwner);
+        store.set('factionNames', factionNames);
+        store.set('factionVault', factionVault);
+        store.set('factionLevel', factionLevel);
+        store.set('factionOwner', factionOwner);
         return;
     }
 
-    if(message.content.toLowerCase().startsWith("vaultdeposit")) {
-    	if(userFaction[cashUserIds.indexOf(message.author.id)] <= -1) {
-    		message.channel.send("You are not in a faction!");
-    		return;
-    	}
-    	var depAmt = parseInt(message.content.slice(13));
-    	let userInd = cashUserIds.indexOf(message.author.id);
-    	if(depAmt > cashUserBals[userInd] || depAmt < 1 || isNaN(depAmt) || userInd == -1) {
-    		message.channel.send("Vault deposit failed!");
-    		return;
-    	}
-    	if((factionVault[userFaction[userInd]]+depAmt) > factionLevel[userFaction[userInd]]*10000) {
-    		message.channel.send("Vault deposit failed! Your faction's vault can hold a maximum of "+userFaction[userInd]*10000);
-    		return;
-    	}
-    	cashUserBals[userInd] -= depAmt;
-                factionVault[userFaction[userInd]] += depAmt;
-                message.channel.send("Deposit successful! New vault balance: " + factionVault[userFaction[userInd]]);
-                store.set('userFaction', userFaction);
-    	store.set('factionNames', factionNames);
-    	store.set('factionVault', factionVault);
-    	store.set('factionLevel', factionLevel);
-    	store.set('factionOwner', factionOwner);
-                return;
+    if (message.content.toLowerCase().startsWith("vaultdeposit")) {
+        if (userFaction[cashUserIds.indexOf(message.author.id)] <= -1) {
+            message.channel.send("You are not in a faction!");
+            return;
+        }
+        var depAmt = parseInt(message.content.slice(13));
+        let userInd = cashUserIds.indexOf(message.author.id);
+        if (depAmt > cashUserBals[userInd] || depAmt < 1 || isNaN(depAmt) || userInd == -1) {
+            message.channel.send("Vault deposit failed!");
+            return;
+        }
+        if ((factionVault[userFaction[userInd]] + depAmt) > factionLevel[userFaction[userInd]] * 10000) {
+            message.channel.send("Vault deposit failed! Your faction's vault can hold a maximum of " + userFaction[userInd] * 10000);
+            return;
+        }
+        cashUserBals[userInd] -= depAmt;
+        factionVault[userFaction[userInd]] += depAmt;
+        message.channel.send("Deposit successful! New vault balance: " + factionVault[userFaction[userInd]]);
+        store.set('userFaction', userFaction);
+        store.set('factionNames', factionNames);
+        store.set('factionVault', factionVault);
+        store.set('factionLevel', factionLevel);
+        store.set('factionOwner', factionOwner);
+        return;
 
     }
 
-    if(message.content.toLowerCase().startsWith("vaultwithdraw")) {
-    	if(userFaction[cashUserIds.indexOf(message.author.id)] <= -1) {
-    		message.channel.send("You are not in a faction!");
-    		return;
-    	}
-    	var drawAmt = parseInt(message.content.slice(14));
-    	let userInd = cashUserIds.indexOf(message.author.id);
-    	if(drawAmt > factionVault[userFaction[userInd]] || drawAmt < 1 || isNaN(drawAmt) || userInd == -1) {
-    		message.channel.send("Vault withdraw failed!");
-    		return;
-    	}
-    	cashUserBals[userInd] += drawAmt;
-                factionVault[userFaction[userInd]] -= drawAmt;
-                message.channel.send("Withdraw successful! New vault balance: " + factionVault[userFaction[userInd]]);
-                store.set('userFaction', userFaction);
-    	store.set('factionNames', factionNames);
-    	store.set('factionVault', factionVault);
-    	store.set('factionLevel', factionLevel);
-    	store.set('factionOwner', factionOwner);
-                return;
+    if (message.content.toLowerCase().startsWith("vaultwithdraw")) {
+        if (userFaction[cashUserIds.indexOf(message.author.id)] <= -1) {
+            message.channel.send("You are not in a faction!");
+            return;
+        }
+        var drawAmt = parseInt(message.content.slice(14));
+        let userInd = cashUserIds.indexOf(message.author.id);
+        if (drawAmt > factionVault[userFaction[userInd]] || drawAmt < 1 || isNaN(drawAmt) || userInd == -1) {
+            message.channel.send("Vault withdraw failed!");
+            return;
+        }
+        cashUserBals[userInd] += drawAmt;
+        factionVault[userFaction[userInd]] -= drawAmt;
+        message.channel.send("Withdraw successful! New vault balance: " + factionVault[userFaction[userInd]]);
+        store.set('userFaction', userFaction);
+        store.set('factionNames', factionNames);
+        store.set('factionVault', factionVault);
+        store.set('factionLevel', factionLevel);
+        store.set('factionOwner', factionOwner);
+        return;
 
     }
 
@@ -1743,12 +1763,12 @@ client.on("message", async message => {
                         message.react("✅");
 
 
-/*
-                        fs.appendFile('messagelogs.txt', '\n' + hashedId + '-' + message.content, function(err) {
-                            if (err) throw err;
-                            console.log('Poll logged');
-                        });
-                        */
+                        /*
+                                                fs.appendFile('messagelogs.txt', '\n' + hashedId + '-' + message.content, function(err) {
+                                                    if (err) throw err;
+                                                    console.log('Poll logged');
+                                                });
+                                                */
                         client.channels.get(instantChannel).send(new Discord.RichEmbed()
                             .setColor('#800080')
                             .setTitle('Anonymous Poll')
@@ -1786,11 +1806,11 @@ client.on("message", async message => {
                         message.react("✅");
 
                         currentPollTitle = optionsArray[2];
-/*
-                        fs.appendFile('messagelogs.txt', '\n' + hashedId + '-' + message.content, function(err) {
-                            if (err) throw err;
-                            console.log('Poll logged');
-                        });*/
+                        /*
+                                                fs.appendFile('messagelogs.txt', '\n' + hashedId + '-' + message.content, function(err) {
+                                                    if (err) throw err;
+                                                    console.log('Poll logged');
+                                                });*/
                         client.channels.get(instantChannel).send(new Discord.RichEmbed()
                             .setColor('#800080')
                             .setTitle('Anonymous Poll - ' + optionsArray[2])
@@ -1828,11 +1848,11 @@ client.on("message", async message => {
                     currentPollTitle = optionsArray[2];
 
                     message.react("✅");
-/*
-                    fs.appendFile('messagelogs.txt', '\n' + hashedId + '-' + message.content, function(err) {
-                        if (err) throw err;
-                        console.log('Poll logged');
-                    });*/
+                    /*
+                                        fs.appendFile('messagelogs.txt', '\n' + hashedId + '-' + message.content, function(err) {
+                                            if (err) throw err;
+                                            console.log('Poll logged');
+                                        });*/
                     client.channels.get(instantChannel).send(new Discord.RichEmbed()
                         .setColor('#FFA500')
                         .setTitle('Poll - ' + optionsArray[2])
@@ -1863,11 +1883,11 @@ client.on("message", async message => {
                     pollVoters = "111111111111111111";
                     currentPoll = true;
                     message.react("✅");
-/*
-                    fs.appendFile('messagelogs.txt', '\n' + hashedId + '-' + message.content, function(err) {
-                        if (err) throw err;
-                        console.log('Poll logged');
-                    });*/
+                    /*
+                                        fs.appendFile('messagelogs.txt', '\n' + hashedId + '-' + message.content, function(err) {
+                                            if (err) throw err;
+                                            console.log('Poll logged');
+                                        });*/
                     client.channels.get(instantChannel).send(new Discord.RichEmbed()
                         .setColor('#FFA500')
                         .setTitle('Poll')
@@ -1931,12 +1951,12 @@ client.on("message", async message => {
                     );
                 }, 45000)
             });
-/*
-            fs.appendFile('messagelogs.txt', '\n' + cNum + '-' + hashedId + '-' + message.content, function(err) {
-                if (err) throw err;
-                console.log('Exploding message logged');
-            });
-*/
+            /*
+                        fs.appendFile('messagelogs.txt', '\n' + cNum + '-' + hashedId + '-' + message.content, function(err) {
+                            if (err) throw err;
+                            console.log('Exploding message logged');
+                        });
+            */
             return;
         } else if (isRoulette) {
             var rand = Math.random();
@@ -2011,22 +2031,22 @@ client.on("message", async message => {
         //repPostReporters.push(cNum);
 
         message.react("✅");
-/*
-        if (message.attachments.size > 0) {
-            fs.appendFile('messagelogs.txt', '\n' + cNum + '-' + hashedId + '-' + attach[0].url, function(err) {
-                if (err) throw err;
-                console.log('Confession logged');
-            });
-        } else {
+        /*
+                if (message.attachments.size > 0) {
+                    fs.appendFile('messagelogs.txt', '\n' + cNum + '-' + hashedId + '-' + attach[0].url, function(err) {
+                        if (err) throw err;
+                        console.log('Confession logged');
+                    });
+                } else {
 
 
-            fs.appendFile('messagelogs.txt', '\n' + cNum + '-' + hashedId + '-' + message.content, function(err) {
-                if (err) throw err;
-                console.log('Confession logged');
-            });
+                    fs.appendFile('messagelogs.txt', '\n' + cNum + '-' + hashedId + '-' + message.content, function(err) {
+                        if (err) throw err;
+                        console.log('Confession logged');
+                    });
 
-        }
-        */
+                }
+                */
 
         cNum++;
         for (var i = 0; i < cashUserInv.length; i++) {
