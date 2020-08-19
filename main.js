@@ -388,7 +388,7 @@ client.on("message", async message => {
     if (message.content == "brycoinhelp") {
         let fulltxt = "";
         for (var i = 0; i < bannedCmds.length; i++) {
-            fulltxt += bannedCmds[i] + "\n";
+            fulltxt += bannedCmds[i] + ", ";
         }
         message.channel.send(new Discord.RichEmbed()
             .setColor('#FFDF00')
@@ -752,7 +752,7 @@ client.on("message", async message => {
                 message.channel.send(new Discord.RichEmbed()
                     .setColor('#FFDF00')
                     .setTitle('Success!')
-                    .setDescription("You successfully robbed " + factionNames[split[1]] + "! You took " + Math.floor(0.4 * factionWarchest[split[1]]) + " Brycoins - 50% of their warchest.")
+                    .setDescription("You successfully robbed " + factionNames[split[1]] + "! You took " + Math.floor(0.4 * factionWarchest[split[1]]) + " Brycoins - 40% of their warchest.")
                     .addField("Stats", "There is a " + (probability.toString().slice(2) + "0") + "% of a factionraid failing determined by the target faction level. You rolled " + roll)
                 );
                 factionWarchest[split[1]] -= Math.floor(0.4 * factionWarchest[split[1]]);
@@ -763,7 +763,7 @@ client.on("message", async message => {
                 message.channel.send(new Discord.RichEmbed()
                     .setColor('#FFDF00')
                     .setTitle('Failure!')
-                    .setDescription("You failed to rob " + factionNames[split[1]] + "! They took " + Math.floor(0.4 * factionWarchest[id]) + " Brycoins - 30% of your warchest.")
+                    .setDescription("You failed to rob " + factionNames[split[1]] + "! They took " + Math.floor(0.4 * factionWarchest[id]) + " Brycoins - 40% of your warchest.")
                     .addField("Stats", "There is a " + (probability.toString().slice(2) + "0") + "% of a factionraid failing determined by the target faction level. You rolled " + roll)
                 );
                 factionWarchest[split[1]] += Math.floor(0.4 * factionWarchest[id]);
