@@ -92,6 +92,7 @@ let topGamblesWager = store.get('gambWager');
 let topGamblesInfo = store.get('gambInfo');
 let factionNames = store.get('factionNames');
 let factionVault = store.get('factionVault');
+let factionWarchest = store.get('factionWarchest');
 let factionOwner = store.get('factionOwner');
 let factionLevel = store.get('factionLevel');
 let userFaction = store.get('userFaction');
@@ -631,12 +632,8 @@ client.on("message", async message => {
             message.channel.send("You can't rob a faction member!");
             return;
         }
-        if (cashUserBals[indexxxx] < getRankCost(rankId - 6)) {
-            message.channel.send("You need at least " + getRankCost(rankId - 6) + " Brycoins to rob that user!");
-            return;
-        }
-        if (cashUserBals[indexxxx] < getRankCost(getRankId(message.author.id) - 5)) {
-            message.channel.send("You need at least " + getRankCost(getRankId(message.author.id) - 5) + " Brycoins to rob anyone!");
+        if (cashUserBals[indexxxx] < getRankCost(rankId - 5)) {
+            message.channel.send("You need at least " + getRankCost(rankId - 5) + " Brycoins to rob that user!");
             return;
         }
         if (cashUserBals[targId] < insuranceCost) {
@@ -681,6 +678,171 @@ client.on("message", async message => {
             cashUserBals[indexxxx] -= Math.floor(0.3 * cashUserBals[indexxxx]);
             cashUserBals[targId] += Math.floor(0.3 * cashUserBals[indexxxx]);
             store.set('userBals', cashUserBals);
+            return;
+        }
+    }
+
+    if(message.content.toLowerCase() == "disableinvites") {
+        if(userFaction[cashUserIds.indexOf(message.author.id)] > -1) {
+            message.channel.send("You are in a faction!");
+            return;
+        }
+        userFaction[cashUserIds.indexOf(message.author.id)] = -2;
+        message.channel.send("You are now rejecting all faction invites.");
+        return;
+    }
+
+    if(message.content.toLowerCase() == "acceptinvites") {
+        if(userFaction[cashUserIds.indexOf(message.author.id)] > -1) {
+            message.channel.send("You are in a faction!");
+            return;
+        }
+        userFaction[cashUserIds.indexOf(message.author.id)] = -1;
+        message.channel.send("You are now accepting all faction invites.");
+        return;
+    }
+
+    if(message.content.toLowerCase() == "levelup") {
+        let id = userFaction[cashUserIds.indexOf(message.author.id)];
+        if (id <= -1) {
+            message.channel.send("You are not in a faction!");
+            return;
+        }
+        let facMem = 0;
+        for (var i = 0; i < userFaction.length; i++) {
+            if (userFaction[i] == userFaction[cashUserIds.indexOf(message.author.id)]) {
+                facMem++;
+            }
+        }
+        if(factionLevel[id] >= facMem*2) {
+            message.channel.send("You need one more member to level up your faction!");
+            return;
+        }
+        let levelPrice = 5000;
+        if(factionLevel[id] > 4) {
+            levelPrice = 7500;
+        }
+        if(factionVault[id] < levelPrice) {
+            message.channel.send("You need "+levelPrice+" BC in your vault to level up!");
+            return;
+        }
+        message.channel.send("You have levelled your faction up! You now are at level "+(factionLevel[id]+1)+".");
+        factionVault[id] -= levelPrice;
+        factionLevel[id] += 1;
+        return;
+    }
+
+
+    if (message.channel.type != "dm" && message.content.toLowerCase().startsWith("raid")) {
+        let id = userFaction[cashUserIds.indexOf(message.author.id)];
+        if (id <= -1) {
+            message.channel.send("You are not in a faction!");
+            return;
+        }
+        
+        if(message.content.length < 10) {
+            let split = message.content.split(" ");
+            if(isNaN(split[1]) || split[1] < 0 || split[1] > factionNames.length-1 || factionWarchest[split[1]] < 1) {
+                message.channel.send("Error raiding faction!");
+                return;
+            }
+            let probability = (factionLevel[split[1]]/10);
+            let roll = Math.random();
+            if(roll > probability) {
+                message.channel.send(new Discord.RichEmbed()
+                .setColor('#FFDF00')
+                .setTitle('Success!')
+                .setDescription("You successfully robbed "+factionNames[split[1]]+"! You took " + Math.floor(0.4 * factionWarchest[split[1]]) + " Brycoins - 50% of their warchest.")
+                .addField("Stats", "There is a "+(probability.toString().slice(2)+"0")+"% of a factionraid failing determined by the target faction level. You rolled "+roll)
+            );
+            factionWarchest[split[1]] -= Math.floor(0.4 * factionWarchest[split[1]]);
+            factionWarchest[id] += Math.floor(0.4 * factionWarchest[split[1]]);
+            store.set('factionWarchest', factionWarchest);
+            return;
+            } else {
+                message.channel.send(new Discord.RichEmbed()
+                .setColor('#FFDF00')
+                .setTitle('Failure!')
+                .setDescription("You failed to rob "+factionNames[split[1]]+"! They took " + Math.floor(0.4 * factionWarchest[id]) + " Brycoins - 30% of your warchest.")
+                .addField("Stats", "There is a "+(probability.toString().slice(2)+"0")+"% of a factionraid failing determined by the target faction level. You rolled "+roll)
+            );
+            factionWarchest[split[1]] += Math.floor(0.4 * factionWarchest[id]);
+            factionWarchest[id] -= Math.floor(0.4 * factionWarchest[id]);
+            store.set('factionWarchest', factionWarchest);
+            return;
+            }
+            message.channel.send("Failure!");
+            return;
+        }
+        let targetedUser = message.content.slice(8, 26);
+        let targId = cashUserIds.indexOf(targetedUser);
+        let targInv = cashUserInv[targId].split(",");
+        if (targId == -1) {
+            message.channel.send("Invalid target!");
+            return;
+        }
+        let rankId = getRankId(targetedUser);
+        let rankCost = getRankCost(rankId);
+        let insuranceCost = Math.floor(rankCost * 0.75);
+        if (rankId == 0) {
+            rankCost = 0;
+        }
+        if (userFaction[targId] == id) {
+            message.channel.send("You can't rob a faction member!");
+            return;
+        }
+        if (factionWarchest[id] < 10000) {
+            message.channel.send("You need at least " + 10000 + " Brycoins in your vault to rob that user!");
+            return;
+        }
+        if(factionWarchest[id] > 10000) {
+            message.channel.send("You have unclaimed warchest earnings! Withdraw "+(factionWarchest[id]-10000));
+            return;
+        }
+        if (cashUserBals[targId] < insuranceCost) {
+            message.channel.send(new Discord.RichEmbed()
+                .setColor('#FFDF00')
+                .setTitle('Failure!')
+                .setDescription(addTitle(targetedUser) + " has a balance under their insurance, disallowing you to steal from them.")
+            );
+            return;
+        }
+        let probab = 0.5-(factionLevel[id]*0.02);
+        if (Math.random() < probab) {
+            message.channel.send(new Discord.RichEmbed()
+                .setColor('#FFDF00')
+                .setTitle('Oh No!')
+                .setDescription("The police caught you before you could rob anyone! They took " + Math.floor(0.3 * factionWarchest[id]) + " Brycoins - 30% of your balance - from your warchest.")
+                .addField("Stats", "There is a "+probab+"% of a robbery failing due to police.")
+            );
+            factionWarchest[id] -= Math.floor(0.3 * factionWarchest[id]);
+            store.set('factionWarchest', factionWarchest);
+            return;
+        }
+        if (Math.random() < (1 - (rankId / allTitles.length))) {
+            var stealAmt = Math.floor(cashUserBals[targId] * 0.3);
+            message.channel.send(new Discord.RichEmbed()
+                .setColor('#FFDF00')
+                .setTitle('Success!')
+                .setDescription("You successfully robbed " + addTitle(targetedUser) + " ! You stole " + Math.floor(stealAmt) + " Brycoins - 30% of their balance - from their wallet.")
+                .addField("Stats", "There is a "+probab+"% of a robbery failing due to police, and " + addTitle(targetedUser) + " had rank protection adding a " + ((rankId / allTitles.length) * 100) + "% chance of failure after you evaded the police.")
+            );
+            cashUserBals[targId] -= Math.floor(stealAmt);
+            factionWarchest[id] += Math.floor(stealAmt);
+            store.set('userBals', cashUserBals);
+            store.set('factionWarchest', factionWarchest);
+            return;
+        } else {
+            message.channel.send(new Discord.RichEmbed()
+                .setColor('#FFDF00')
+                .setTitle('Failure!')
+                .setDescription(addTitle(targetedUser) + " managed to defend themselves and took " + Math.floor(0.3 * factionWarchest[id]) + " Brycoins - 30% of your balance - from your wallet.")
+                .addField("Stats", "There is a "+probab+"% of a robbery failing due to police, and " + addTitle(targetedUser) + " had rank protection adding a " + ((rankId / allTitles.length) * 100) + "% chance of failure.")
+            );
+            factionWarchest[id] -= Math.floor(0.3 * factionWarchest[id]);
+            cashUserBals[targId] += Math.floor(0.3 * factionWarchest[id]);
+            store.set('userBals', cashUserBals);
+            store.set('factionWarchest', factionWarchest);
             return;
         }
     }
@@ -978,6 +1140,10 @@ client.on("message", async message => {
             message.channel.send("You are already in a faction!");
             return;
         }
+        if(getRankId(message.author.id) <= 3) {
+            message.channel.send("Users must be at least rank Journeyman to join a faction!");
+            return;
+        }
         if (message.content.slice(14).length < 4 || factionNames.indexOf(message.content.slice(14)) != -1) {
             message.channel.send("Invalid faction name! Must be greater than 4 characters and not yet exist");
             return;
@@ -991,6 +1157,7 @@ client.on("message", async message => {
         factionNames.push(message.content.slice(14));
         factionVault.push(0);
         factionLevel.push(1);
+        factionWarchest.push(0);
         factionOwner.push(message.author.id);
         userFaction[cashUserIds.indexOf(message.author.id)] = factionVault.length - 1;
         message.channel.send("Congrats " + addTitle(message.author.id) + " - you are now the leader of " + message.content.slice(14) + "!\nThis transaction cost you 5000 BC.");
@@ -999,6 +1166,7 @@ client.on("message", async message => {
         store.set('factionVault', factionVault);
         store.set('factionLevel', factionLevel);
         store.set('factionOwner', factionOwner);
+        store.set('factionWarchest', factionWarchest);
         return;
     }
 
@@ -1039,6 +1207,7 @@ client.on("message", async message => {
         store.set('factionVault', factionVault);
         store.set('factionLevel', factionLevel);
         store.set('factionOwner', factionOwner);
+        store.set('factionWarchest', factionWarchest);
         return;
     }
 
@@ -1047,6 +1216,10 @@ client.on("message", async message => {
         let targInd = cashUserIds.indexOf(sluice);
         if (targInd == -1 || userFaction[targInd] != -1 || userFaction[cashUserIds.indexOf(message.author.id)] <= -1) {
             message.channel.send("This user could not be invited!");
+            return;
+        }
+        if(getRankId(sluice) <= 3) {
+            message.channel.send("Users must be at least rank Journeyman to join a faction!");
             return;
         }
         let facMem = 0;
@@ -1066,6 +1239,7 @@ client.on("message", async message => {
         store.set('factionVault', factionVault);
         store.set('factionLevel', factionLevel);
         store.set('factionOwner', factionOwner);
+        store.set('factionWarchest', factionWarchest);
         return;
 
     }
@@ -1084,6 +1258,7 @@ client.on("message", async message => {
         store.set('factionVault', factionVault);
         store.set('factionLevel', factionLevel);
         store.set('factionOwner', factionOwner);
+        store.set('factionWarchest', factionWarchest);
         return;
     }
 
@@ -1104,6 +1279,7 @@ client.on("message", async message => {
         store.set('factionVault', factionVault);
         store.set('factionLevel', factionLevel);
         store.set('factionOwner', factionOwner);
+        store.set('factionWarchest', factionWarchest);
         return;
     }
 
@@ -1118,7 +1294,7 @@ client.on("message", async message => {
     }
 
 
-    if (message.content.toLowerCase() == "listfactions") {
+    if (message.content.toLowerCase() == "listfactions" || message.content.toLowerCase() == "factionlist") {
         let fulltext = "";
         for (var i = 0; i < factionNames.length; i++) {
             if (factionNames[i] == "deleted") {
@@ -1139,6 +1315,7 @@ client.on("message", async message => {
         store.set('factionVault', factionVault);
         store.set('factionLevel', factionLevel);
         store.set('factionOwner', factionOwner);
+        store.set('factionWarchest', factionWarchest);
         return;
     }
 
@@ -1172,16 +1349,21 @@ client.on("message", async message => {
 
             }
         }
+        let maxDep = (factionLevel[id]-2)*10000;
+        if(maxDep < 10000) {
+            maxDep = 10000;
+        }
         message.channel.send(new Discord.RichEmbed()
             .setColor('#FFDF00')
             .setTitle(factionNames[id])
-            .setDescription('Vault: ' + factionVault[id] + " BC\nLevel " + factionLevel[id] + "\nMembers:\n" + addTitle(factionOwner[id]) + " \(Owner\)" + memberListText)
+            .setDescription('Vault: ' + factionVault[id] + "/"+maxDep+" BC\nWarchest: "+factionWarchest[id]+"/10000 BC\nLevel " + factionLevel[id] + "\nMembers:\n" + addTitle(factionOwner[id]) + " \(Owner\)" + memberListText)
         );
         store.set('userFaction', userFaction);
         store.set('factionNames', factionNames);
         store.set('factionVault', factionVault);
         store.set('factionLevel', factionLevel);
         store.set('factionOwner', factionOwner);
+        store.set('factionWarchest', factionWarchest);
         return;
     }
 
@@ -1196,8 +1378,12 @@ client.on("message", async message => {
             message.channel.send("Vault deposit failed!");
             return;
         }
-        if ((factionVault[userFaction[userInd]] + depAmt) > factionLevel[userFaction[userInd]] * 10000) {
-            message.channel.send("Vault deposit failed! Your faction's vault can hold a maximum of " + userFaction[userInd] * 10000);
+        let maxDep = (factionLevel[userFaction[userInd]]-2)*10000;
+        if(maxDep < 10000) {
+            maxDep = 10000;
+        }
+        if ((factionVault[userFaction[userInd]] + depAmt) > maxDep) {
+            message.channel.send("Vault deposit failed! Your faction's vault can hold a maximum of " + maxDep);
             return;
         }
         cashUserBals[userInd] -= depAmt;
@@ -1208,6 +1394,40 @@ client.on("message", async message => {
         store.set('factionVault', factionVault);
         store.set('factionLevel', factionLevel);
         store.set('factionOwner', factionOwner);
+        store.set('factionWarchest', factionWarchest);
+        return;
+
+    }
+
+    if (message.content.toLowerCase().startsWith("warchestdeposit")) {
+        if (userFaction[cashUserIds.indexOf(message.author.id)] <= -1) {
+            message.channel.send("You are not in a faction!");
+            return;
+        }
+
+        var depAmt = parseInt(message.content.slice(16));
+        let userInd = cashUserIds.indexOf(message.author.id);
+        if (depAmt > cashUserBals[userInd] || depAmt < 1 || isNaN(depAmt) || userInd == -1) {
+            message.channel.send("Warchest deposit failed!");
+            return;
+        }
+        if(factionLevel[userFaction[userInd]] < 2) {
+            message.channel.send("Warchest deposit failed! You need at least level 2!");
+            return;
+        }
+        if ((factionWarchest[userFaction[userInd]] + depAmt) > 10000) {
+            message.channel.send("Warchest deposit failed! Your faction's warchest can hold a maximum of " + 10000);
+            return;
+        }
+        cashUserBals[userInd] -= depAmt;
+        factionWarchest[userFaction[userInd]] += depAmt;
+        message.channel.send("Deposit successful! New warchest balance: " + factionWarchest[userFaction[userInd]]);
+        store.set('userFaction', userFaction);
+        store.set('factionNames', factionNames);
+        store.set('factionVault', factionVault);
+        store.set('factionLevel', factionLevel);
+        store.set('factionOwner', factionOwner);
+        store.set('factionWarchest', factionWarchest);
         return;
 
     }
@@ -1231,6 +1451,31 @@ client.on("message", async message => {
         store.set('factionVault', factionVault);
         store.set('factionLevel', factionLevel);
         store.set('factionOwner', factionOwner);
+        store.set('factionWarchest', factionWarchest);
+        return;
+
+    }
+
+    if (message.content.toLowerCase().startsWith("warchestwithdraw")) {
+        if (userFaction[cashUserIds.indexOf(message.author.id)] <= -1) {
+            message.channel.send("You are not in a faction!");
+            return;
+        }
+        var drawAmt = parseInt(message.content.slice(17));
+        let userInd = cashUserIds.indexOf(message.author.id);
+        if (drawAmt > factionWarchest[userFaction[userInd]] || drawAmt < 1 || isNaN(drawAmt) || userInd == -1) {
+            message.channel.send("Warchest withdraw failed!");
+            return;
+        }
+        cashUserBals[userInd] += drawAmt;
+        factionWarchest[userFaction[userInd]] -= drawAmt;
+        message.channel.send("Withdraw successful! New warchest balance: " + factionWarchest[userFaction[userInd]]);
+        store.set('userFaction', userFaction);
+        store.set('factionNames', factionNames);
+        store.set('factionVault', factionVault);
+        store.set('factionLevel', factionLevel);
+        store.set('factionOwner', factionOwner);
+        store.set('factionWarchest', factionWarchest);
         return;
 
     }
