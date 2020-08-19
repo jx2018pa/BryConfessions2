@@ -627,7 +627,7 @@ client.on("message", async message => {
             message.channel.send("You can't rob yourself...");
             return;
         }
-        if (userFaction[targId] == userFaction[indexxxx]) {
+        if (userFaction[targId] == userFaction[indexxxx] && userFaction[targId] != -1) {
             message.channel.send("You can't rob a faction member!");
             return;
         }
