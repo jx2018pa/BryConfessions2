@@ -746,6 +746,14 @@ client.on("message", async message => {
                 message.channel.send("Error raiding faction!");
                 return;
             }
+            let amNeeded = 5000;
+        if(factionWarchest[split[1]] < 5000) {
+        	amNeeded = factionWarchest[split[1]];
+        }
+        if (factionWarchest[id] < amNeeded) {
+            message.channel.send("You need at least " + amNeeded + " Brycoins in your warchest to rob that faction!");
+            return;
+        }
             let probability = (factionLevel[split[1]] / 10);
             let roll = Math.random();
             if (roll > probability) {
