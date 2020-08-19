@@ -791,8 +791,12 @@ client.on("message", async message => {
             message.channel.send("You can't rob a faction member!");
             return;
         }
-        if (factionWarchest[id] < 10000) {
-            message.channel.send("You need at least " + 10000 + " Brycoins in your vault to rob that user!");
+        let amNeeded = 10000;
+        if(cashUserBals[targId] < 10000) {
+        	amNeeded = cashUserBals[targId];
+        }
+        if (factionWarchest[id] < amNeeded) {
+            message.channel.send("You need at least " + amNeeded + " Brycoins in your warchest to rob that user!");
             return;
         }
         if (factionWarchest[id] > 10000) {
