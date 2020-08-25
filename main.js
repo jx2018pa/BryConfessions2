@@ -38,6 +38,7 @@ let cashUserBals = store.get('userBals');
 let cashUserInv = store.get('userInv');
 let cashUserBank = store.get('userBank');
 let cashUserDeposit = store.get('userDeposit');
+let cashUserStocks = store.get('userStocks');
 const cashShopListings = store.get('shopListings');
 const cashShopCosts = store.get('shopCosts');
 const secret = store.get('secretKey');
@@ -97,6 +98,8 @@ let factionOwner = store.get('factionOwner');
 let factionLevel = store.get('factionLevel');
 let userFaction = store.get('userFaction');
 let lastTaxed = Date.now();
+let stockPrice = store.get('stockPrice');
+let lastStockPrice = stockPrice;
 const brycoinWhitelist = ["743902996567425089", "739250815700828292", "739221630596808744", "739247750020989029", "514170284027150385", "740275815622639656", "493553508251861012", "651622265666142248", "508822430123425794", "739253509576327268", "741360591368618034", "496796970929618945"];
 const bannedCmds = ["balance", "brybank", "gamble", "titles", "rankup", "rob", "transfer", "leaderboard", "togglerank", "buy", "inventory", "makeitrain", "ranks", "topgambles", "createfaction", "disbandfaction", "invite", "kick", "listfactions", "factioninfo", "vaultdeposit", "vaultwithdraw", "factionlist", "disableinvites", "raid", "acceptinvites", "levelup", "warchestdeposit", "warchestwithdraw"];
 const allTitles = ["🗑️ Bum",
@@ -320,6 +323,7 @@ client.on("message", async message => {
             cashUserBank.push(0);
             cashUserDeposit.push(0);
             userFaction.push(-1);
+            cashUserStocks.push(0);
             return;
         }
         let rankId = getRankId(message.author.id);
@@ -398,7 +402,7 @@ client.on("message", async message => {
 
     }
 
-    if (brycoinWhitelist.indexOf(message.channel.id) == -1 && message.channel.type != "dm") {
+    if (brycoinWhitelist.indexOf(message.channel.id.toLowerCase()) == -1 && message.channel.type != "dm") {
         for (var i = 0; i < bannedCmds.length; i++) {
             if (message.content.startsWith(bannedCmds[i])) {
                 /*
@@ -432,7 +436,7 @@ client.on("message", async message => {
         let rankId = getRankId(targetUserId);
         let rankCost = parseInt(getRankCost(rankId));
         let insuranceCost = Math.floor(rankCost * 0.75);
-        let balanceString = addTitle(targetUserId) + '\n' + cashUserBals[indd] + ' Brycoins in Wallet\n' + getBankBal(targetUserId) + ' Brycoins in Brybank\nThis user is insured for ' + insuranceCost + ' Brycoins.\nNext hourly ' + getHourlyReward(rankId) + ' BC reward in ' + Math.round((3600000 - (Date.now() - rateUserRefresh[rateUserIndex])) / 60000) + ' minutes.';
+        let balanceString = addTitle(targetUserId) + '\n' + cashUserBals[indd] + ' Brycoins in Wallet\n' + getBankBal(targetUserId) + ' Brycoins in Brybank\n'+cashUserStocks[indd]+' Brystocks\nThis user is insured for ' + insuranceCost + ' Brycoins.\nNext hourly ' + getHourlyReward(rankId) + ' BC reward in ' + Math.round((3600000 - (Date.now() - rateUserRefresh[rateUserIndex])) / 60000) + ' minutes.';
         if (userFaction[indd] > -1) {
             balanceString += "\nMember of " + factionNames[userFaction[indd]];
         }
@@ -440,6 +444,79 @@ client.on("message", async message => {
             .setColor('#FFDF00')
             .setTitle('Balance')
             .setDescription(balanceString)
+        );
+        return;
+    }
+
+    if(message.content.toLowerCase().startsWith("buystocks")) {
+    	let buyAmt = 0;
+    	if(message.content.toLowerCase() == "buystocks") {
+    		buyAmt = 1;
+    	} else {
+    		buyAmt = parseInt(message.content.slice(9));
+    	} 
+    	let totalPayAmt = 0;
+    	//let theoStockCost = stockPrice;
+    	for(var i = 1; i < buyAmt+1; i++) {
+    		totalPayAmt += stockPrice +(i*50);
+    	}
+    	if(buyAmt <= 0 || isNaN(buyAmt) || cashUserIds.indexOf(message.author.id) == -1 || totalPayAmt > cashUserBals[cashUserIds.indexOf(message.author.id)] || totalPayAmt < 0) {
+    		message.channel.send("Error! You might not have enough money to buy that many stocks! You would need "+totalPayAmt+" BC.");
+    		return;
+    	}
+    	if(((buyAmt+cashUserStocks[cashUserIds.indexOf(message.author.id)])*stockPrice) > 10000) {
+    		message.channel.send("You can't own that many stocks! Based on market dynamics you can own up to "+(10000/stockPrice)+" Brystocks right now.");
+    		return;
+    	}
+    	stockPrice = stockPrice+(50*buyAmt);
+    	cashUserStocks[cashUserIds.indexOf(message.author.id)] += buyAmt;
+    	cashUserBals[cashUserIds.indexOf(message.author.id)] -= totalPayAmt;
+    	store.set('stockPrice', stockPrice);
+    	store.set('userStocks', cashUserStocks);
+    	message.channel.send(new Discord.RichEmbed()
+            .setColor('#FFDF00')
+            .setTitle('Transaction Summary')
+            .setDescription('You just paid '+totalPayAmt+' BC for '+buyAmt+' Brystocks!\nYou paid an average of '+(totalPayAmt/buyAmt)+' BC per share\nThe stock price is now '+stockPrice+' BC per share.')
+        );
+        return;
+
+    }
+
+    if(message.content.toLowerCase().startsWith("sellstocks")) {
+    	let sellAmt = 0;
+    	if(message.content.toLowerCase() == "sellstocks") {
+    		sellAmt = 1;
+    	} else {
+    		sellAmt = parseInt(message.content.slice(11));
+    	}
+    	let totalPayAmt = 0;
+    	//let theoStockCost = stockPrice;
+    	for(var i = 0; i < sellAmt; i++) {
+    		totalPayAmt += stockPrice-(i*50);
+    	}
+    	if(sellAmt <= 0 || isNaN(sellAmt) || cashUserIds.indexOf(message.author.id) == -1 || sellAmt > cashUserStocks[cashUserIds.indexOf(message.author.id)]) {
+    		message.channel.send("Error! You might not have enough stocks to sell!");
+    		return;
+    	}
+    	stockPrice = stockPrice-(50*sellAmt);
+    	cashUserStocks[cashUserIds.indexOf(message.author.id)] -= sellAmt;
+    	cashUserBals[cashUserIds.indexOf(message.author.id)] += totalPayAmt;
+    	store.set('stockPrice', stockPrice);
+    	store.set('userStocks', cashUserStocks);
+    	message.channel.send(new Discord.RichEmbed()
+            .setColor('#FFDF00')
+            .setTitle('Transaction Summary')
+            .setDescription('You just earned '+totalPayAmt+' BC for selling '+sellAmt+' Brystocks!\nYou earned an average of '+(totalPayAmt/sellAmt)+' BC per share\nThe stock price is now '+stockPrice+' BC per share.')
+        );
+        return;
+
+    }
+
+    if(message.content.toLowerCase() == "stockmarket") {
+    	message.channel.send(new Discord.RichEmbed()
+            .setColor('#FFDF00')
+            .setTitle('Stock Market')
+            .setDescription('Current Brystock Price: '+stockPrice+'\n24 hr change: 📈 '+(((stockPrice-lastStockPrice)/lastStockPrice)*100).toString().slice(0,5)+'%')
         );
         return;
     }
@@ -593,6 +670,7 @@ client.on("message", async message => {
                 confsEarned = 0;
                 revealsEarned = 0;
                 ranksEarned = 0;
+                lastStockPrice = stockPrice;
             }
             for (var i = 0; i < cashUserInv.length; i++) {
                 if (getRankId(cashUserIds[i]) >= 6 && ranksEarned < 4) {
@@ -866,6 +944,7 @@ client.on("message", async message => {
             confsEarned = 0;
             revealsEarned = 0;
             ranksEarned = 0;
+            lastStockPrice = stockPrice;
         }
         let rankMoney = (ranksEarned * 2000);
         let confMoney = (confsEarned * 50);
@@ -913,32 +992,6 @@ client.on("message", async message => {
             return;
         }
         message.channel.send("Success! You are now " + addTitle(message.author.id));
-        return;
-    }
-
-
-
-    if (message.channel.type != "dm" && message.content.startsWith("buy")) {
-        /*
-        let itemInd = parseInt(message.content.slice(4));
-        let buyerInd = cashUserIds.indexOf(message.author.id);
-        if (buyerInd == -1 || isNaN(itemInd) || itemInd < 0 || itemInd >= cashShopListings.length) {
-            message.channel.send("Could not buy item!");
-            return;
-        }
-        if (cashUserBals[buyerInd] < cashShopCosts[itemInd]) {
-            message.channel.send("You do not have enough brycoins to buy this!");
-            return;
-        } else if ((cashUserBals[buyerInd] - cashShopCosts[itemInd]) >= 0) {
-            cashUserBals[buyerInd] = (cashUserBals[buyerInd] - cashShopCosts[itemInd]);
-            cashUserInv[buyerInd] += "," + itemInd;
-            store.set('userInv', cashUserInv);
-            message.channel.send("Purchase successful! Please check your inventory to see your new items.");
-            return;
-
-        }
-        */
-        message.channel.send("Shop is closed temporarily! Check rank perks instead!");
         return;
     }
 
@@ -1365,6 +1418,9 @@ client.on("message", async message => {
         if (maxDep < 10000) {
             maxDep = 10000;
         }
+        if(maxDep > 50000) {
+        	maxDep = 50000;
+        }
         message.channel.send(new Discord.RichEmbed()
             .setColor('#FFDF00')
             .setTitle(factionNames[id])
@@ -1393,6 +1449,9 @@ client.on("message", async message => {
         let maxDep = (factionLevel[userFaction[userInd]] - 2) * 10000;
         if (maxDep < 10000) {
             maxDep = 10000;
+        }
+        if(maxDep > 50000) {
+        	maxDep = 50000;
         }
         if ((factionVault[userFaction[userInd]] + depAmt) > maxDep) {
             message.channel.send("Vault deposit failed! Your faction's vault can hold a maximum of " + maxDep);
@@ -2245,6 +2304,7 @@ client.on("message", async message => {
                             confsEarned = 0;
                             revealsEarned = 0;
                             ranksEarned = 0;
+                            lastStockPrice = stockPrice;
                         }
                         if (revealsEarned < 24) {
                             cashUserBals[i] += 150;
@@ -2327,6 +2387,7 @@ client.on("message", async message => {
                     confsEarned = 0;
                     revealsEarned = 0;
                     ranksEarned = 0;
+                    lastStockPrice = stockPrice;
                 }
                 if (confsEarned < 150) {
                     cashUserBals[i] += 50;
