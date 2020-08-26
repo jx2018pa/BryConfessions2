@@ -101,7 +101,7 @@ let lastTaxed = Date.now();
 let stockPrice = store.get('stockPrice');
 let lastStockPrice = stockPrice;
 const brycoinWhitelist = ["743902996567425089", "739250815700828292", "739221630596808744", "739247750020989029", "514170284027150385", "740275815622639656", "493553508251861012", "651622265666142248", "508822430123425794", "739253509576327268", "741360591368618034", "496796970929618945"];
-const bannedCmds = ["balance", "brybank", "gamble", "titles", "rankup", "rob", "transfer", "leaderboard", "togglerank", "buy", "inventory", "makeitrain", "ranks", "topgambles", "createfaction", "disbandfaction", "invite", "kick", "listfactions", "factioninfo", "vaultdeposit", "vaultwithdraw", "factionlist", "disableinvites", "raid", "acceptinvites", "levelup", "warchestdeposit", "warchestwithdraw"];
+const bannedCmds = ["balance", "brybank", "gamble", "titles", "rankup", "rob", "transfer", "leaderboard", "togglerank", "buy", "inventory", "makeitrain", "ranks", "topgambles", "createfaction", "disbandfaction", "invite", "kick", "listfactions", "factioninfo", "vaultdeposit", "vaultwithdraw", "factionlist", "disableinvites", "raid", "acceptinvites", "levelup", "warchestdeposit", "warchestwithdraw","buystocks","stockmarket","sellstocks"];
 const allTitles = ["🗑️ Bum",
     "🧱 Commoner",
     "🎖️ Ensign",
@@ -456,6 +456,10 @@ client.on("message", async message => {
     		buyAmt = parseInt(message.content.slice(9));
     	} 
     	let totalPayAmt = 0;
+    	if(buyAmt > 100) {
+    		message.channel.send("You can't buy that much stock!");
+    		return;
+    	}
     	//let theoStockCost = stockPrice;
     	for(var i = 1; i < buyAmt+1; i++) {
     		totalPayAmt += stockPrice +(i*50);
@@ -464,8 +468,8 @@ client.on("message", async message => {
     		message.channel.send("Error! You might not have enough money to buy that many stocks! You would need "+totalPayAmt+" BC.");
     		return;
     	}
-    	if(((buyAmt+cashUserStocks[cashUserIds.indexOf(message.author.id)])*stockPrice) > 12000) {
-    		message.channel.send("You can't own that many stocks! Based on market dynamics you can own up to "+(12000/stockPrice)+" Brystocks right now.");
+    	if(((buyAmt+cashUserStocks[cashUserIds.indexOf(message.author.id)])*stockPrice) > 13000) {
+    		message.channel.send("You can't own that many stocks! Based on market dynamics you can own up to "+Math.floor(13000/stockPrice)+" Brystocks right now.");
     		return;
     	}
     	stockPrice = stockPrice+(50*buyAmt);
@@ -491,6 +495,10 @@ client.on("message", async message => {
     	}
     	let totalPayAmt = 0;
     	//let theoStockCost = stockPrice;
+    	if(sellAmt > 40) {
+    		message.channel.send("You can't sell that much stock!");
+    		return;
+    	}
     	for(var i = 0; i < sellAmt; i++) {
     		totalPayAmt += stockPrice-(i*50);
     	}
