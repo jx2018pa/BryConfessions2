@@ -464,8 +464,8 @@ client.on("message", async message => {
     		message.channel.send("Error! You might not have enough money to buy that many stocks! You would need "+totalPayAmt+" BC.");
     		return;
     	}
-    	if(((buyAmt+cashUserStocks[cashUserIds.indexOf(message.author.id)])*stockPrice) > 10000) {
-    		message.channel.send("You can't own that many stocks! Based on market dynamics you can own up to "+(10000/stockPrice)+" Brystocks right now.");
+    	if(((buyAmt+cashUserStocks[cashUserIds.indexOf(message.author.id)])*stockPrice) > 12000) {
+    		message.channel.send("You can't own that many stocks! Based on market dynamics you can own up to "+(12000/stockPrice)+" Brystocks right now.");
     		return;
     	}
     	stockPrice = stockPrice+(50*buyAmt);
