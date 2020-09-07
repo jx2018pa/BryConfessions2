@@ -308,7 +308,7 @@ client.on("message", async message => {
     if (message.author.bot) {
         return;
     }
-    if(message.channel.id == "752622740166541322") {
+    if(message.channel.id == "752646474348757033") {
         if(message.author.id == lastUser) {
             message.delete();
             //message.channel.send("Someone else needs to type the next number!");
