@@ -272,7 +272,7 @@ function getBankBal(id) {
         return 0;
     }
     let epoch = Math.floor((Date.now() - cashUserDeposit[ussIndd]) / 86400000);
-    let theoBal = Math.floor(cashUserBank[ussIndd] * Math.pow(1.05, epoch));
+    let theoBal = Math.floor(cashUserBank[ussIndd] * Math.pow(1.10, epoch));
     if ((theoBal - cashUserBank[ussIndd]) > 10000) {
         theoBal = cashUserBank[ussIndd] + 10000;
     }
@@ -579,7 +579,7 @@ client.on("message", async message => {
             return;
         }
         let epoch = Math.floor((Date.now() - cashUserDeposit[ussIndd]) / 86400000);
-        let tmrwBal = Math.floor(cashUserBank[ussIndd] * Math.pow(1.05, epoch + 1));
+        let tmrwBal = Math.floor(cashUserBank[ussIndd] * Math.pow(1.10, epoch + 1));
         let tmrwGain = (tmrwBal - bankBal);
         if ((tmrwBal - cashUserBank[ussIndd]) > 10000) {
             tmrwGain = 0;
@@ -588,7 +588,7 @@ client.on("message", async message => {
             .setColor('#FFDF00')
             .setTitle('Bry Bank')
             .setDescription(addTitle(profId) + " has a bank balance of " + bankBal)
-            .addField("Stats", bankBal + " earning 5% daily interest for " + epoch + " days.\n" + (bankBal - cashUserBank[ussIndd]) + " Brycoins earned so far.\nTo withdraw, type \"brybank withdraw\"\nYou can earn a maximum of 10000 Brycoins from the bank.\nIf you wait " + readableDate(cashUserDeposit[ussIndd] + ((epoch + 1) * 86400000)) + " to withdraw you will get an additional " + tmrwGain + " Brycoins.")
+            .addField("Stats", bankBal + " earning 10% daily interest for " + epoch + " days.\n" + (bankBal - cashUserBank[ussIndd]) + " Brycoins earned so far.\nTo withdraw, type \"brybank withdraw\"\nYou can earn a maximum of 10000 Brycoins from the bank.\nIf you wait " + readableDate(cashUserDeposit[ussIndd] + ((epoch + 1) * 86400000)) + " to withdraw you will get an additional " + tmrwGain + " Brycoins.")
         );
         return;
     }
