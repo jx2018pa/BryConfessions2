@@ -49,6 +49,7 @@ let bannedNum = store.get('bannedNum');
 let bannedAppealed = store.get('bannedAppealed');
 const config = require("./config.json");
 let instantChannel = store.get('instChan');
+let currentNum = store.get('currentNum');
 let postIds = [];
 let postTimes = [];
 let repPostNum = [];
@@ -87,6 +88,7 @@ let ranksEarned = 0;
 let confsEarned = 0;
 let revealsEarned = 0;
 let randomDisplay = 0;
+let lastUser = "";
 let rouletteHit = store.get('rouletteHits');
 let rouletteSave = store.get('rouletteSaves');
 let topGamblesWager = store.get('gambWager');
@@ -305,6 +307,19 @@ client.on("guildDelete", guild => {
 client.on("message", async message => {
     if (message.author.bot) {
         return;
+    }
+    if(message.channel.id == "752622740166541322") {
+        if(message.author.id == lastUser) {
+            message.delete();
+            //message.channel.send("Someone else needs to type the next number!");
+        } else if(message.content != currentNum.toString()) {
+            message.delete();
+            //message.channel.send("That's not correct, please type "+currentNum);
+        } else {
+            lastUser = message.author.id;
+            currentNum++;
+            store.set('currentNum', currentNum);
+        }
     }
     if (starUsers.indexOf(message.author.id) > -1 && message.channel.type != "dm") {
         try {
