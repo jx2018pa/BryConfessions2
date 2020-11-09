@@ -864,8 +864,8 @@ client.on("message", async message => {
                     .setDescription("You successfully robbed " + factionNames[split[1]] + "! You took " + Math.floor(0.4 * factionWarchest[split[1]]) + " Brycoins - 40% of their warchest.")
                     .addField("Stats", "There is a " + (probability.toString().slice(2) + "0") + "% of a factionraid failing determined by the target faction level. You rolled " + roll)
                 );
-                factionWarchest[split[1]] -= Math.floor(0.4 * factionWarchest[split[1]]);
                 factionWarchest[id] += Math.floor(0.4 * factionWarchest[split[1]]);
+                factionWarchest[split[1]] -= Math.floor(0.4 * factionWarchest[split[1]]);
                 store.set('factionWarchest', factionWarchest);
                 return;
             } else {
@@ -938,7 +938,7 @@ client.on("message", async message => {
                 .setColor('#FFDF00')
                 .setTitle('Success!')
                 .setDescription("You successfully robbed " + addTitle(targetedUser) + " ! You stole " + Math.floor(stealAmt) + " Brycoins - 30% of their balance - from their wallet.")
-                .addField("Stats", "There is a " + probab + "% of a robbery failing due to police, and " + addTitle(targetedUser) + " had rank protection adding a " + ((rankId / allTitles.length) * 100) + "% chance of failure after you evaded the police.")
+                .addField("Stats", "There is a " + probab * 100 + "% of a robbery failing due to police, and " + addTitle(targetedUser) + " had rank protection adding a " + ((rankId / allTitles.length) * 100) + "% chance of failure after you evaded the police.")
             );
             cashUserBals[targId] -= Math.floor(stealAmt);
             factionWarchest[id] += Math.floor(stealAmt);
